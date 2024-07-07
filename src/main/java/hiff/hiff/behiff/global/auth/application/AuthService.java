@@ -1,0 +1,44 @@
+package hiff.hiff.behiff.global.auth.application;
+
+import hiff.hiff.behiff.domain.user.application.UserService;
+import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.enums.Role;
+import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
+import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
+import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class AuthService {
+
+    public final JwtService jwtService;
+    public final UserRepository userRepository;
+    public final UserService userService;
+
+    public LoginResponse login(LoginRequest request) {
+        String email = request.getEmail();
+        SocialType socialType = request.getSocialType();
+        String name = request.getName();
+        String socialId = request.getSocialId();
+        String phoneNum = request.getPhoneNum();
+
+        String accessToken = jwtService.createAccessToken(email);
+        String refreshToken = jwtService.createRefreshToken();
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            User newUser = userService.registerUser(name, email, socialId,
+                socialType, Role.USER, phoneNum);
+            return LoginResponse.of(newUser.getId(), accessToken, refreshToken, email, false);
+        }
+
+        User user = userOptional.get();
+        return LoginResponse.of(user.getId(), accessToken, refreshToken, email, true);
+    }
+}
