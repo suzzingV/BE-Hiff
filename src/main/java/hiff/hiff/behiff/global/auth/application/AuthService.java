@@ -5,10 +5,15 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import java.util.Optional;
+
+import hiff.hiff.behiff.global.exception.properties.ErrorCode;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,5 +45,29 @@ public class AuthService {
 
         User user = userOptional.get();
         return LoginResponse.of(user.getId(), accessToken, refreshToken, email, true);
+    }
+
+    public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = jwtService.extractRefreshToken(request)
+                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+        jwtService.isTokenValid(refreshToken);
+
+        jwtService.reissueAndSendTokens(response, refreshToken);
+    }
+
+    public void logout(Optional<String> accessToken, Optional<String> refreshToken) {
+        String access = accessToken
+                .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+        String refresh = refreshToken
+                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+        jwtService.extractEmail(access)
+                .orElseThrow(() -> new AuthException(ErrorCode.EMAIL_NOT_EXTRACTED));
+
+        jwtService.isTokenValid(refresh);
+        jwtService.isTokenValid(access);
+        //refresh token 삭제
+        jwtService.deleteRefreshToken(refresh);
+        //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationProcessingFilter에서 인증처리 거부
+        jwtService.invalidAccessToken(access);
     }
 }
