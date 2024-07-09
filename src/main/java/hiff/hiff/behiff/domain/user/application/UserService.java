@@ -7,10 +7,11 @@ import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.exception.properties.ErrorCode;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,15 +22,15 @@ public class UserService {
     private final JwtService jwtService;
 
     public User registerUser(String name, String email, String socialId, SocialType socialType,
-        Role role, String phoneNum) {
+                             Role role, String phoneNum) {
         User user = User.builder()
-            .phoneNum(phoneNum)
-            .role(role)
-            .socialType(socialType)
-            .socialId(socialId)
-            .email(email)
-            .name(name)
-            .build();
+                .phoneNum(phoneNum)
+                .role(role)
+                .socialType(socialType)
+                .socialId(socialId)
+                .email(email)
+                .name(name)
+                .build();
         return userRepository.save(user);
     }
 
@@ -38,9 +39,9 @@ public class UserService {
         user.delete();
 
         String access = accessToken
-            .orElseThrow(() -> new UserException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+                .orElseThrow(() -> new UserException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
         String refresh = refreshToken
-            .orElseThrow(() -> new UserException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+                .orElseThrow(() -> new UserException(ErrorCode.REFRESH_TOKEN_REQUIRED));
 
         jwtService.isTokenValid(refresh);
         jwtService.isTokenValid(access);
@@ -50,7 +51,7 @@ public class UserService {
 
     public User findUserById(Long id) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
         return user;
     }
 }

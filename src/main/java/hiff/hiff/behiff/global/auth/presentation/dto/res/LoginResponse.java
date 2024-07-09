@@ -14,13 +14,13 @@ public class LoginResponse {
     private boolean isJoined;
 
     public static LoginResponse of(Long userId, String accessToken, String refreshToken,
-        String email, boolean isJoined) {
+                                   String email, boolean isJoined) {
         return LoginResponse.builder()
-            .userId(userId)
-            .accessToken(accessToken)
-            .refreshToken(refreshToken)
-            .email(email)
-            .isJoined(isJoined)
-            .build();
+                .userId(userId)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .email(email)
+                .isJoined(isJoined)
+                .build();
     }
 }

@@ -9,14 +9,14 @@ import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
-import java.util.Optional;
-
 import hiff.hiff.behiff.global.exception.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,7 +39,7 @@ public class AuthService {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             User newUser = userService.registerUser(name, email, socialId,
-                socialType, Role.USER, phoneNum);
+                    socialType, Role.USER, phoneNum);
             return LoginResponse.of(newUser.getId(), accessToken, refreshToken, email, false);
         }
 
