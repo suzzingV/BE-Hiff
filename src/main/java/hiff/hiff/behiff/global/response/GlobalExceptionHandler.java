@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
             String field = fieldError.getField();
-            String rejectedValue = (String) fieldError.getRejectedValue();
+            String rejectedValue = String.valueOf(fieldError.getRejectedValue());
             String message = fieldError.getDefaultMessage();
             ErrorResponse error = ErrorResponse.builder()
                 .statusCode(errorCode.getHttpStatus().value())

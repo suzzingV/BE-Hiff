@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@Slf4j
 @RequiredArgsConstructor
 public class UserController {
 
@@ -69,6 +71,7 @@ public class UserController {
     @PatchMapping("/income")
     public ResponseEntity<UserRegisterResponse> updateIncome(@AuthenticationPrincipal User user,
         @Valid @RequestBody IncomeRequest request) {
+        log.info("controller");
         UserRegisterResponse response = userService.updateIncome(user.getId(), request);
         return ResponseEntity.ok(response);
     }

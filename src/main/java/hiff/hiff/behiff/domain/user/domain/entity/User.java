@@ -64,6 +64,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
+    @Min(0)
     private Integer income;
 
     private String address;
