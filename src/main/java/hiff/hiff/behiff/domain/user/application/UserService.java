@@ -11,6 +11,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
@@ -157,6 +158,15 @@ public class UserService {
     public UserRegisterResponse updatePhoneNum(Long userId, PhoneNumRequest request) {
         User user = findUserById(userId);
         user.changePhoneNum(request.getPhoneNum());
+
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    public UserRegisterResponse updateHopeAge(Long userId, HopeAgeRequest request) {
+        User user = findUserById(userId);
+        user.changeHopeAge(request.getMinAge(), request.getMaxAge());
 
         return UserRegisterResponse.builder()
             .userId(userId)

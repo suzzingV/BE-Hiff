@@ -92,9 +92,15 @@ public class User implements UserDetails {
     @Max(31)
     private Integer birthDay;
 
-    private Gender hopeGender;
-
     private Long jobId;
+
+    @Min(20)
+    @Max(50)
+    private Integer hopeMinAge;
+
+    @Min(20)
+    @Max(50)
+    private Integer hopeMaxAge;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -160,6 +166,11 @@ public class User implements UserDetails {
 
     public void changePhoneNum(String phoneNum) {
         this.phoneNum = phoneNum;
+    }
+
+    public void changeHopeAge(Integer minAge, Integer maxAge) {
+        this.hopeMinAge = minAge;
+        this.hopeMaxAge = maxAge;
     }
 
     @Override

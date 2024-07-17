@@ -6,6 +6,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
@@ -105,6 +106,14 @@ public class UserController {
         @Valid @RequestBody
         PhoneNumRequest request) {
         UserRegisterResponse response = userService.updatePhoneNum(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/hope-age")
+    public ResponseEntity<UserRegisterResponse> updateHopeAge(@AuthenticationPrincipal User user,
+        @Valid @RequestBody
+        HopeAgeRequest request) {
+        UserRegisterResponse response = userService.updateHopeAge(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
