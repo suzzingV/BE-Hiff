@@ -73,6 +73,7 @@ public class User implements UserDetails {
 
     private String addr3;
 
+    @Enumerated(EnumType.STRING)
     private Education education;
 
     private String school;
@@ -144,6 +145,11 @@ public class User implements UserDetails {
         this.addr1 = addr1;
         this.addr2 = addr2;
         this.addr3 = addr3;
+    }
+
+    public void changeEducation(Education education, String school) {
+        this.education = education;
+        this.school = school;
     }
 
     @Override

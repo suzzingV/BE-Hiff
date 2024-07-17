@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
@@ -78,6 +79,14 @@ public class UserController {
     public ResponseEntity<UserRegisterResponse> updateAddress(@AuthenticationPrincipal User user,
         @Valid @RequestBody AddressRequest request) {
         UserRegisterResponse response = userService.updateAddress(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/education")
+    public ResponseEntity<UserRegisterResponse> updateEducation(@AuthenticationPrincipal User user,
+        @Valid @RequestBody
+        EducationRequest request) {
+        UserRegisterResponse response = userService.updateEducation(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

@@ -8,6 +8,7 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
@@ -130,6 +131,15 @@ public class UserService {
     public UserRegisterResponse updateAddress(Long userId, AddressRequest request) {
         User user = findUserById(userId);
         user.changeAddress(request.getAddr1(), request.getAddr2(), request.getAddr3());
+
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    public UserRegisterResponse updateEducation(Long userId, EducationRequest request) {
+        User user = findUserById(userId);
+        user.changeEducation(request.getEducation(), request.getSchool());
 
         return UserRegisterResponse.builder()
             .userId(userId)

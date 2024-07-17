@@ -1,5 +1,7 @@
 package hiff.hiff.behiff.domain.user.domain.enums;
 
+import java.util.EnumSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,4 +16,6 @@ public enum Education {
     DOCTOR_DEGREE("박사");
 
     private final String key;
+
+    public static final Set<Education> ALL_VALUES = EnumSet.allOf(Education.class);
 }
