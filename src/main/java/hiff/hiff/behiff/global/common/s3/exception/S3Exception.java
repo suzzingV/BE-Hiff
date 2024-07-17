@@ -1,15 +1,15 @@
-package hiff.hiff.behiff.global.auth.exception;
+package hiff.hiff.behiff.global.common.s3.exception;
 
 import hiff.hiff.behiff.global.response.exceptionClass.CustomException;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 
-public class AuthException extends CustomException {
+public class S3Exception extends CustomException{
 
-    public AuthException(ErrorCode errorCode) {
+    public S3Exception(ErrorCode errorCode) {
         super(errorCode);
     }
 
-    public AuthException(ErrorCode errorCode, String runtimeValue) {
+    public S3Exception(ErrorCode errorCode, String runtimeValue) {
         super(errorCode, runtimeValue);
     }
 }

@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Role;
-import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
+import hiff.hiff.behiff.domain.user.domain.enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
@@ -13,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -27,14 +27,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 10)
-    private String name;
+    @Column(length = 10)
+    private String nickname;
 
-    @Column(nullable = false)
     @Email
     private String email;
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
     private String phoneNum;
 
     @Enumerated(EnumType.STRING)
@@ -48,6 +47,24 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String socialId;
 
+    private Gender gender;
+
+    private Mbti mbti;
+
+    private int income;
+
+    private String address;
+
+    private Education education;
+
+    private String school;
+
+    private LocalDate birth;
+
+    private Gender hopeGender;
+
+    private String job;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -55,18 +72,20 @@ public class User implements UserDetails {
     private LocalDateTime deletedAt;
 
     @Builder
-    private User(String phoneNum, String name, String email, Role role,
+    private User(String email, Role role,
                  String socialId, SocialType socialType) {
-        this.name = name;
         this.email = email;
         this.role = role;
         this.socialId = socialId;
         this.socialType = socialType;
-        this.phoneNum = phoneNum;
     }
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @Override
