@@ -79,7 +79,7 @@ public class UserService {
 //                .build();
 //    }
 
-    public UserRegisterResponse registerNickname(Long userId, NicknameRequest request) {
+    public UserRegisterResponse updateNickname(Long userId, NicknameRequest request) {
         User user = findUserById(userId);
         user.changeNickname(request.getNickname());
         return UserRegisterResponse.builder()
@@ -87,7 +87,7 @@ public class UserService {
             .build();
     }
 
-    public UserRegisterResponse registerBirth(Long userId, BirthRequest request) {
+    public UserRegisterResponse updateBirth(Long userId, BirthRequest request) {
         User user = findUserById(userId);
         user.changeBirthYear(request.getBirthYear());
         user.changeBirthMonth(request.getBirthMonth());
@@ -98,7 +98,7 @@ public class UserService {
             .build();
     }
 
-    public UserRegisterResponse registerGender(Long userId, GenderRequest request) {
+    public UserRegisterResponse updateGender(Long userId, GenderRequest request) {
         User user = findUserById(userId);
         user.changeGender(request.getGender());
 
@@ -107,7 +107,7 @@ public class UserService {
             .build();
     }
 
-    public UserRegisterResponse registerMbti(Long userId, MbtiRequest request) {
+    public UserRegisterResponse updateMbti(Long userId, MbtiRequest request) {
         User user = findUserById(userId);
         user.changeMbti(request.getMbti());
 

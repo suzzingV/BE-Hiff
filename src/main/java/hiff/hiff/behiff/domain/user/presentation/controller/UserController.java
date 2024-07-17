@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,34 +35,34 @@ public class UserController {
 //        return ResponseEntity.ok(response);
 //    }
 
-    @PostMapping("/nickname")
-    public ResponseEntity<UserRegisterResponse> registerNickname(@AuthenticationPrincipal User user,
+    @PatchMapping("/nickname")
+    public ResponseEntity<UserRegisterResponse> updateNickname(@AuthenticationPrincipal User user,
         @RequestBody
         NicknameRequest request) {
-        UserRegisterResponse response = userService.registerNickname(user.getId(),
+        UserRegisterResponse response = userService.updateNickname(user.getId(),
             request);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/birth")
-    public ResponseEntity<UserRegisterResponse> registerBirth(@AuthenticationPrincipal User user,
+    @PatchMapping("/birth")
+    public ResponseEntity<UserRegisterResponse> updateBirth(@AuthenticationPrincipal User user,
         @Valid @RequestBody
         BirthRequest request) {
-        UserRegisterResponse response = userService.registerBirth(user.getId(), request);
+        UserRegisterResponse response = userService.updateBirth(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/gender")
-    public ResponseEntity<UserRegisterResponse> registerGender(@AuthenticationPrincipal User user,
+    @PatchMapping("/gender")
+    public ResponseEntity<UserRegisterResponse> updateGender(@AuthenticationPrincipal User user,
         @Valid @RequestBody GenderRequest request) {
-        UserRegisterResponse response = userService.registerGender(user.getId(), request);
+        UserRegisterResponse response = userService.updateGender(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/mbti")
-    public ResponseEntity<UserRegisterResponse> registerMbti(@AuthenticationPrincipal User user,
+    @PatchMapping("/mbti")
+    public ResponseEntity<UserRegisterResponse> updateMbti(@AuthenticationPrincipal User user,
         @Valid @RequestBody MbtiRequest request) {
-        UserRegisterResponse response = userService.registerMbti(user.getId(), request);
+        UserRegisterResponse response = userService.updateMbti(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
