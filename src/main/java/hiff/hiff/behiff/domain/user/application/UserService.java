@@ -8,6 +8,7 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
@@ -90,6 +91,15 @@ public class UserService {
         user.changeBirthYear(request.getBirthYear());
         user.changeBirthMonth(request.getBirthMonth());
         user.changeBirthDay(request.getBirthDay());
+
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    public UserRegisterResponse registerGender(Long userId, GenderRequest request) {
+        User user = findUserById(userId);
+        user.changeGender(request.getGender());
 
         return UserRegisterResponse.builder()
             .userId(userId)

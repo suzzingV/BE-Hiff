@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +47,13 @@ public class UserController {
         @Valid @RequestBody
         BirthRequest request) {
         UserRegisterResponse response = userService.registerBirth(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/gender")
+    public ResponseEntity<UserRegisterResponse> registerGender(@AuthenticationPrincipal User user,
+        @Valid @RequestBody GenderRequest request) {
+        UserRegisterResponse response = userService.registerGender(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

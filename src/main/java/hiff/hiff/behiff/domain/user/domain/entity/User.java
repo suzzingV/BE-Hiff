@@ -58,6 +58,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String socialId;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private Mbti mbti;
@@ -119,6 +120,10 @@ public class User implements UserDetails {
 
     public void changeBirthDay(int birthDay) {
         this.birthDay = birthDay;
+    }
+
+    public void changeGender(Gender gender) {
+        this.gender = gender;
     }
 
     @Override
