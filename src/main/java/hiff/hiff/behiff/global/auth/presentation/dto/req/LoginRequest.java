@@ -18,6 +18,4 @@ public class LoginRequest {
     private String socialId;
 
     private SocialType socialType;
-
-    private String phoneNum;
 }
