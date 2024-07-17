@@ -15,6 +15,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
@@ -148,6 +149,15 @@ public class UserService {
         User user = findUserById(userId);
         user.changeJob(request.getJobId());
         isJobExist(request.getJobId());
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    public UserRegisterResponse updatePhoneNum(Long userId, PhoneNumRequest request) {
+        User user = findUserById(userId);
+        user.changePhoneNum(request.getPhoneNum());
+
         return UserRegisterResponse.builder()
             .userId(userId)
             .build();

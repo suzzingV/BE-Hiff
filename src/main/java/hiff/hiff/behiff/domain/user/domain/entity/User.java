@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -45,6 +46,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(length = 20)
+    @Pattern(regexp = "^[0-9]*$")
     private String phoneNum;
 
     @Enumerated(EnumType.STRING)
@@ -154,6 +156,10 @@ public class User implements UserDetails {
 
     public void changeJob(Long jobId) {
         this.jobId = jobId;
+    }
+
+    public void changePhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
     }
 
     @Override

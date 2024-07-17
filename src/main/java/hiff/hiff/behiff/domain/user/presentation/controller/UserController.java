@@ -10,6 +10,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -96,6 +97,14 @@ public class UserController {
         @RequestBody
         JobRequest request) {
         UserRegisterResponse response = userService.updateJob(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/phoneNum")
+    public ResponseEntity<UserRegisterResponse> updatePhoneNum(@AuthenticationPrincipal User user,
+        @Valid @RequestBody
+        PhoneNumRequest request) {
+        UserRegisterResponse response = userService.updatePhoneNum(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
