@@ -9,6 +9,7 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
@@ -110,6 +111,15 @@ public class UserService {
     public UserRegisterResponse updateMbti(Long userId, MbtiRequest request) {
         User user = findUserById(userId);
         user.changeMbti(request.getMbti());
+
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    public UserRegisterResponse updateIncome(Long userId, IncomeRequest request) {
+        User user = findUserById(userId);
+        user.changeIncome(request.getIncome());
 
         return UserRegisterResponse.builder()
             .userId(userId)

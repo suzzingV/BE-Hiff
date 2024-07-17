@@ -131,6 +131,10 @@ public class User implements UserDetails {
         this.mbti = mbti;
     }
 
+    public void changeIncome(Integer income) {
+        this.income = income;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getKey()));
