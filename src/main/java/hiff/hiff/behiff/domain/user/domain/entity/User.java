@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Role;
-import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
+import hiff.hiff.behiff.domain.user.domain.enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
@@ -13,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -47,6 +47,32 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String socialId;
+
+    @Column(nullable = false)
+    private Gender gender;
+
+    @Column(nullable = false)
+    private Mbti mbti;
+
+    @Column(nullable = false)
+    private int income;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private Education education;
+
+    private String school;
+
+    @Column(nullable = false)
+    private LocalDate birth;
+
+    @Column(nullable = false)
+    private Gender hopeGender;
+
+    @Column(nullable = false)
+    private String job;
 
     @CreationTimestamp
     @Column(nullable = false)
