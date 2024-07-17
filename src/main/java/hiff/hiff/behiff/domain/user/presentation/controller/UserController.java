@@ -7,6 +7,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
@@ -87,6 +88,14 @@ public class UserController {
         @Valid @RequestBody
         EducationRequest request) {
         UserRegisterResponse response = userService.updateEducation(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/job")
+    public ResponseEntity<UserRegisterResponse> updateJob(@AuthenticationPrincipal User user,
+        @RequestBody
+        JobRequest request) {
+        UserRegisterResponse response = userService.updateJob(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

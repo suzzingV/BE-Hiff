@@ -92,7 +92,7 @@ public class User implements UserDetails {
 
     private Gender hopeGender;
 
-    private String job;
+    private Long jobId;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -150,6 +150,10 @@ public class User implements UserDetails {
     public void changeEducation(Education education, String school) {
         this.education = education;
         this.school = school;
+    }
+
+    public void changeJob(Long jobId) {
+        this.jobId = jobId;
     }
 
     @Override

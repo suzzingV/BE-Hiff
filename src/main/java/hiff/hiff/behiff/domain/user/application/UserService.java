@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
+import hiff.hiff.behiff.domain.user.infrastructure.JobRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
@@ -11,6 +12,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
@@ -30,6 +32,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPhotoRepository userPhotoRepository;
+    private final JobRepository jobRepository;
     private final JwtService jwtService;
 //    private final S3Service s3Service;
 
@@ -57,11 +60,6 @@ public class UserService {
         jwtService.isTokenValid(access);
         jwtService.deleteRefreshToken(refresh);
         jwtService.invalidAccessToken(access);
-    }
-
-    public User findUserById(Long id) {
-        return userRepository.findById(id)
-            .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
 //    public UserRegisterResponse registerPhoto(Long userId, List<MultipartFile> photos) {
@@ -146,9 +144,28 @@ public class UserService {
             .build();
     }
 
+    public UserRegisterResponse updateJob(Long userId, JobRequest request) {
+        User user = findUserById(userId);
+        user.changeJob(request.getJobId());
+        isJobExist(request.getJobId());
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+    }
+
     private void checkPhotoQuantity(List<MultipartFile> photos) {
         if (photos.size() < 2) {
             throw new UserException(ErrorCode.PHOTO_QUANTITY_ERROR);
         }
+    }
+
+    private void isJobExist(Long jobId) {
+        jobRepository.findById(jobId)
+            .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
     }
 }
