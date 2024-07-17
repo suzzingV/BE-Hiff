@@ -6,12 +6,13 @@ import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
@@ -120,6 +121,15 @@ public class UserService {
     public UserRegisterResponse updateIncome(Long userId, IncomeRequest request) {
         User user = findUserById(userId);
         user.changeIncome(request.getIncome());
+
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    public UserRegisterResponse updateAddress(Long userId, AddressRequest request) {
+        User user = findUserById(userId);
+        user.changeAddress(request.getAddr1(), request.getAddr2(), request.getAddr3());
 
         return UserRegisterResponse.builder()
             .userId(userId)

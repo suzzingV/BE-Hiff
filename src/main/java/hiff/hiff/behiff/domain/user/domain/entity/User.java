@@ -67,7 +67,11 @@ public class User implements UserDetails {
     @Min(0)
     private Integer income;
 
-    private String address;
+    private String addr1;
+
+    private String addr2;
+
+    private String addr3;
 
     private Education education;
 
@@ -134,6 +138,12 @@ public class User implements UserDetails {
 
     public void changeIncome(Integer income) {
         this.income = income;
+    }
+
+    public void changeAddress(String addr1, String addr2, String addr3) {
+        this.addr1 = addr1;
+        this.addr2 = addr2;
+        this.addr3 = addr3;
     }
 
     @Override

@@ -2,18 +2,18 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/user")
-@Slf4j
 @RequiredArgsConstructor
 public class UserController {
 
@@ -71,8 +70,14 @@ public class UserController {
     @PatchMapping("/income")
     public ResponseEntity<UserRegisterResponse> updateIncome(@AuthenticationPrincipal User user,
         @Valid @RequestBody IncomeRequest request) {
-        log.info("controller");
         UserRegisterResponse response = userService.updateIncome(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/address")
+    public ResponseEntity<UserRegisterResponse> updateAddress(@AuthenticationPrincipal User user,
+        @Valid @RequestBody AddressRequest request) {
+        UserRegisterResponse response = userService.updateAddress(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

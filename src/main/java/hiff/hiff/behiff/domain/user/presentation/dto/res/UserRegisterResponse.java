@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.user.presentation.dto;
+package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
 import lombok.Builder;
 import lombok.Getter;
