@@ -8,8 +8,9 @@ import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
-import hiff.hiff.behiff.global.common.s3.S3Service;
+//import hiff.hiff.behiff.global.common.s3.S3Service;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,16 +28,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserPhotoRepository userPhotoRepository;
     private final JwtService jwtService;
-    private final S3Service s3Service;
+//    private final S3Service s3Service;
 
-    public User registerUser(String name, String email, String socialId, SocialType socialType,
+    public User registerUser(String email, String socialId, SocialType socialType,
                              Role role) {
         User user = User.builder()
                 .role(role)
                 .socialType(socialType)
                 .socialId(socialId)
                 .email(email)
-                .name(name)
                 .build();
         return userRepository.save(user);
     }
@@ -61,22 +61,30 @@ public class UserService {
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public UserRegisterResponse registerPhoto(Long userId, List<MultipartFile> photos) {
-        checkPhotoQuantity(photos);
-        findUserById(userId);
+//    public UserRegisterResponse registerPhoto(Long userId, List<MultipartFile> photos) {
+//        checkPhotoQuantity(photos);
+//        findUserById(userId);
+//
+//        List<String> photoUrls = s3Service.savePhotos(photos);
+//        for(String photoUrl : photoUrls) {
+//            UserPhoto userPhoto = UserPhoto.builder()
+//                    .userId(userId)
+//                    .photoUrl(photoUrl)
+//                    .build();
+//            userPhotoRepository.save(userPhoto);
+//        }
+//
+//        return UserRegisterResponse.builder()
+//                .userId(userId)
+//                .build();
+//    }
 
-        List<String> photoUrls = s3Service.savePhotos(photos);
-        for(String photoUrl : photoUrls) {
-            UserPhoto userPhoto = UserPhoto.builder()
-                    .userId(userId)
-                    .photoUrl(photoUrl)
-                    .build();
-            userPhotoRepository.save(userPhoto);
-        }
-
+    public UserRegisterResponse registerNickname(Long userId, NicknameRequest request) {
+        User user = findUserById(userId);
+        user.changeNickname(request.getNickname());
         return UserRegisterResponse.builder()
-                .userId(userId)
-                .build();
+            .userId(userId)
+            .build();
     }
 
     private void checkPhotoQuantity(List<MultipartFile> photos) {
