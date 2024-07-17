@@ -8,15 +8,15 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -33,7 +33,8 @@ public class UserController {
 //    }
 
     @PostMapping("/nickname")
-    public ResponseEntity<UserRegisterResponse> registerNickname(@AuthenticationPrincipal User user, @RequestBody
+    public ResponseEntity<UserRegisterResponse> registerNickname(@AuthenticationPrincipal User user,
+        @RequestBody
         NicknameRequest request) {
         UserRegisterResponse response = userService.registerNickname(user.getId(),
             request);
@@ -41,7 +42,8 @@ public class UserController {
     }
 
     @PostMapping("/birth")
-    public ResponseEntity<UserRegisterResponse> registerBirth(@AuthenticationPrincipal User user, @Valid @RequestBody
+    public ResponseEntity<UserRegisterResponse> registerBirth(@AuthenticationPrincipal User user,
+        @Valid @RequestBody
         BirthRequest request) {
         UserRegisterResponse response = userService.registerBirth(user.getId(), request);
         return ResponseEntity.ok(response);
@@ -49,7 +51,7 @@ public class UserController {
 
     @DeleteMapping
     public ResponseEntity<Void> withdraw(HttpServletRequest request,
-                                         @AuthenticationPrincipal User user) {
+        @AuthenticationPrincipal User user) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
         userService.withdraw(user.getId(), accessToken, refreshToken);

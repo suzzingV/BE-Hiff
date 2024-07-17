@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserPhoto;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
@@ -11,15 +10,13 @@ import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
-//import hiff.hiff.behiff.global.common.s3.S3Service;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,13 +29,13 @@ public class UserService {
 //    private final S3Service s3Service;
 
     public User registerUser(String email, String socialId, SocialType socialType,
-                             Role role) {
+        Role role) {
         User user = User.builder()
-                .role(role)
-                .socialType(socialType)
-                .socialId(socialId)
-                .email(email)
-                .build();
+            .role(role)
+            .socialType(socialType)
+            .socialId(socialId)
+            .email(email)
+            .build();
         return userRepository.save(user);
     }
 
@@ -47,9 +44,9 @@ public class UserService {
         user.delete();
 
         String access = accessToken
-                .orElseThrow(() -> new UserException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+            .orElseThrow(() -> new UserException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
         String refresh = refreshToken
-                .orElseThrow(() -> new UserException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+            .orElseThrow(() -> new UserException(ErrorCode.REFRESH_TOKEN_REQUIRED));
 
         jwtService.isTokenValid(refresh);
         jwtService.isTokenValid(access);
@@ -59,7 +56,7 @@ public class UserService {
 
     public User findUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
 //    public UserRegisterResponse registerPhoto(Long userId, List<MultipartFile> photos) {
@@ -100,7 +97,7 @@ public class UserService {
     }
 
     private void checkPhotoQuantity(List<MultipartFile> photos) {
-        if(photos.size() < 2) {
+        if (photos.size() < 2) {
             throw new UserException(ErrorCode.PHOTO_QUANTITY_ERROR);
         }
     }
