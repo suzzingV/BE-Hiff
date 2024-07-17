@@ -2,7 +2,6 @@ package hiff.hiff.behiff.global.validation.validator;
 
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.global.validation.annotation.ValidSocialType;
-import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -10,7 +9,7 @@ public class SocialTypeValidator implements ConstraintValidator<ValidSocialType,
 
     @Override
     public boolean isValid(SocialType value, ConstraintValidatorContext context) {
-        if(value == null) {
+        if (value == null) {
             return false;
         }
 

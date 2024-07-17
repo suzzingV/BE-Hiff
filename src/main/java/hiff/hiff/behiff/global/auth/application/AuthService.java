@@ -12,11 +12,10 @@ import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,7 +36,7 @@ public class AuthService {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             User newUser = userService.registerUser(email, socialId,
-                    socialType, Role.USER);
+                socialType, Role.USER);
             return LoginResponse.of(newUser.getId(), accessToken, refreshToken, email, false);
         }
 
@@ -47,7 +46,7 @@ public class AuthService {
 
     public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtService.extractRefreshToken(request)
-                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+            .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
         jwtService.isTokenValid(refreshToken);
 
         jwtService.reissueAndSendTokens(response, refreshToken);
@@ -55,11 +54,11 @@ public class AuthService {
 
     public void logout(Optional<String> accessToken, Optional<String> refreshToken) {
         String access = accessToken
-                .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+            .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
         String refresh = refreshToken
-                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+            .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
         jwtService.extractEmail(access)
-                .orElseThrow(() -> new AuthException(ErrorCode.EMAIL_NOT_EXTRACTED));
+            .orElseThrow(() -> new AuthException(ErrorCode.EMAIL_NOT_EXTRACTED));
 
         jwtService.isTokenValid(refresh);
         jwtService.isTokenValid(access);

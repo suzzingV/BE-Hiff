@@ -11,20 +11,19 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.MediaType;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import javax.security.sasl.AuthenticationException;
+import org.springframework.http.MediaType;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
     ) throws ServletException, IOException {
 
         try {
@@ -41,22 +40,22 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     }
 
     private void setErrorResponse(
-            HttpServletResponse response,
-            ErrorCode errorCode
+        HttpServletResponse response,
+        ErrorCode errorCode
     ) {
         ObjectMapper objectMapper = new ObjectMapper();
         response.setCharacterEncoding("UTF-8");
         response.setStatus(errorCode.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .statusCode(errorCode.getHttpStatus().value())
-                .statusCodeName(errorCode.getHttpStatus().name())
-                .code(errorCode.name())
-                .message(errorCode.getMessage())
-                .build();
+            .statusCode(errorCode.getHttpStatus().value())
+            .statusCodeName(errorCode.getHttpStatus().name())
+            .code(errorCode.name())
+            .message(errorCode.getMessage())
+            .build();
         try {
             response.getWriter().write(objectMapper.registerModule(new JavaTimeModule())
-                    .writeValueAsString(errorResponse));
+                .writeValueAsString(errorResponse));
         } catch (IOException e) {
             e.printStackTrace();
         }

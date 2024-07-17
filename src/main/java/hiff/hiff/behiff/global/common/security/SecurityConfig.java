@@ -30,24 +30,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .headers(headersConfigure -> headersConfigure
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .sessionManagement(httpSecuritySessionManagementConfigurer ->
-                        httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/v1/auth/login").permitAll()
-                        .requestMatchers("/api/v1/**").authenticated()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll())
-                .exceptionHandling(customizer -> customizer
-                        .authenticationEntryPoint(customAuthenticationEntryPoint())
-                        .accessDeniedHandler(customAccessDeniedHandler()))
-                .addFilterAfter(jwtAuthenticationProcessFilter(), LogoutFilter.class)
-                .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationProcessingFilter.class);
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .headers(headersConfigure -> headersConfigure
+                .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+            .sessionManagement(httpSecuritySessionManagementConfigurer ->
+                httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
+                    SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/**").authenticated()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll())
+            .exceptionHandling(customizer -> customizer
+                .authenticationEntryPoint(customAuthenticationEntryPoint())
+                .accessDeniedHandler(customAccessDeniedHandler()))
+            .addFilterAfter(jwtAuthenticationProcessFilter(), LogoutFilter.class)
+            .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationProcessingFilter.class);
         // 필터 순서: Logout filter -> jwtAuthenticationProcessFilter
         return http.build();
     }

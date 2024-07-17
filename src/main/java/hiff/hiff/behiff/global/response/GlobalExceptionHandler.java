@@ -3,13 +3,13 @@ package hiff.hiff.behiff.global.response;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import hiff.hiff.behiff.global.response.dto.ErrorResponse;
-import hiff.hiff.behiff.global.response.dto.ValidationErrorResponse;
 import hiff.hiff.behiff.global.response.exceptionClass.CustomException;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -18,9 +18,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
@@ -28,23 +25,23 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = CustomException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(
-            CustomException e, HttpServletRequest request
+        CustomException e, HttpServletRequest request
     ) {
         return ErrorResponse.toResponseEntity(e.getErrorCode(), e.getRuntimeValue());
     }
 
     @ExceptionHandler(value = {
-            BindException.class,
+        BindException.class,
         MethodArgumentNotValidException.class
     })
     protected ResponseEntity<List<ErrorResponse>> validationException(BindException e,
-                                                                                HttpServletRequest request) {
+        HttpServletRequest request) {
         BindingResult bindingResult = e.getBindingResult();
         List<ErrorResponse> errors = new ArrayList<>();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
             String field = fieldError.getField();
-            String rejectedValue = (String)fieldError.getRejectedValue();
+            String rejectedValue = (String) fieldError.getRejectedValue();
             String message = fieldError.getDefaultMessage();
             ErrorResponse error = ErrorResponse.builder()
                 .statusCode(errorCode.getHttpStatus().value())
@@ -59,7 +56,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = ConstraintViolationException.class)
-    protected ResponseEntity<List<ErrorResponse>> validationException(ConstraintViolationException e,
+    protected ResponseEntity<List<ErrorResponse>> validationException(
+        ConstraintViolationException e,
         HttpServletRequest request) {
         List<ErrorResponse> errors = new ArrayList<>();
         e.getConstraintViolations().forEach(violation -> {
@@ -80,7 +78,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
+    protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+        HttpMessageNotReadableException ex, WebRequest request) {
         Throwable mostSpecificCause = ex.getMostSpecificCause();
         ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
         if (mostSpecificCause instanceof InvalidFormatException ife) {
@@ -109,7 +108,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(
-            Exception e, HttpServletRequest request
+        Exception e, HttpServletRequest request
     ) {
         return ErrorResponse.toResponseEntity(ErrorCode.SERVER_ERROR, e.getMessage());
     }
