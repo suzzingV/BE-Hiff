@@ -30,14 +30,13 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         String email = request.getEmail();
         SocialType socialType = request.getSocialType();
-        String name = request.getName();
         String socialId = request.getSocialId();
 
         String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
-            User newUser = userService.registerUser(name, email, socialId,
+            User newUser = userService.registerUser(email, socialId,
                     socialType, Role.USER);
             return LoginResponse.of(newUser.getId(), accessToken, refreshToken, email, false);
         }

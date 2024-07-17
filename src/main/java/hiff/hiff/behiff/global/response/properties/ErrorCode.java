@@ -15,6 +15,7 @@ public enum ErrorCode {
     EMAIL_NOT_EXTRACTED(BAD_REQUEST, "이메일을 추출할 수 없습니다."),
     S3_ACCESS_DENIED(BAD_REQUEST, "s3에 접근할 수 없습니다."),
     PHOTO_QUANTITY_ERROR(BAD_REQUEST, "사진은 2개 이상 등록해야 합니다."),
+    VALIDATION_ERROR(BAD_REQUEST, "입력값이 유효하지 않습니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),

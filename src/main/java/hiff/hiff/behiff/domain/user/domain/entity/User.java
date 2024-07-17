@@ -27,14 +27,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 10)
-    private String name;
+    @Column(length = 10)
+    private String nickname;
 
-    @Column(nullable = false)
     @Email
     private String email;
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
     private String phoneNum;
 
     @Enumerated(EnumType.STRING)
@@ -48,30 +47,22 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String socialId;
 
-    @Column(nullable = false)
     private Gender gender;
 
-    @Column(nullable = false)
     private Mbti mbti;
 
-    @Column(nullable = false)
     private int income;
 
-    @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
     private Education education;
 
     private String school;
 
-    @Column(nullable = false)
     private LocalDate birth;
 
-    @Column(nullable = false)
     private Gender hopeGender;
 
-    @Column(nullable = false)
     private String job;
 
     @CreationTimestamp
@@ -81,18 +72,20 @@ public class User implements UserDetails {
     private LocalDateTime deletedAt;
 
     @Builder
-    private User(String phoneNum, String name, String email, Role role,
+    private User(String email, Role role,
                  String socialId, SocialType socialType) {
-        this.name = name;
         this.email = email;
         this.role = role;
         this.socialId = socialId;
         this.socialType = socialType;
-        this.phoneNum = phoneNum;
     }
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @Override
