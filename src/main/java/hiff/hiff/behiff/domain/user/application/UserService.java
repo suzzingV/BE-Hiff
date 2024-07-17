@@ -8,6 +8,7 @@ import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 //import hiff.hiff.behiff.global.common.s3.S3Service;
@@ -82,6 +83,17 @@ public class UserService {
     public UserRegisterResponse registerNickname(Long userId, NicknameRequest request) {
         User user = findUserById(userId);
         user.changeNickname(request.getNickname());
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    public UserRegisterResponse registerBirth(Long userId, BirthRequest request) {
+        User user = findUserById(userId);
+        user.changeBirthYear(request.getBirthYear());
+        user.changeBirthMonth(request.getBirthMonth());
+        user.changeBirthDay(request.getBirthDay());
+
         return UserRegisterResponse.builder()
             .userId(userId)
             .build();

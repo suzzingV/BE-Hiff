@@ -3,9 +3,11 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,13 @@ public class UserController {
         NicknameRequest request) {
         UserRegisterResponse response = userService.registerNickname(user.getId(),
             request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/birth")
+    public ResponseEntity<UserRegisterResponse> registerBirth(@AuthenticationPrincipal User user, @Valid @RequestBody
+        BirthRequest request) {
+        UserRegisterResponse response = userService.registerBirth(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

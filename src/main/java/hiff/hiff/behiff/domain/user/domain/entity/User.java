@@ -3,6 +3,8 @@ package hiff.hiff.behiff.domain.user.domain.entity;
 import hiff.hiff.behiff.domain.user.domain.enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,7 +53,7 @@ public class User implements UserDetails {
 
     private Mbti mbti;
 
-    private int income;
+    private Integer income;
 
     private String address;
 
@@ -59,7 +61,17 @@ public class User implements UserDetails {
 
     private String school;
 
-    private LocalDate birth;
+    @Min(1900)
+    @Max(2024)
+    private Integer birthYear;
+
+    @Min(1)
+    @Max(12)
+    private Integer birthMonth;
+
+    @Min(1)
+    @Max(31)
+    private Integer birthDay;
 
     private Gender hopeGender;
 
@@ -86,6 +98,18 @@ public class User implements UserDetails {
 
     public void changeNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void changeBirthYear(int birthYear) {
+        this.birthYear = birthYear;
+    }
+
+    public void changeBirthMonth(int birthMonth) {
+        this.birthMonth = birthMonth;
+    }
+
+    public void changeBirthDay(int birthDay) {
+        this.birthDay = birthDay;
     }
 
     @Override
