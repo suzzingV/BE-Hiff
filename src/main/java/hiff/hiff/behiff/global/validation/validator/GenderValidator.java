@@ -4,9 +4,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.global.validation.annotation.ValidGender;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class GenderValidator implements ConstraintValidator<ValidGender, Gender> {
 
     @Override

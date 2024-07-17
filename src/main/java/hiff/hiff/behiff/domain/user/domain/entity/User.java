@@ -61,6 +61,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
     private Integer income;
@@ -124,6 +125,10 @@ public class User implements UserDetails {
 
     public void changeGender(Gender gender) {
         this.gender = gender;
+    }
+
+    public void changeMbti(Mbti mbti) {
+        this.mbti = mbti;
     }
 
     @Override

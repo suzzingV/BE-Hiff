@@ -5,6 +5,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,6 +55,13 @@ public class UserController {
     public ResponseEntity<UserRegisterResponse> registerGender(@AuthenticationPrincipal User user,
         @Valid @RequestBody GenderRequest request) {
         UserRegisterResponse response = userService.registerGender(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/mbti")
+    public ResponseEntity<UserRegisterResponse> registerMbti(@AuthenticationPrincipal User user,
+        @Valid @RequestBody MbtiRequest request) {
+        UserRegisterResponse response = userService.registerMbti(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
