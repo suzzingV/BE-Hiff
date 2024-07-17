@@ -1,16 +1,22 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.UserPhoto;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
+import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.domain.user.presentation.dto.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
-import hiff.hiff.behiff.global.exception.properties.ErrorCode;
+import hiff.hiff.behiff.global.common.s3.S3Service;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,12 +25,13 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserPhotoRepository userPhotoRepository;
     private final JwtService jwtService;
+    private final S3Service s3Service;
 
     public User registerUser(String name, String email, String socialId, SocialType socialType,
-                             Role role, String phoneNum) {
+                             Role role) {
         User user = User.builder()
-                .phoneNum(phoneNum)
                 .role(role)
                 .socialType(socialType)
                 .socialId(socialId)
@@ -50,8 +57,31 @@ public class UserService {
     }
 
     public User findUserById(Long id) {
-        User user = userRepository.findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
-        return user;
+    }
+
+    public UserRegisterResponse registerPhoto(Long userId, List<MultipartFile> photos) {
+        checkPhotoQuantity(photos);
+        findUserById(userId);
+
+        List<String> photoUrls = s3Service.savePhotos(photos);
+        for(String photoUrl : photoUrls) {
+            UserPhoto userPhoto = UserPhoto.builder()
+                    .userId(userId)
+                    .photoUrl(photoUrl)
+                    .build();
+            userPhotoRepository.save(userPhoto);
+        }
+
+        return UserRegisterResponse.builder()
+                .userId(userId)
+                .build();
+    }
+
+    private void checkPhotoQuantity(List<MultipartFile> photos) {
+        if(photos.size() < 2) {
+            throw new UserException(ErrorCode.PHOTO_QUANTITY_ERROR);
+        }
     }
 }
