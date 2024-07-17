@@ -1,6 +1,6 @@
-package hiff.hiff.behiff.global.exception.exceptionClass;
+package hiff.hiff.behiff.global.response.exceptionClass;
 
-import hiff.hiff.behiff.global.exception.properties.ErrorCode;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.Getter;
 
 @Getter

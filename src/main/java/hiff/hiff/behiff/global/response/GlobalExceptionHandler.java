@@ -1,10 +1,10 @@
-package hiff.hiff.behiff.global.exception;
+package hiff.hiff.behiff.global.response;
 
 
-import hiff.hiff.behiff.global.exception.dto.ErrorResponse;
-import hiff.hiff.behiff.global.exception.dto.ValidationErrorResponse;
-import hiff.hiff.behiff.global.exception.exceptionClass.CustomException;
-import hiff.hiff.behiff.global.exception.properties.ErrorCode;
+import hiff.hiff.behiff.global.response.dto.ErrorResponse;
+import hiff.hiff.behiff.global.response.dto.ValidationErrorResponse;
+import hiff.hiff.behiff.global.response.exceptionClass.CustomException;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -2,8 +2,8 @@ package hiff.hiff.behiff.global.auth.jwt.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import hiff.hiff.behiff.global.exception.dto.ErrorResponse;
-import hiff.hiff.behiff.global.exception.properties.ErrorCode;
+import hiff.hiff.behiff.global.response.dto.ErrorResponse;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;

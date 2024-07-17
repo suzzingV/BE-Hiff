@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.global.exception.dto;
+package hiff.hiff.behiff.global.response.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

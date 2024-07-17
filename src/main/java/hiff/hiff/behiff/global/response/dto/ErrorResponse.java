@@ -1,6 +1,6 @@
-package hiff.hiff.behiff.global.exception.dto;
+package hiff.hiff.behiff.global.response.dto;
 
-import hiff.hiff.behiff.global.exception.properties.ErrorCode;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
