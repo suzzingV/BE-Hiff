@@ -10,7 +10,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public enum Gender {
 
-    MALE("남"), FEMALE("여"), ETC("기타");
+    MALE("남"), FEMALE("여");
 
     private final String key;
 
