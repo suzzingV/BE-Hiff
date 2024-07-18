@@ -33,6 +33,7 @@ public enum ErrorCode {
     // 404
     USER_NOT_FOUND(NOT_FOUND, "user을 찾을 수 없습니다."),
     JOB_NOT_FOUND(NOT_FOUND, "직업을 찾을 수 없습니다."),
+    NICKNAME_ALREADY_EXISTS(NOT_FOUND, "이미 존재하는 닉네임입니다."),
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다.");

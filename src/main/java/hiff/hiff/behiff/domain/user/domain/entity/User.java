@@ -1,25 +1,11 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Education;
-import hiff.hiff.behiff.domain.user.domain.enums.Gender;
-import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
-import hiff.hiff.behiff.domain.user.domain.enums.Role;
-import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import hiff.hiff.behiff.domain.user.domain.enums.*;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +14,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,7 +29,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 10)
+    @Column(length = 8)
     private String nickname;
 
     @Email
@@ -110,7 +100,7 @@ public class User implements UserDetails {
 
     @Builder
     private User(String email, Role role,
-        String socialId, SocialType socialType) {
+                 String socialId, SocialType socialType) {
         this.email = email;
         this.role = role;
         this.socialId = socialId;

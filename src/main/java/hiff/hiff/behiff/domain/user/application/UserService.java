@@ -7,25 +7,17 @@ import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.JobRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,13 +31,13 @@ public class UserService {
 //    private final S3Service s3Service;
 
     public User registerUser(String email, String socialId, SocialType socialType,
-        Role role) {
+                             Role role) {
         User user = User.builder()
-            .role(role)
-            .socialType(socialType)
-            .socialId(socialId)
-            .email(email)
-            .build();
+                .role(role)
+                .socialType(socialType)
+                .socialId(socialId)
+                .email(email)
+                .build();
         return userRepository.save(user);
     }
 
@@ -54,9 +46,9 @@ public class UserService {
         user.delete();
 
         String access = accessToken
-            .orElseThrow(() -> new UserException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+                .orElseThrow(() -> new UserException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
         String refresh = refreshToken
-            .orElseThrow(() -> new UserException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+                .orElseThrow(() -> new UserException(ErrorCode.REFRESH_TOKEN_REQUIRED));
 
         jwtService.isTokenValid(refresh);
         jwtService.isTokenValid(access);
@@ -84,10 +76,11 @@ public class UserService {
 
     public UserRegisterResponse updateNickname(Long userId, NicknameRequest request) {
         User user = findUserById(userId);
+        checkDuplication(request.getNickname());
         user.changeNickname(request.getNickname());
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updateBirth(Long userId, BirthRequest request) {
@@ -97,8 +90,8 @@ public class UserService {
         user.changeBirthDay(request.getBirthDay());
 
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updateGender(Long userId, GenderRequest request) {
@@ -106,8 +99,8 @@ public class UserService {
         user.changeGender(request.getGender());
 
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updateMbti(Long userId, MbtiRequest request) {
@@ -115,8 +108,8 @@ public class UserService {
         user.changeMbti(request.getMbti());
 
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updateIncome(Long userId, IncomeRequest request) {
@@ -124,8 +117,8 @@ public class UserService {
         user.changeIncome(request.getIncome());
 
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updateAddress(Long userId, AddressRequest request) {
@@ -133,8 +126,8 @@ public class UserService {
         user.changeAddress(request.getAddr1(), request.getAddr2(), request.getAddr3());
 
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updateEducation(Long userId, EducationRequest request) {
@@ -142,8 +135,8 @@ public class UserService {
         user.changeEducation(request.getEducation(), request.getSchool());
 
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updateJob(Long userId, JobRequest request) {
@@ -151,8 +144,8 @@ public class UserService {
         user.changeJob(request.getJobId());
         isJobExist(request.getJobId());
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updatePhoneNum(Long userId, PhoneNumRequest request) {
@@ -160,8 +153,8 @@ public class UserService {
         user.changePhoneNum(request.getPhoneNum());
 
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 
     public UserRegisterResponse updateHopeAge(Long userId, HopeAgeRequest request) {
@@ -169,13 +162,18 @@ public class UserService {
         user.changeHopeAge(request.getMinAge(), request.getMaxAge());
 
         return UserRegisterResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
+    }
+
+    private void checkDuplication(String nickname) {
+        userRepository.findByNickname(nickname)
+                .ifPresent(user -> new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS));
     }
 
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
     private void checkPhotoQuantity(List<MultipartFile> photos) {
@@ -186,6 +184,6 @@ public class UserService {
 
     private void isJobExist(Long jobId) {
         jobRepository.findById(jobId)
-            .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
+                .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
     }
 }
