@@ -2,16 +2,7 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -114,6 +105,12 @@ public class UserController {
         @Valid @RequestBody
         HopeAgeRequest request) {
         UserRegisterResponse response = userService.updateHopeAge(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/hobby")
+    public ResponseEntity<UserRegisterResponse> updateHobby(@AuthenticationPrincipal User user, @Valid @RequestBody HobbyRequest request) {
+        UserRegisterResponse response = userService.updateHobby(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

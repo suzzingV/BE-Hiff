@@ -1,12 +1,12 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.JobRepository;
-import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
-import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.domain.user.infrastructure.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
@@ -27,6 +27,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserPhotoRepository userPhotoRepository;
     private final JobRepository jobRepository;
+    private final HobbyRepository hobbyRepository;
+    private final UserHobbyRepository userHobbyRepository;
     private final JwtService jwtService;
 //    private final S3Service s3Service;
 
@@ -166,6 +168,19 @@ public class UserService {
                 .build();
     }
 
+    public UserRegisterResponse updateHobby(Long userId, HobbyRequest request) {
+        findUserById(userId);
+        List<Long> originHobbies = request.getOriginHobbies();
+        List<String> newHobbies = request.getNewHobbies();
+
+        updateUserHobby(userId, originHobbies);
+        registerNewHobby(userId, newHobbies);
+
+        return UserRegisterResponse.builder()
+                .userId(userId)
+                .build();
+    }
+
     private void checkDuplication(String nickname) {
         userRepository.findByNickname(nickname)
                 .ifPresent(user -> {throw new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS);});
@@ -185,5 +200,43 @@ public class UserService {
     private void isJobExist(Long jobId) {
         jobRepository.findById(jobId)
                 .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
+    }
+
+    private void registerNewHobby(Long userId, List<String> newHobbies) {
+        for(String hobbyName : newHobbies) {
+            Hobby hobby = createHobby(hobbyName);
+            UserHobby userHobby = UserHobby.builder()
+                    .userId(userId)
+                    .hobbyId(hobby.getId())
+                    .build();
+            userHobbyRepository.save(userHobby);
+        }
+    }
+
+    private void updateUserHobby(Long userId, List<Long> originHobbies) {
+        for(Long hobbyId : originHobbies) {
+            Hobby hobby = findHobbyById(hobbyId);
+            hobby.addCount();
+            UserHobby userHobby = UserHobby.builder()
+                    .userId(userId)
+                    .hobbyId(hobbyId)
+                    .build();
+            userHobbyRepository.save(userHobby);
+        }
+    }
+
+    private Hobby createHobby(String hobbyName) {
+        hobbyRepository.findByName(hobbyName)
+                .ifPresent(hobby -> { throw new UserException(ErrorCode.HOBBY_ALREADY_EXISTS); });
+        Hobby hobby = Hobby.builder()
+                .name(hobbyName)
+                .build();
+        hobbyRepository.save(hobby);
+        return hobby;
+    }
+
+    private Hobby findHobbyById(Long hobbyId) {
+        return hobbyRepository.findById(hobbyId)
+                .orElseThrow(() -> new UserException(ErrorCode.HOBBY_NOT_FOUND));
     }
 }
