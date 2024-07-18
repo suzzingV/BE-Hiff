@@ -168,7 +168,7 @@ public class UserService {
 
     private void checkDuplication(String nickname) {
         userRepository.findByNickname(nickname)
-                .ifPresent(user -> new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS));
+                .ifPresent(user -> {throw new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS);});
     }
 
     private User findUserById(Long userId) {
