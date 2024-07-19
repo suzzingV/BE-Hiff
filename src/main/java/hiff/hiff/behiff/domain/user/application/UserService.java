@@ -1,7 +1,9 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.user.domain.entity.Belief;
 import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.UserBelief;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
@@ -29,6 +31,8 @@ public class UserService {
     private final JobRepository jobRepository;
     private final HobbyRepository hobbyRepository;
     private final UserHobbyRepository userHobbyRepository;
+    private final UserBeliefRepository userBeliefRepository;
+    private final BeliefRepository beliefRepository;
     private final JwtService jwtService;
 //    private final S3Service s3Service;
 
@@ -181,6 +185,19 @@ public class UserService {
                 .build();
     }
 
+    public UserRegisterResponse updateBelief(Long userId, BeliefRequest request) {
+        findUserById(userId);
+        List<Long> originBeliefs = request.getOriginBeliefs();
+        List<String> newBeliefs = request.getNewBeliefs();
+
+        updateUserBelief(userId, originBeliefs);
+        registerNewBelief(userId, newBeliefs);
+
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
     private void checkDuplication(String nickname) {
         userRepository.findByNickname(nickname)
                 .ifPresent(user -> {throw new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS);});
@@ -238,5 +255,43 @@ public class UserService {
     private Hobby findHobbyById(Long hobbyId) {
         return hobbyRepository.findById(hobbyId)
                 .orElseThrow(() -> new UserException(ErrorCode.HOBBY_NOT_FOUND));
+    }
+
+    private void registerNewBelief(Long userId, List<String> newBeliefs) {
+        for(String beliefName : newBeliefs) {
+            Belief belief = createBelief(beliefName);
+            UserBelief userBelief = UserBelief.builder()
+                .userId(userId)
+                .beliefId(belief.getId())
+                .build();
+            userBeliefRepository.save(userBelief);
+        }
+    }
+
+    private void updateUserBelief(Long userId, List<Long> originBeliefs) {
+        for(Long beliefId : originBeliefs) {
+            Belief belief = findBeliefById(beliefId);
+            belief.addCount();
+            UserBelief userBelief = UserBelief.builder()
+                .userId(userId)
+                .beliefId(belief.getId())
+                .build();
+            userBeliefRepository.save(userBelief);
+        }
+    }
+
+    private Belief createBelief(String beliefName) {
+        beliefRepository.findByName(beliefName)
+            .ifPresent(belief -> { throw new UserException(ErrorCode.BELIEF_ALREADY_EXISTS); });
+        Belief belief = Belief.builder()
+            .name(beliefName)
+            .build();
+        beliefRepository.save(belief);
+        return belief;
+    }
+
+    private Belief findBeliefById(Long beliefId) {
+        return beliefRepository.findById(beliefId)
+            .orElseThrow(() -> new UserException(ErrorCode.BELIEF_NOT_FOUND));
     }
 }

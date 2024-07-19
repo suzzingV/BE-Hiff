@@ -22,6 +22,7 @@ public enum ErrorCode {
     VALIDATION_ERROR(BAD_REQUEST, "입력값이 유효하지 않습니다."),
     NICKNAME_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 닉네임입니다."),
     HOBBY_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 취미입니다."),
+    BELIEF_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 가치관입니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
@@ -36,6 +37,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(NOT_FOUND, "user을 찾을 수 없습니다."),
     JOB_NOT_FOUND(NOT_FOUND, "직업을 찾을 수 없습니다."),
     HOBBY_NOT_FOUND(NOT_FOUND, "취미를 찾을 수 없습니다."),
+    BELIEF_NOT_FOUND(NOT_FOUND, "가치관을 찾을 수 없습니다."),
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다.");

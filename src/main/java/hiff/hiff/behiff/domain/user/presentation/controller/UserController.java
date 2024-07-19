@@ -114,6 +114,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/belief")
+    public ResponseEntity<UserRegisterResponse> updateBelief(@AuthenticationPrincipal User user, @Valid @RequestBody BeliefRequest request) {
+        UserRegisterResponse response = userService.updateBelief(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> withdraw(HttpServletRequest request,
         @AuthenticationPrincipal User user) {
