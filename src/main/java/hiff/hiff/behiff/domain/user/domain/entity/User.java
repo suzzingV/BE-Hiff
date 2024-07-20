@@ -92,6 +92,14 @@ public class User implements UserDetails {
     @Max(50)
     private Integer hopeMaxAge;
 
+    @Min(0)
+    @Max(700)
+    private Integer maxDistance;
+
+    @Min(0)
+    @Max(700)
+    private Integer minDistance;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -163,6 +171,14 @@ public class User implements UserDetails {
     public void changeHopeAge(Integer minAge, Integer maxAge) {
         this.hopeMinAge = minAge;
         this.hopeMaxAge = maxAge;
+    }
+
+    public void changeMaxDistance(Integer maxDistance) {
+        this.maxDistance = maxDistance;
+    }
+
+    public void changeMinDistance(Integer minDistance) {
+        this.minDistance = minDistance;
     }
 
     @Override

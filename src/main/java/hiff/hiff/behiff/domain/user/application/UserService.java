@@ -200,6 +200,23 @@ public class UserService {
             .build();
     }
 
+    public UserRegisterResponse updateDistance(Long userId, DistanceRequest request) {
+        User user = findUserById(userId);
+        checkDistanceRange(request);
+        user.changeMaxDistance(request.getMaxDistance());
+        user.changeMinDistance(request.getMinDistance());
+
+        return UserRegisterResponse.builder()
+            .userId(userId)
+            .build();
+    }
+
+    private static void checkDistanceRange(DistanceRequest request) {
+        if(request.getMinDistance() > request.getMaxDistance()) {
+            throw new UserException(ErrorCode.DISTANCE_RANGE_REVERSE);
+        }
+    }
+
     private void checkDuplication(String nickname) {
         userRepository.findByNickname(nickname)
                 .ifPresent(user -> {throw new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS);});

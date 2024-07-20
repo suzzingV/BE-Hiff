@@ -120,6 +120,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/distance")
+    public ResponseEntity<UserRegisterResponse> updateDistance(@AuthenticationPrincipal User user, @Valid @RequestBody DistanceRequest request) {
+        UserRegisterResponse response = userService.updateDistance(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> withdraw(HttpServletRequest request,
         @AuthenticationPrincipal User user) {
