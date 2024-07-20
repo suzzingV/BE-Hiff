@@ -105,6 +105,8 @@ public class User implements UserDetails {
         this.role = role;
         this.socialId = socialId;
         this.socialType = socialType;
+        this.hopeMaxAge = 50;
+        this.hopeMinAge = 20;
     }
 
     public void delete() {
