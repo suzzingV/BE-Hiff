@@ -120,7 +120,9 @@ public class UserService {
 
     public UserRegisterResponse updateIncome(Long userId, IncomeRequest request) {
         User user = findUserById(userId);
-        user.changeIncome(request.getIncome());
+        if(request.isOpen()) {
+            user.changeIncome(request.getIncome());
+        }
 
         return UserRegisterResponse.builder()
                 .userId(userId)

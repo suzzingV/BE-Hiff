@@ -8,4 +8,6 @@ public class IncomeRequest {
 
     @Min(0)
     private Integer income;
+
+    private boolean isOpen;
 }
