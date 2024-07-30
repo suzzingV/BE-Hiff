@@ -1,10 +1,6 @@
 package hiff.hiff.behiff.domain.user.application;
 
-import hiff.hiff.behiff.domain.user.domain.entity.Belief;
-import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserBelief;
-import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
+import hiff.hiff.behiff.domain.user.domain.entity.*;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
@@ -14,6 +10,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +30,7 @@ public class UserService {
     private final UserHobbyRepository userHobbyRepository;
     private final UserBeliefRepository userBeliefRepository;
     private final BeliefRepository beliefRepository;
+    private final WeightValueRepository weightValueRepository;
     private final JwtService jwtService;
 //    private final S3Service s3Service;
 
@@ -209,6 +207,29 @@ public class UserService {
         return UserRegisterResponse.builder()
             .userId(userId)
             .build();
+    }
+
+    public UserRegisterResponse updateWeightValue(Long userId, WeightValueRequest request) {
+        findUserById(userId);
+        weightValueRepository.findByUserId(userId)
+                .ifPresentOrElse(weightValue -> {
+                    weightValue.changeWeightValue(request.getIncome(), request.getAppearance(), request.getHobby(),
+                            request.getBelief(), request.getMbti());
+                        }, () -> {
+                    WeightValue weightValue = WeightValue.builder()
+                            .userId(userId)
+                                    .income(request.getIncome())
+                                    .appearance(request.getAppearance())
+                                    .hobby(request.getHobby())
+                                    .belief(request.getBelief())
+                                    .mbti(request.getMbti())
+                                    .build();
+                    weightValueRepository.save(weightValue);
+                        }
+                );
+        return UserRegisterResponse.builder()
+                .userId(userId)
+                .build();
     }
 
     private static void checkDistanceRange(DistanceRequest request) {

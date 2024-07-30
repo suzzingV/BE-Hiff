@@ -11,11 +11,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -123,6 +119,12 @@ public class UserController {
     @PatchMapping("/distance")
     public ResponseEntity<UserRegisterResponse> updateDistance(@AuthenticationPrincipal User user, @Valid @RequestBody DistanceRequest request) {
         UserRegisterResponse response = userService.updateDistance(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/weight-value")
+    public ResponseEntity<UserRegisterResponse> updateWeight(@AuthenticationPrincipal User user, @Valid @RequestBody WeightValueRequest request) {
+        UserRegisterResponse response = userService.updateWeightValue(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
