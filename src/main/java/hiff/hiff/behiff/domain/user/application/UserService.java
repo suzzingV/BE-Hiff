@@ -276,7 +276,7 @@ public class UserService {
                 .gender(user.getGender())
                 .mbti(user.getMbti())
                 .income(user.getIncome())
-                .addr(user.getAddr1() + " " + user.getAddr2() + " " + user.getAddr3())
+                .addr(user.getAddr())
                 .education(user.getEducation())
                 .school(user.getSchool())
                 .job(job.getName())

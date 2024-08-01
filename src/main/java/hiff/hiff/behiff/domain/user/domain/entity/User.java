@@ -35,6 +35,7 @@ public class User implements UserDetails {
     private String nickname;
 
     @Email
+    @Column(nullable = false)
     private String email;
 
     @Column(length = 20)
@@ -61,11 +62,7 @@ public class User implements UserDetails {
     @Min(0)
     private Integer income;
 
-    private String addr1;
-
-    private String addr2;
-
-    private String addr3;
+    private String addr;
 
     @Enumerated(EnumType.STRING)
     private Education education;
@@ -151,9 +148,7 @@ public class User implements UserDetails {
     }
 
     public void changeAddress(String addr1, String addr2, String addr3) {
-        this.addr1 = addr1;
-        this.addr2 = addr2;
-        this.addr3 = addr3;
+        this.addr = addr1 + " " + addr2 + " " + addr3;
     }
 
     public void changeEducation(Education education, String school) {
