@@ -3,6 +3,7 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -125,6 +126,12 @@ public class UserController {
     @PutMapping("/weight-value")
     public ResponseEntity<UserRegisterResponse> updateWeight(@AuthenticationPrincipal User user, @Valid @RequestBody WeightValueRequest request) {
         UserRegisterResponse response = userService.updateWeightValue(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MyInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
+        MyInfoResponse response = userService.getMyInfo(user.getId());
         return ResponseEntity.ok(response);
     }
 

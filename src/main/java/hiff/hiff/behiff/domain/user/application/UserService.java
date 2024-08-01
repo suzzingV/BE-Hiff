@@ -1,11 +1,11 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.*;
-import hiff.hiff.behiff.domain.user.domain.enums.Role;
-import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
+import hiff.hiff.behiff.domain.user.domain.enums.*;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -225,6 +226,60 @@ public class UserService {
                 );
         return UserRegisterResponse.builder()
                 .userId(userId)
+                .build();
+    }
+
+    public MyInfoResponse getMyInfo(Long userId) {
+        User user = findUserById(userId);
+        List<String> photos = userPhotoRepository.findByUserId(userId)
+                .stream()
+                .map(UserPhoto::getPhotoUrl)
+                .toList();
+        List<String> hobbies = userHobbyRepository.findByUserId(userId)
+                .stream()
+                .map(userHobby -> {
+                    Hobby hobby = findHobbyById(userHobby.getHobbyId());
+                    return hobby.getName();
+                })
+                .toList();
+        List<String> beliefs = userBeliefRepository.findByUserId(userId)
+                .stream()
+                .map(userBelief -> {
+                    Belief belief = findBeliefById(userBelief.getBeliefId());
+                    return belief.getName();
+                })
+                .toList();
+        WeightValue weightValue = weightValueRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
+        if(user.getJobId() == null) {
+            throw new UserException(ErrorCode.USER_JOB_NOT_EXISTS);
+        }
+        Job job = jobRepository.findById(user.getJobId())
+                .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
+
+        return MyInfoResponse.builder()
+                .nickname(user.getNickname())
+                .age(user.getAge())
+                .maxDistance(user.getMaxDistance())
+                .minDistance(user.getMinDistance())
+                .photos(photos)
+                .hobbies(hobbies)
+                .beliefs(beliefs)
+                .incomeWeight(weightValue.getIncome())
+                .beliefWeight(weightValue.getBelief())
+                .hobbyWeight(weightValue.getHobby())
+                .appearanceWeight(weightValue.getAppearance())
+                .mbtiWeight(weightValue.getMbti())
+                .phoneNum(user.getPhoneNum())
+                .gender(user.getGender())
+                .mbti(user.getMbti())
+                .income(user.getIncome())
+                .addr(user.getAddr1() + " " + user.getAddr2() + " " + user.getAddr3())
+                .education(user.getEducation())
+                .school(user.getSchool())
+                .job(job.getName())
+                .hopeMinAge(user.getHopeMinAge())
+                .hopeMaxAge(user.getHopeMaxAge())
                 .build();
     }
 
