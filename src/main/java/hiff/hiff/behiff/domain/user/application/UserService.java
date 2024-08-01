@@ -259,6 +259,7 @@ public class UserService {
                 .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
 
         return MyInfoResponse.builder()
+                .userId(userId)
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .birth(user.getBirth())
@@ -283,6 +284,8 @@ public class UserService {
                 .job(job.getName())
                 .hopeMinAge(user.getHopeMinAge())
                 .hopeMaxAge(user.getHopeMaxAge())
+                .heart(user.getHeart())
+                .appearanceScore(user.getAppearanceScore())
                 .build();
     }
 

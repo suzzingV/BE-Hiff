@@ -20,7 +20,7 @@ public class UserPhoto {
     @Column(nullable = false)
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2048)
     private String photoUrl;
 
     @Builder

@@ -93,6 +93,14 @@ public class User implements UserDetails {
     @Max(700)
     private Integer minDistance;
 
+    @Column(nullable = false)
+    private Integer heart;
+
+    private Double appearanceScore;
+
+    @Column(nullable = false)
+    private Integer appearanceCount;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -108,6 +116,10 @@ public class User implements UserDetails {
         this.socialType = socialType;
         this.hopeMaxAge = 50;
         this.hopeMinAge = 20;
+        this.maxDistance = 700;
+        this.minDistance = 0;
+        this.heart = 0;
+        this.appearanceCount = 0;
     }
 
     public void delete() {
