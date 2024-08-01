@@ -261,6 +261,7 @@ public class UserService {
         return MyInfoResponse.builder()
                 .email(user.getEmail())
                 .nickname(user.getNickname())
+                .birth(user.getBirth())
                 .age(user.getAge())
                 .maxDistance(user.getMaxDistance())
                 .minDistance(user.getMinDistance())

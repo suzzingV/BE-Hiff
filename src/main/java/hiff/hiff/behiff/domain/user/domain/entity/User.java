@@ -69,17 +69,7 @@ public class User implements UserDetails {
 
     private String school;
 
-    @Min(1900)
-    @Max(2024)
-    private Integer birthYear;
-
-    @Min(1)
-    @Max(12)
-    private Integer birthMonth;
-
-    @Min(1)
-    @Max(31)
-    private Integer birthDay;
+    private LocalDate birth;
 
     @Min(18)
     @Max(80)
@@ -129,10 +119,9 @@ public class User implements UserDetails {
     }
 
     public void changeBirth(int birthYear, int birthMonth, int birthDay) {
-        this.birthYear = birthYear;
-        this.birthMonth = birthMonth;
-        this.birthDay = birthDay;
-        this.age = AgeCalculator.calculateAge(LocalDate.of(birthYear, birthMonth, birthDay));
+        LocalDate birthDate = LocalDate.of(birthYear, birthMonth, birthDay);
+        this.birth = birthDate;
+        this.age = AgeCalculator.calculateAge(birthDate);
     }
 
     public void changeGender(Gender gender) {

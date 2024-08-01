@@ -6,6 +6,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -17,6 +18,8 @@ public class MyInfoResponse {
     private String email;
 
     private String nickname;
+
+    private LocalDate birth;
 
     private Integer age;
 
