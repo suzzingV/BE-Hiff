@@ -133,7 +133,7 @@ public class User implements UserDetails {
     public void changeBirth(int birthYear, int birthMonth, int birthDay) {
         LocalDate birthDate = LocalDate.of(birthYear, birthMonth, birthDay);
         this.birth = birthDate;
-        this.age = AgeCalculator.calculateAge(birthDate);
+        updateAge();
     }
 
     public void changeGender(Gender gender) {
@@ -191,5 +191,9 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    public void updateAge() {
+        this.age = AgeCalculator.calculateAge(this.birth);
     }
 }

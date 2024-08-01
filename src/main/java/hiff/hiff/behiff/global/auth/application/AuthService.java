@@ -41,6 +41,7 @@ public class AuthService {
         }
 
         User user = userOptional.get();
+        user.updateAge();
         return LoginResponse.of(user.getId(), accessToken, refreshToken, email, true);
     }
 
