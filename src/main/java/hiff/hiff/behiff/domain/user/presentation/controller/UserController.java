@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,8 +24,8 @@ public class UserController {
     private final JwtService jwtService;
 
 //    @PostMapping("/photo")
-//    public ResponseEntity<UserRegisterResponse> registerPhoto(@AuthenticationPrincipal User user, @RequestPart(value = "photos")List<MultipartFile> photos) {
-//        UserRegisterResponse response = userService.registerPhoto(user.getId(), photos);
+//    public ResponseEntity<UserRegisterResponse> registerPhoto(@AuthenticationPrincipal User user, @RequestPart(value = "main photo") MultipartFile mainPhoto, @RequestPart(value = "photos")List<MultipartFile> photos) {
+//        UserRegisterResponse response = userService.registerPhoto(user.getId(), photo, photos);
 //        return ResponseEntity.ok(response);
 //    }
 
@@ -135,6 +136,13 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDetailResponse> getUserInfo(@AuthenticationPrincipal User me, @PathVariable Long userId) {
+        UserDetailResponse response = userService.getUserDetail(me.getId(), userId);
+        return ResponseEntity.ok(response);
+    }
+
+    // TODO: ouath 탈퇴 서버에서 할 일 찾아보기
     @DeleteMapping
     public ResponseEntity<Void> withdraw(HttpServletRequest request,
         @AuthenticationPrincipal User user) {

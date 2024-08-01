@@ -6,6 +6,7 @@ import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
@@ -31,6 +32,7 @@ public class UserService {
     private final UserBeliefRepository userBeliefRepository;
     private final BeliefRepository beliefRepository;
     private final WeightValueRepository weightValueRepository;
+    private final UserPosRepository userPosRepository;
     private final JwtService jwtService;
 //    private final S3Service s3Service;
 
@@ -117,9 +119,7 @@ public class UserService {
 
     public UserRegisterResponse updateIncome(Long userId, IncomeRequest request) {
         User user = findUserById(userId);
-        if(request.isOpen()) {
-            user.changeIncome(request.getIncome());
-        }
+        user.changeIncome(request.getIncome());
 
         return UserRegisterResponse.builder()
                 .userId(userId)
@@ -143,10 +143,12 @@ public class UserService {
                 .userId(userId)
                 .build();
     }
-
+    // TODO: 직종 직접 입력 추가
     public UserRegisterResponse updateJob(Long userId, JobRequest request) {
         User user = findUserById(userId);
-        user.changeJob(request.getJobId());
+        Job job = jobRepository.findById(request.getJobId())
+                .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
+        user.changeJob(job.getName());
         isJobExist(request.getJobId());
         return UserRegisterResponse.builder()
                 .userId(userId)
@@ -252,11 +254,6 @@ public class UserService {
                 .toList();
         WeightValue weightValue = weightValueRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
-        if(user.getJobId() == null) {
-            throw new UserException(ErrorCode.USER_JOB_NOT_EXISTS);
-        }
-        Job job = jobRepository.findById(user.getJobId())
-                .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
 
         return MyInfoResponse.builder()
                 .userId(userId)
@@ -281,12 +278,53 @@ public class UserService {
                 .addr(user.getAddr())
                 .education(user.getEducation())
                 .school(user.getSchool())
-                .job(job.getName())
+                .job(user.getJob())
                 .hopeMinAge(user.getHopeMinAge())
                 .hopeMaxAge(user.getHopeMaxAge())
                 .heart(user.getHeart())
                 .appearanceScore(user.getAppearanceScore())
                 .build();
+    }
+
+    public UserDetailResponse getUserDetail(Long myId, Long userId) {
+        User user = findUserById(userId);
+        List<String> photos = userPhotoRepository.findByUserId(userId)
+                .stream()
+                .map(UserPhoto::getPhotoUrl)
+                .toList();
+        List<String> hobbies = userHobbyRepository.findByUserId(userId)
+                .stream()
+                .map(userHobby -> {
+                    Hobby hobby = findHobbyById(userHobby.getHobbyId());
+                    return hobby.getName();
+                })
+                .toList();
+        List<String> beliefs = userBeliefRepository.findByUserId(userId)
+                .stream()
+                .map(userBelief -> {
+                    Belief belief = findBeliefById(userBelief.getBeliefId());
+                    return belief.getName();
+                })
+                .toList();
+        // TODO : 소득 공개 여부 처리
+        UserDetailResponse.UserDetailResponseBuilder responseBuilder = UserDetailResponse.builder()
+                .nickname(user.getNickname())
+                .age(user.getAge())
+                .income(user.getIncome().getKey())
+                .addr(user.getAddr())
+                .job(user.getJob())
+                .photos(photos)
+                .beliefs(beliefs)
+                .hobbies(hobbies)
+                .mbti(user.getMbti())
+                .education(user.getEducation().getKey())
+                .school(user.getSchool());
+        userPosRepository.findByUserId(userId)
+                .ifPresent(userPos -> {
+                    responseBuilder.posX(userPos.getX());
+                    responseBuilder.posY(userPos.getY());
+                });
+        return responseBuilder.build();
     }
 
     private static void checkDistanceRange(DistanceRequest request) {
