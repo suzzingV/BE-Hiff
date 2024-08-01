@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
+import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,7 +50,7 @@ public class MyInfoResponse {
 
     private Mbti mbti;
 
-    private Integer income;
+    private Income income;
 
     private String addr;
 

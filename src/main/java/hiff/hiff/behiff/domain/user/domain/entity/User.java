@@ -59,8 +59,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
-    @Min(0)
-    private Integer income;
+    private Income income;
 
     private String addr;
 
@@ -75,7 +74,7 @@ public class User implements UserDetails {
     @Max(80)
     private Integer age;
 
-    private Long jobId;
+    private String job;
 
     @Min(20)
     @Max(50)
@@ -144,7 +143,7 @@ public class User implements UserDetails {
         this.mbti = mbti;
     }
 
-    public void changeIncome(Integer income) {
+    public void changeIncome(Income income) {
         this.income = income;
     }
 
@@ -157,8 +156,8 @@ public class User implements UserDetails {
         this.school = school;
     }
 
-    public void changeJob(Long jobId) {
-        this.jobId = jobId;
+    public void changeJob(String job) {
+        this.job = job;
     }
 
     public void changePhoneNum(String phoneNum) {
