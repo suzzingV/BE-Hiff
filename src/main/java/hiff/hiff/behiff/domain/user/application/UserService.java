@@ -60,11 +60,12 @@ public class UserService {
         jwtService.invalidAccessToken(access);
     }
 
-//    public UserRegisterResponse registerPhoto(Long userId, List<MultipartFile> photos) {
-//        checkPhotoQuantity(photos);
+    // TODO: 대표 사진 등록
+//    public UserRegisterResponse registerPhoto(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos) {
+//        checkPhotoQuantity(mainPhoto, photos);
 //        findUserById(userId);
 //
-//        List<String> photoUrls = s3Service.savePhotos(photos);
+//        List<String> photoUrls = s3Service.savePhotos(photo, photos);
 //        for(String photoUrl : photoUrls) {
 //            UserPhoto userPhoto = UserPhoto.builder()
 //                    .userId(userId)
@@ -258,6 +259,7 @@ public class UserService {
                 .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
 
         return MyInfoResponse.builder()
+                .email(user.getEmail())
                 .nickname(user.getNickname())
                 .age(user.getAge())
                 .maxDistance(user.getMaxDistance())

@@ -14,6 +14,8 @@ public class MyInfoResponse {
 
     private Long userId;
 
+    private String email;
+
     private String nickname;
 
     private Integer age;
