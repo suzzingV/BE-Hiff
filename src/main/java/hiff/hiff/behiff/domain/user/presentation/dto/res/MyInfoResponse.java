@@ -62,4 +62,8 @@ public class MyInfoResponse {
     private Integer hopeMinAge;
 
     private Integer hopeMaxAge;
+
+    private Integer heart;
+
+    private Double appearanceScore;
 }
