@@ -88,9 +88,7 @@ public class UserService {
 
     public UserRegisterResponse updateBirth(Long userId, BirthRequest request) {
         User user = findUserById(userId);
-        user.changeBirthYear(request.getBirthYear());
-        user.changeBirthMonth(request.getBirthMonth());
-        user.changeBirthDay(request.getBirthDay());
+        user.changeBirth(request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
 
         return UserRegisterResponse.builder()
                 .userId(userId)
@@ -211,10 +209,9 @@ public class UserService {
     public UserRegisterResponse updateWeightValue(Long userId, WeightValueRequest request) {
         findUserById(userId);
         weightValueRepository.findByUserId(userId)
-                .ifPresentOrElse(weightValue -> {
-                    weightValue.changeWeightValue(request.getIncome(), request.getAppearance(), request.getHobby(),
-                            request.getBelief(), request.getMbti());
-                        }, () -> {
+                .ifPresentOrElse(weightValue ->
+                        weightValue.changeWeightValue(request.getIncome(), request.getAppearance(), request.getHobby(),
+                        request.getBelief(), request.getMbti()), () -> {
                     WeightValue weightValue = WeightValue.builder()
                             .userId(userId)
                                     .income(request.getIncome())

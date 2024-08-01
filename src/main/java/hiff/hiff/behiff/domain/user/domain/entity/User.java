@@ -1,6 +1,7 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
 import hiff.hiff.behiff.domain.user.domain.enums.*;
+import hiff.hiff.behiff.domain.user.util.AgeCalculator;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -15,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -82,6 +84,10 @@ public class User implements UserDetails {
     @Max(31)
     private Integer birthDay;
 
+    @Min(18)
+    @Max(80)
+    private Integer age;
+
     private Long jobId;
 
     @Min(20)
@@ -125,16 +131,11 @@ public class User implements UserDetails {
         this.nickname = nickname;
     }
 
-    public void changeBirthYear(int birthYear) {
+    public void changeBirth(int birthYear, int birthMonth, int birthDay) {
         this.birthYear = birthYear;
-    }
-
-    public void changeBirthMonth(int birthMonth) {
         this.birthMonth = birthMonth;
-    }
-
-    public void changeBirthDay(int birthDay) {
         this.birthDay = birthDay;
+        this.age = AgeCalculator.calculateAge(LocalDate.of(birthYear, birthMonth, birthDay));
     }
 
     public void changeGender(Gender gender) {
