@@ -10,7 +10,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.res.UserRegisterResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -177,8 +176,8 @@ public class UserService {
         List<Long> originHobbies = request.getOriginHobbies();
         List<String> newHobbies = request.getNewHobbies();
 
-        updateUserHobby(userId, originHobbies);
-        registerNewHobby(userId, newHobbies);
+        updateUserHobbies(userId, originHobbies);
+        registerNewHobbies(userId, newHobbies);
 
         return UserRegisterResponse.builder()
                 .userId(userId)
@@ -259,7 +258,7 @@ public class UserService {
                 .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
     }
 
-    private void registerNewHobby(Long userId, List<String> newHobbies) {
+    private void registerNewHobbies(Long userId, List<String> newHobbies) {
         for(String hobbyName : newHobbies) {
             Hobby hobby = createHobby(hobbyName);
             UserHobby userHobby = UserHobby.builder()
@@ -270,7 +269,10 @@ public class UserService {
         }
     }
 
-    private void updateUserHobby(Long userId, List<Long> originHobbies) {
+    private void updateUserHobbies(Long userId, List<Long> originHobbies) {
+        List<UserHobby> oldHobbies = userHobbyRepository.findByUserId(userId);
+        userHobbyRepository.deleteAll(oldHobbies);
+
         for(Long hobbyId : originHobbies) {
             Hobby hobby = findHobbyById(hobbyId);
             hobby.addCount();
@@ -309,6 +311,9 @@ public class UserService {
     }
 
     private void updateUserBelief(Long userId, List<Long> originBeliefs) {
+        List<UserBelief> oldBeliefs = userBeliefRepository.findByUserId(userId);
+        userBeliefRepository.deleteAll(oldBeliefs);
+
         for(Long beliefId : originBeliefs) {
             Belief belief = findBeliefById(beliefId);
             belief.addCount();
