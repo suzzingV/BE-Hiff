@@ -73,7 +73,7 @@ public class User implements UserDetails {
 
     private LocalDate birth;
 
-    @Min(18)
+    @Min(0)
     @Max(80)
     private Integer age;
 
@@ -124,6 +124,7 @@ public class User implements UserDetails {
         this.appearanceCount = 0;
         this.income = Income.PRIVATE;
         this.education = Education.PRIVATE;
+        this.birth = LocalDate.now();
     }
 
     public void delete() {
