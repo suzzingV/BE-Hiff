@@ -1,5 +1,7 @@
 package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
+import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Income;
@@ -67,4 +69,36 @@ public class MyInfoResponse {
     private Integer heart;
 
     private Double appearanceScore;
+
+    public static MyInfoResponse of(User user, List<String> hobbies, List<String> photos, List<String> beliefs, WeightValue weightValue) {
+        return MyInfoResponse.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .birth(user.getBirth())
+                .age(user.getAge())
+                .maxDistance(user.getMaxDistance())
+                .minDistance(user.getMinDistance())
+                .photos(photos)
+                .hobbies(hobbies)
+                .beliefs(beliefs)
+                .incomeWeight(weightValue.getIncome())
+                .beliefWeight(weightValue.getBelief())
+                .hobbyWeight(weightValue.getHobby())
+                .appearanceWeight(weightValue.getAppearance())
+                .mbtiWeight(weightValue.getMbti())
+                .phoneNum(user.getPhoneNum())
+                .gender(user.getGender())
+                .mbti(user.getMbti())
+                .income(user.getIncome())
+                .addr(user.getAddr())
+                .education(user.getEducation())
+                .school(user.getSchool())
+                .job(user.getJob())
+                .hopeMinAge(user.getHopeMinAge())
+                .hopeMaxAge(user.getHopeMaxAge())
+                .heart(user.getHeart())
+                .appearanceScore(user.getAppearanceScore())
+                .build();
+    }
 }
