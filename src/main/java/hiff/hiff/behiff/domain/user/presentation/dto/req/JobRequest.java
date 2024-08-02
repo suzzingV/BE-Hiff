@@ -6,4 +6,6 @@ import lombok.Getter;
 public class JobRequest {
 
     private Long jobId;
+
+    private String newJobName;
 }

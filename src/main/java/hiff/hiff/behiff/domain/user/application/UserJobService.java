@@ -17,16 +17,24 @@ public class UserJobService {
 
     private final JobRepository jobRepository;
 
-    // TODO: 직종 직접 입력 추가
-    public void updateJob(User user, JobRequest request) {
-        Job job = jobRepository.findById(request.getJobId())
-                .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
-        user.changeJob(job.getName());
-        isJobExist(request.getJobId());
+    public void updateOriginJob(User user, Long jobId) {
+            Job job = findById(jobId);
+            user.changeJob(job.getName());
     }
 
-    private void isJobExist(Long jobId) {
-        jobRepository.findById(jobId)
+    public void updateNewJob(User user, String jobName) {
+        jobRepository.findByName(jobName)
+                .ifPresentOrElse(Job::addCount, () -> {
+                    Job job = Job.builder()
+                            .name(jobName)
+                            .build();
+                    jobRepository.save(job);
+                });
+        user.changeJob(jobName);
+    }
+
+    private Job findById(Long jobId) {
+        return jobRepository.findById(jobId)
                 .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
     }
 }

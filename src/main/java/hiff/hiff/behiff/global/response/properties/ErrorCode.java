@@ -24,6 +24,7 @@ public enum ErrorCode {
     HOBBY_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 취미입니다."),
     BELIEF_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 가치관입니다."),
     DISTANCE_RANGE_REVERSE(BAD_REQUEST, "거리의 최대값보다 최소값이 클 수 없습니다."),
+    JOB_UPDATE_REQUEST_ERROR(BAD_REQUEST, "job id와 new job name 중 반드시 하나만 값이 존재해야 합니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),

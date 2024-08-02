@@ -3,12 +3,10 @@ package hiff.hiff.behiff.domain.user.application;
 import hiff.hiff.behiff.domain.user.domain.entity.*;
 import hiff.hiff.behiff.domain.user.domain.enums.*;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
-import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -102,7 +100,13 @@ public class UserService {
 
     public UserUpdateResponse updateJob(Long userId, JobRequest request) {
         User user = userCRUDService.findUserById(userId);
-        userJobService.updateJob(user, request);
+        if(request.getJobId() != null && request.getNewJobName() == null) {
+            userJobService.updateOriginJob(user, request.getJobId());
+        } else if(request.getNewJobName() != null && request.getJobId() == null){
+            userJobService.updateNewJob(user, request.getNewJobName());
+        } else {
+            throw new UserException(ErrorCode.JOB_UPDATE_REQUEST_ERROR);
+        }
         return UserUpdateResponse.from(userId);
     }
 
