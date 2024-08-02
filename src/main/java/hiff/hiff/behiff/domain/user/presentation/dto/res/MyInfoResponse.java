@@ -34,7 +34,7 @@ public class MyInfoResponse {
 
     private List<String> hobbies;
 
-    private List<String> beliefs;
+    private List<String> lifeStyles;
 
     private Integer incomeWeight;
 
@@ -42,7 +42,7 @@ public class MyInfoResponse {
 
     private Integer hobbyWeight;
 
-    private Integer beliefWeight;
+    private Integer lifeStyleWeight;
 
     private Integer mbtiWeight;
 
@@ -70,7 +70,7 @@ public class MyInfoResponse {
 
     private Double appearanceScore;
 
-    public static MyInfoResponse of(User user, List<String> hobbies, List<String> photos, List<String> beliefs, WeightValue weightValue) {
+    public static MyInfoResponse of(User user, List<String> hobbies, List<String> photos, List<String> lifeStyles, WeightValue weightValue) {
         return MyInfoResponse.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
@@ -81,9 +81,9 @@ public class MyInfoResponse {
                 .minDistance(user.getMinDistance())
                 .photos(photos)
                 .hobbies(hobbies)
-                .beliefs(beliefs)
+                .lifeStyles(lifeStyles)
                 .incomeWeight(weightValue.getIncome())
-                .beliefWeight(weightValue.getBelief())
+                .lifeStyleWeight(weightValue.getLifeStyle())
                 .hobbyWeight(weightValue.getHobby())
                 .appearanceWeight(weightValue.getAppearance())
                 .mbtiWeight(weightValue.getMbti())

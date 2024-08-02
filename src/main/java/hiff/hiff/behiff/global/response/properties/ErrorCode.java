@@ -22,7 +22,7 @@ public enum ErrorCode {
     VALIDATION_ERROR(BAD_REQUEST, "입력값이 유효하지 않습니다."),
     NICKNAME_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 닉네임입니다."),
     HOBBY_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 취미입니다."),
-    BELIEF_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 가치관입니다."),
+    LIFESTYLE_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 라이프스타일입니다."),
     DISTANCE_RANGE_REVERSE(BAD_REQUEST, "거리의 최대값보다 최소값이 클 수 없습니다."),
     JOB_UPDATE_REQUEST_ERROR(BAD_REQUEST, "job id와 new job name 중 반드시 하나만 값이 존재해야 합니다."),
 
@@ -39,7 +39,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(NOT_FOUND, "user을 찾을 수 없습니다."),
     JOB_NOT_FOUND(NOT_FOUND, "직업을 찾을 수 없습니다."),
     HOBBY_NOT_FOUND(NOT_FOUND, "취미를 찾을 수 없습니다."),
-    BELIEF_NOT_FOUND(NOT_FOUND, "가치관을 찾을 수 없습니다."),
+    LIFESTYLE_NOT_FOUND(NOT_FOUND, "라이프스타일을 찾을 수 없습니다."),
     WEIGHT_VALUE_NOT_FOUND(NOT_FOUND, "해당 유저의 가중치 정보를 찾을 수 없습니다."),
     USER_JOB_NOT_EXISTS(NOT_FOUND, "user의 직업이 존재하지 않습니다."),
 

@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.user.infrastructure;
 
-import hiff.hiff.behiff.domain.user.domain.entity.Belief;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import org.springframework.data.jpa.repository.JpaRepository;
 

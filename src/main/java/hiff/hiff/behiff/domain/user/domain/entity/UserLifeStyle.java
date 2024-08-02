@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,26 +14,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "belief_TB")
-public class Belief {
+@Table(name = "user_life_sytle_TB")
+public class UserLifeStyle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private Long userId;
 
     @Column(nullable = false)
-    private Integer count;
+    private Long lifeStyleId;
 
     @Builder
-    private Belief(String name) {
-        this.name = name;
-        this.count = 1;
-    }
-
-    public void addCount() {
-        count++;
+    private UserLifeStyle(Long userId, Long lifeStyleId) {
+        this.userId = userId;
+        this.lifeStyleId = lifeStyleId;
     }
 }

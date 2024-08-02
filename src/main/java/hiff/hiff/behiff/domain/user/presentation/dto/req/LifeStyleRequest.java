@@ -4,9 +4,9 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class BeliefRequest {
+public class LifeStyleRequest {
 
-    private List<Long> originBeliefs;
+    private List<Long> originLifeStyles;
 
-    private List<String> newBeliefs;
+    private List<String> newLifeStyles;
 }

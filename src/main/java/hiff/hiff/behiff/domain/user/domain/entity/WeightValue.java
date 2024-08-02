@@ -3,7 +3,6 @@ package hiff.hiff.behiff.domain.user.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,7 +39,7 @@ public class WeightValue {
     @Min(1)
     @Max(5)
     @Column(nullable = false)
-    private Integer belief;
+    private Integer lifeStyle;
 
     @Min(1)
     @Max(5)
@@ -53,15 +52,15 @@ public class WeightValue {
         this.income = 3;
         this.appearance = 3;
         this.hobby = 3;
-        this.belief = 3;
+        this.lifeStyle = 3;
         this.mbti = 3;
     }
 
-    public void changeWeightValue(Integer income, Integer appearance, Integer hobby, Integer belief, Integer mbti) {
+    public void changeWeightValue(Integer income, Integer appearance, Integer hobby, Integer lifeStyle, Integer mbti) {
         this.income = income;
         this.appearance = appearance;
         this.hobby = hobby;
-        this.belief = belief;
+        this.lifeStyle = lifeStyle;
         this.mbti = mbti;
     }
 }

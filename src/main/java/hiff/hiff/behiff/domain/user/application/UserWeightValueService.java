@@ -20,7 +20,7 @@ public class UserWeightValueService {
         WeightValue weightValue = weightValueRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
         weightValue.changeWeightValue(request.getIncome(), request.getAppearance(), request.getHobby(),
-                                        request.getBelief(), request.getMbti());
+                                        request.getLifeStyle(), request.getMbti());
     }
 
     public WeightValue createWeightValue(Long userId) {

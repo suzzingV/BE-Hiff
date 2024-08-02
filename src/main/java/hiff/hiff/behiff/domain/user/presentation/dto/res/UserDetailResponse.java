@@ -2,13 +2,11 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
-import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Builder
@@ -32,7 +30,7 @@ public class UserDetailResponse {
 
     private List<String> hobbies;
 
-    private List<String> beliefs;
+    private List<String> lifeStyles;
 
     private Mbti mbti;
 
@@ -48,7 +46,7 @@ public class UserDetailResponse {
                 .posY(userPos.getY());
     }
 
-    public static UserDetailResponse of(User user, List<String> photos, List<String> hobbies, List<String> beliefs, String posX, String posY) {
+    public static UserDetailResponse of(User user, List<String> photos, List<String> hobbies, List<String> lifeStyles, String posX, String posY) {
 
         return UserDetailResponse.builder()
                 .nickname(user.getNickname())
@@ -57,7 +55,7 @@ public class UserDetailResponse {
                 .addr(user.getAddr())
                 .job(user.getJob())
                 .photos(photos)
-                .beliefs(beliefs)
+                .lifeStyles(lifeStyles)
                 .hobbies(hobbies)
                 .mbti(user.getMbti())
                 .education(user.getEducation().getKey())

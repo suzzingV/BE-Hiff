@@ -26,7 +26,7 @@ public class WeightValueRequest {
     @NotNull
     @Min(1)
     @Max(5)
-    private Integer belief;
+    private Integer lifeStyle;
 
     @NotNull
     @Min(1)

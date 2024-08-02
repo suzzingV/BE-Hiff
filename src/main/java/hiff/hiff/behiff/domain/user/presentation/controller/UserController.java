@@ -112,9 +112,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/belief")
-    public ResponseEntity<UserUpdateResponse> updateBelief(@AuthenticationPrincipal User user, @Valid @RequestBody BeliefRequest request) {
-        UserUpdateResponse response = userService.updateBelief(user.getId(), request);
+    @PatchMapping("/life-style")
+    public ResponseEntity<UserUpdateResponse> updateLifeStyle(@AuthenticationPrincipal User user, @Valid @RequestBody LifeStyleRequest request) {
+        UserUpdateResponse response = userService.updateLifeStyle(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

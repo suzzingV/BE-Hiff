@@ -21,7 +21,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserHobbyService userHobbyService;
-    private final UserBeliefService userBeliefService;
+    private final UserLifeStyleService userLifeStyleService;
     private final UserJobService userJobService;
     private final UserWeightValueService userWeightValueService;
     private final UserPhotoService userPhotoService;
@@ -117,10 +117,9 @@ public class UserService {
         return userHobbyService.updateHobby(userId, request);
     }
 
-    // TODO: 이름 바꾸기
-    public UserUpdateResponse updateBelief(Long userId, BeliefRequest request) {
+    public UserUpdateResponse updateLifeStyle(Long userId, LifeStyleRequest request) {
         userCRUDService.findUserById(userId);
-        return userBeliefService.updateBelief(userId, request);
+        return userLifeStyleService.updateLifeStyle(userId, request);
     }
 
     public UserUpdateResponse updateDistance(Long userId, DistanceRequest request) {
@@ -139,22 +138,21 @@ public class UserService {
         User user = userCRUDService.findUserById(userId);
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
         List<String> hobbies = userHobbyService.getHobbiesOfUser(userId);
-        List<String> beliefs = userBeliefService.getBeliefsOfUser(userId);
+        List<String> lifeStyles = userLifeStyleService.getLifeStylesOfUser(userId);
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
 
-        return MyInfoResponse.of(user, hobbies, photos, beliefs, weightValue);
+        return MyInfoResponse.of(user, hobbies, photos, lifeStyles, weightValue);
     }
 
     public UserDetailResponse getUserDetail(Long myId, Long userId) {
         User user = userCRUDService.findUserById(userId);
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
         List<String> hobbies = userHobbyService.getHobbiesOfUser(userId);
-        List<String> beliefs = userBeliefService.getBeliefsOfUser(userId);
-        // TODO : 소득 공개 여부 처리
+        List<String> lifeStyles = userLifeStyleService.getLifeStylesOfUser(userId);
         Optional<UserPos> userPos = userProfileService.findUserPosByUserId(userId);
         String posX = userPos.map(UserPos::getX).orElse(null);
         String posY = userPos.map(UserPos::getY).orElse(null);
 
-        return UserDetailResponse.of(user, photos, hobbies, beliefs, posX, posY);
+        return UserDetailResponse.of(user, photos, hobbies, lifeStyles, posX, posY);
     }
 }
