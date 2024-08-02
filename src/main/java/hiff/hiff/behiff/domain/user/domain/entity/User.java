@@ -59,11 +59,14 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Income income;
 
     private String addr;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Education education;
 
     private String school;
@@ -119,6 +122,8 @@ public class User implements UserDetails {
         this.minDistance = 0;
         this.heart = 0;
         this.appearanceCount = 0;
+        this.income = Income.PRIVATE;
+        this.education = Education.PRIVATE;
     }
 
     public void delete() {

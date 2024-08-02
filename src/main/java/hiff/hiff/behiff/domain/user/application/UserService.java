@@ -30,7 +30,9 @@ public class UserService {
 
     public User registerUser(String email, String socialId, SocialType socialType,
                              Role role) {
-        return userCRUDService.registerUser(email, socialId, socialType, role);
+        User user = userCRUDService.registerUser(email, socialId, socialType, role);
+        userWeightValueService.createWeightValue(user.getId());
+        return user;
     }
 
     public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {

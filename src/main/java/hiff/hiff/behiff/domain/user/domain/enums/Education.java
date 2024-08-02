@@ -10,6 +10,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public enum Education {
 
+    PRIVATE("비공개"),
     HIGH_SCHOOL_GRADUATE("고등학교 졸업"),
     BEING_IN_UNIVERSITY("대학교 재학"),
     UNIVERSITY_GRADUATION("대학교 졸업"),

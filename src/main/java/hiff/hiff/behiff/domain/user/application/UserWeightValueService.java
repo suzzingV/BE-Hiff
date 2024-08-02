@@ -17,21 +17,17 @@ public class UserWeightValueService {
     private final WeightValueRepository weightValueRepository;
 
     public void updateWeightValue(Long userId, WeightValueRequest request) {
-        weightValueRepository.findByUserId(userId)
-                .ifPresentOrElse(weightValue ->
-                                weightValue.changeWeightValue(request.getIncome(), request.getAppearance(), request.getHobby(),
-                                        request.getBelief(), request.getMbti()), () -> {
-                            WeightValue weightValue = WeightValue.builder()
-                                    .userId(userId)
-                                    .income(request.getIncome())
-                                    .appearance(request.getAppearance())
-                                    .hobby(request.getHobby())
-                                    .belief(request.getBelief())
-                                    .mbti(request.getMbti())
-                                    .build();
-                            weightValueRepository.save(weightValue);
-                        }
-                );
+        WeightValue weightValue = weightValueRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
+        weightValue.changeWeightValue(request.getIncome(), request.getAppearance(), request.getHobby(),
+                                        request.getBelief(), request.getMbti());
+    }
+
+    public WeightValue createWeightValue(Long userId) {
+        WeightValue weightValue = WeightValue.builder()
+                .userId(userId)
+                .build();
+        return weightValueRepository.save(weightValue);
     }
 
     public WeightValue findByUserId(Long userId) {

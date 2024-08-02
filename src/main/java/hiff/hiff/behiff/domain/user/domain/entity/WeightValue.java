@@ -48,13 +48,13 @@ public class WeightValue {
     private Integer mbti;
 
     @Builder
-    private WeightValue(Long userId, Integer income, Integer appearance, Integer hobby, Integer belief, Integer mbti) {
+    private WeightValue(Long userId) {
         this.userId = userId;
-        this.income = income;
-        this.appearance = appearance;
-        this.hobby = hobby;
-        this.belief = belief;
-        this.mbti = mbti;
+        this.income = 3;
+        this.appearance = 3;
+        this.hobby = 3;
+        this.belief = 3;
+        this.mbti = 3;
     }
 
     public void changeWeightValue(Integer income, Integer appearance, Integer hobby, Integer belief, Integer mbti) {

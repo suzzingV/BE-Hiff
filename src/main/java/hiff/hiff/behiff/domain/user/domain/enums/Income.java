@@ -10,6 +10,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public enum Income {
 
+    PRIVATE("비공개"),
     FROM_0_TO_200("0 ~ 200만원"),
     FROM_200_TO_300("200 ~ 300만원"),
     FROM_300_TO_400("300 ~ 400만원"),
