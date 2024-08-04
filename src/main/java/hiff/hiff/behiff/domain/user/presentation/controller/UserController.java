@@ -3,12 +3,15 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.HobbyResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -112,6 +115,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/hobby/list")
+    public ResponseEntity<List<HobbyResponse>> getHobbies() {
+        List<HobbyResponse> responses = userService.getHobbies();
+        return ResponseEntity.ok(responses);
+    }
+
     @PatchMapping("/life-style")
     public ResponseEntity<UserUpdateResponse> updateLifeStyle(@AuthenticationPrincipal User user, @Valid @RequestBody LifeStyleRequest request) {
         UserUpdateResponse response = userService.updateLifeStyle(user.getId(), request);
@@ -142,7 +151,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // TODO: ouath 탈퇴 서버에서 할 일 찾아보기
     @DeleteMapping
     public ResponseEntity<Void> withdraw(HttpServletRequest request,
         @AuthenticationPrincipal User user) {

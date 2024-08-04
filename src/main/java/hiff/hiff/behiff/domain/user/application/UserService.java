@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.*;
 import hiff.hiff.behiff.domain.user.domain.enums.*;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.HobbyResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+// TODO: 유저 간략 정보 조회, 취미 목록 조회, 라이프스타일 목록 조회, 직종 조회증인 인
 public class UserService {
 
     private final UserHobbyService userHobbyService;
@@ -154,5 +156,16 @@ public class UserService {
         String posY = userPos.map(UserPos::getY).orElse(null);
 
         return UserDetailResponse.of(user, photos, hobbies, lifeStyles, posX, posY);
+    }
+
+    @Transactional(readOnly = true)
+    public List<HobbyResponse> getHobbies() {
+        return userHobbyService.getAllHobbies()
+                .stream().map(hobby ->
+                    HobbyResponse.builder()
+                            .id(hobby.getId())
+                            .name(hobby.getName())
+                            .build())
+                .toList();
     }
 }

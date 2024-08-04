@@ -82,4 +82,8 @@ public class UserHobbyService {
         return hobbyRepository.findById(hobbyId)
                 .orElseThrow(() -> new UserException(ErrorCode.HOBBY_NOT_FOUND));
     }
+
+    public List<Hobby> getAllHobbies() {
+        return hobbyRepository.findAll();
+    }
 }
