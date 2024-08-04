@@ -3,10 +3,7 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.HobbyResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -125,6 +122,12 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updateLifeStyle(@AuthenticationPrincipal User user, @Valid @RequestBody LifeStyleRequest request) {
         UserUpdateResponse response = userService.updateLifeStyle(user.getId(), request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/life-style/list")
+    public ResponseEntity<List<LifeStyleResponse>> getLifeStyles() {
+        List<LifeStyleResponse> responses = userService.getLifeStyles();
+        return ResponseEntity.ok(responses);
     }
 
     @PatchMapping("/distance")

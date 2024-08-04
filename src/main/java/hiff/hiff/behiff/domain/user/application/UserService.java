@@ -4,10 +4,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.*;
 import hiff.hiff.behiff.domain.user.domain.enums.*;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.HobbyResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +16,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-// TODO: 유저 간략 정보 조회, 취미 목록 조회, 라이프스타일 목록 조회, 직종 조회증인 인
+// TODO: 유저 간략 정보 조회, 라이프스타일 목록 조회, 직종 조회, 본인 인증
 public class UserService {
 
     private final UserHobbyService userHobbyService;
@@ -166,6 +163,17 @@ public class UserService {
                             .id(hobby.getId())
                             .name(hobby.getName())
                             .build())
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<LifeStyleResponse> getLifeStyles() {
+        return userLifeStyleService.getAllLifeStyles()
+                .stream().map(lifeStyle ->
+                        LifeStyleResponse.builder()
+                                .id(lifeStyle.getId())
+                                .name(lifeStyle.getName())
+                                .build())
                 .toList();
     }
 }

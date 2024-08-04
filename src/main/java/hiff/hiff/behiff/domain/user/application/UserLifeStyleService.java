@@ -1,11 +1,13 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
 import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.LifeStyleRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.LifeStyleResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -40,6 +42,10 @@ public class UserLifeStyleService {
                     return lifeStyle.getName();
                 })
                 .toList();
+    }
+
+    public List<LifeStyle> getAllLifeStyles() {
+        return lifeStyleRepository.findAll();
     }
 
     private void registerNewLifeStyles(Long userId, List<String> newLifeStyles) {
