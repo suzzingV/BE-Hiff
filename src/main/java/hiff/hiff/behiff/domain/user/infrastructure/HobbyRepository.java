@@ -13,5 +13,5 @@ public interface HobbyRepository extends JpaRepository<Hobby, Long> {
     Optional<Hobby> findByName(String hobbyName);
 
     @Query("select h from Hobby h order by h.count desc")
-    List<Hobby> findAll();
+    @NonNull List<Hobby> findAll();
 }

@@ -8,9 +8,9 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -40,6 +40,11 @@ public class UserHobbyService {
                     return hobby.getName();
                 })
                 .toList();
+    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<Hobby> getAllHobbies() {
+        return hobbyRepository.findAll();
     }
 
     private void registerNewHobbies(Long userId, List<String> newHobbies) {
@@ -81,9 +86,5 @@ public class UserHobbyService {
     private Hobby findHobbyById(Long hobbyId) {
         return hobbyRepository.findById(hobbyId)
                 .orElseThrow(() -> new UserException(ErrorCode.HOBBY_NOT_FOUND));
-    }
-
-    public List<Hobby> getAllHobbies() {
-        return hobbyRepository.findAll();
     }
 }
