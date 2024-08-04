@@ -90,6 +90,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/job/list")
+    public ResponseEntity<List<TagResponse>> getJobs() {
+        List<TagResponse> responses = userService.getJobs();
+        return ResponseEntity.ok(responses);
+    }
+
     @PatchMapping("/phoneNum")
     public ResponseEntity<UserUpdateResponse> updatePhoneNum(@AuthenticationPrincipal User user,
                                                              @Valid @RequestBody
@@ -113,8 +119,8 @@ public class UserController {
     }
 
     @GetMapping("/hobby/list")
-    public ResponseEntity<List<HobbyResponse>> getHobbies() {
-        List<HobbyResponse> responses = userService.getHobbies();
+    public ResponseEntity<List<TagResponse>> getHobbies() {
+        List<TagResponse> responses = userService.getHobbies();
         return ResponseEntity.ok(responses);
     }
 
@@ -125,8 +131,8 @@ public class UserController {
     }
 
     @GetMapping("/life-style/list")
-    public ResponseEntity<List<LifeStyleResponse>> getLifeStyles() {
-        List<LifeStyleResponse> responses = userService.getLifeStyles();
+    public ResponseEntity<List<TagResponse>> getLifeStyles() {
+        List<TagResponse> responses = userService.getLifeStyles();
         return ResponseEntity.ok(responses);
     }
 

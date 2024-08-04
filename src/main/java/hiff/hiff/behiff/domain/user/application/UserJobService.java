@@ -1,6 +1,7 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.Job;
+import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.JobRepository;
@@ -9,6 +10,9 @@ import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.List;
 
 @Service
 @Transactional
@@ -36,5 +40,9 @@ public class UserJobService {
     private Job findById(Long jobId) {
         return jobRepository.findById(jobId)
                 .orElseThrow(() -> new UserException(ErrorCode.JOB_NOT_FOUND));
+    }
+
+    public List<Job> getAllJobs() {
+        return jobRepository.findAll();
     }
 }

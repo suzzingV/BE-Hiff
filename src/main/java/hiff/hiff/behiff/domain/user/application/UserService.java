@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-// TODO: 유저 간략 정보 조회, 라이프스타일 목록 조회, 직종 조회, 본인 인증
+// TODO: 유저 간략 정보 조회, 직종 조회, 본인 인증
 public class UserService {
 
     private final UserHobbyService userHobbyService;
@@ -156,10 +156,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<HobbyResponse> getHobbies() {
+    public List<TagResponse> getHobbies() {
         return userHobbyService.getAllHobbies()
                 .stream().map(hobby ->
-                    HobbyResponse.builder()
+                    TagResponse.builder()
                             .id(hobby.getId())
                             .name(hobby.getName())
                             .build())
@@ -167,12 +167,23 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<LifeStyleResponse> getLifeStyles() {
+    public List<TagResponse> getLifeStyles() {
         return userLifeStyleService.getAllLifeStyles()
                 .stream().map(lifeStyle ->
-                        LifeStyleResponse.builder()
+                        TagResponse.builder()
                                 .id(lifeStyle.getId())
                                 .name(lifeStyle.getName())
+                                .build())
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<TagResponse> getJobs() {
+        return userJobService.getAllJobs()
+                .stream().map(job ->
+                        TagResponse.builder()
+                                .id(job.getId())
+                                .name(job.getName())
                                 .build())
                 .toList();
     }
