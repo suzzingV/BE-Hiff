@@ -47,7 +47,7 @@ public class UserLifeStyleService {
     }
 
     private void registerNewLifeStyles(Long userId, List<String> newLifeStyles) {
-        for(String lifeStyleName : newLifeStyles) {
+        for (String lifeStyleName : newLifeStyles) {
             LifeStyle lifeStyle = createLifeStyle(lifeStyleName);
             UserLifeStyle userLifeStyle = UserLifeStyle.builder()
                     .userId(userId)
@@ -61,7 +61,7 @@ public class UserLifeStyleService {
         List<UserLifeStyle> oldLifeStyles = userLifeStyleRepository.findByUserId(userId);
         userLifeStyleRepository.deleteAll(oldLifeStyles);
 
-        for(Long lifeStyleId : originLifeStyles) {
+        for (Long lifeStyleId : originLifeStyles) {
             LifeStyle lifeStyle = findLifeStyleById(lifeStyleId);
             lifeStyle.addCount();
             UserLifeStyle userLifeStyle = UserLifeStyle.builder()
@@ -74,7 +74,9 @@ public class UserLifeStyleService {
 
     private LifeStyle createLifeStyle(String lifeStyleName) {
         lifeStyleRepository.findByName(lifeStyleName)
-                .ifPresent(lifeStyle -> { throw new UserException(ErrorCode.LIFESTYLE_ALREADY_EXISTS); });
+                .ifPresent(lifeStyle -> {
+                    throw new UserException(ErrorCode.LIFESTYLE_ALREADY_EXISTS);
+                });
         LifeStyle lifeStyle = LifeStyle.builder()
                 .name(lifeStyleName)
                 .build();

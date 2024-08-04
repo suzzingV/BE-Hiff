@@ -3,17 +3,20 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -22,6 +25,36 @@ public class UserController {
 
     private final UserService userService;
     private final JwtService jwtService;
+
+    @GetMapping("/job/list")
+    public ResponseEntity<List<TagResponse>> getJobs() {
+        List<TagResponse> responses = userService.getJobs();
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/hobby/list")
+    public ResponseEntity<List<TagResponse>> getHobbies() {
+        List<TagResponse> responses = userService.getHobbies();
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/life-style/list")
+    public ResponseEntity<List<TagResponse>> getLifeStyles() {
+        List<TagResponse> responses = userService.getLifeStyles();
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MyInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
+        MyInfoResponse response = userService.getMyInfo(user.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDetailResponse> getUserInfo(@AuthenticationPrincipal User me, @PathVariable Long userId) {
+        UserDetailResponse response = userService.getUserDetail(me.getId(), userId);
+        return ResponseEntity.ok(response);
+    }
 
 //    @PostMapping("/photo")
 //    public ResponseEntity<UserRegisterResponse> registerPhoto(@AuthenticationPrincipal User user, @RequestPart(value = "main photo") MultipartFile mainPhoto, @RequestPart(value = "photos")List<MultipartFile> photos) {
@@ -32,16 +65,16 @@ public class UserController {
     @PatchMapping("/nickname")
     public ResponseEntity<UserUpdateResponse> updateNickname(@AuthenticationPrincipal User user,
                                                              @RequestBody
-        NicknameRequest request) {
+                                                             NicknameRequest request) {
         UserUpdateResponse response = userService.updateNickname(user.getId(),
-            request);
+                request);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/birth")
     public ResponseEntity<UserUpdateResponse> updateBirth(@AuthenticationPrincipal User user,
                                                           @Valid @RequestBody
-        BirthRequest request) {
+                                                          BirthRequest request) {
         UserUpdateResponse response = userService.updateBirth(user.getId(), request);
         return ResponseEntity.ok(response);
     }
@@ -77,7 +110,7 @@ public class UserController {
     @PatchMapping("/education")
     public ResponseEntity<UserUpdateResponse> updateEducation(@AuthenticationPrincipal User user,
                                                               @Valid @RequestBody
-        EducationRequest request) {
+                                                              EducationRequest request) {
         UserUpdateResponse response = userService.updateEducation(user.getId(), request);
         return ResponseEntity.ok(response);
     }
@@ -85,21 +118,15 @@ public class UserController {
     @PatchMapping("/job")
     public ResponseEntity<UserUpdateResponse> updateJob(@AuthenticationPrincipal User user,
                                                         @RequestBody
-        JobRequest request) {
+                                                        JobRequest request) {
         UserUpdateResponse response = userService.updateJob(user.getId(), request);
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/job/list")
-    public ResponseEntity<List<TagResponse>> getJobs() {
-        List<TagResponse> responses = userService.getJobs();
-        return ResponseEntity.ok(responses);
     }
 
     @PatchMapping("/phoneNum")
     public ResponseEntity<UserUpdateResponse> updatePhoneNum(@AuthenticationPrincipal User user,
                                                              @Valid @RequestBody
-        PhoneNumRequest request) {
+                                                             PhoneNumRequest request) {
         UserUpdateResponse response = userService.updatePhoneNum(user.getId(), request);
         return ResponseEntity.ok(response);
     }
@@ -107,7 +134,7 @@ public class UserController {
     @PatchMapping("/hope-age")
     public ResponseEntity<UserUpdateResponse> updateHopeAge(@AuthenticationPrincipal User user,
                                                             @Valid @RequestBody
-        HopeAgeRequest request) {
+                                                            HopeAgeRequest request) {
         UserUpdateResponse response = userService.updateHopeAge(user.getId(), request);
         return ResponseEntity.ok(response);
     }
@@ -118,22 +145,10 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/hobby/list")
-    public ResponseEntity<List<TagResponse>> getHobbies() {
-        List<TagResponse> responses = userService.getHobbies();
-        return ResponseEntity.ok(responses);
-    }
-
     @PatchMapping("/life-style")
     public ResponseEntity<UserUpdateResponse> updateLifeStyle(@AuthenticationPrincipal User user, @Valid @RequestBody LifeStyleRequest request) {
         UserUpdateResponse response = userService.updateLifeStyle(user.getId(), request);
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/life-style/list")
-    public ResponseEntity<List<TagResponse>> getLifeStyles() {
-        List<TagResponse> responses = userService.getLifeStyles();
-        return ResponseEntity.ok(responses);
     }
 
     @PatchMapping("/distance")
@@ -148,21 +163,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<MyInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
-        MyInfoResponse response = userService.getMyInfo(user.getId());
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDetailResponse> getUserInfo(@AuthenticationPrincipal User me, @PathVariable Long userId) {
-        UserDetailResponse response = userService.getUserDetail(me.getId(), userId);
-        return ResponseEntity.ok(response);
-    }
-
     @DeleteMapping
     public ResponseEntity<Void> withdraw(HttpServletRequest request,
-        @AuthenticationPrincipal User user) {
+                                         @AuthenticationPrincipal User user) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
         userService.withdraw(user.getId(), accessToken, refreshToken);

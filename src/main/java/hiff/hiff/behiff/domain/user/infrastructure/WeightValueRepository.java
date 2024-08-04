@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.user.infrastructure;
 
-import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

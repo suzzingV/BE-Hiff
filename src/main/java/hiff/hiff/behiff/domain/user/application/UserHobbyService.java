@@ -48,7 +48,7 @@ public class UserHobbyService {
     }
 
     private void registerNewHobbies(Long userId, List<String> newHobbies) {
-        for(String hobbyName : newHobbies) {
+        for (String hobbyName : newHobbies) {
             Hobby hobby = createHobby(hobbyName);
             UserHobby userHobby = UserHobby.builder()
                     .userId(userId)
@@ -62,7 +62,7 @@ public class UserHobbyService {
         List<UserHobby> oldHobbies = userHobbyRepository.findByUserId(userId);
         userHobbyRepository.deleteAll(oldHobbies);
 
-        for(Long hobbyId : originHobbies) {
+        for (Long hobbyId : originHobbies) {
             Hobby hobby = findHobbyById(hobbyId);
             hobby.addCount();
             UserHobby userHobby = UserHobby.builder()
@@ -75,7 +75,9 @@ public class UserHobbyService {
 
     private Hobby createHobby(String hobbyName) {
         hobbyRepository.findByName(hobbyName)
-                .ifPresent(hobby -> { throw new UserException(ErrorCode.HOBBY_ALREADY_EXISTS); });
+                .ifPresent(hobby -> {
+                    throw new UserException(ErrorCode.HOBBY_ALREADY_EXISTS);
+                });
         Hobby hobby = Hobby.builder()
                 .name(hobbyName)
                 .build();

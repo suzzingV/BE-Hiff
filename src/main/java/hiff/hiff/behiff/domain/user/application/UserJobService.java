@@ -1,17 +1,14 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.Job;
-import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.JobRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -22,8 +19,8 @@ public class UserJobService {
     private final JobRepository jobRepository;
 
     public void updateOriginJob(User user, Long jobId) {
-            Job job = findById(jobId);
-            user.changeJob(job.getName());
+        Job job = findById(jobId);
+        user.changeJob(job.getName());
     }
 
     public void updateNewJob(User user, String jobName) {

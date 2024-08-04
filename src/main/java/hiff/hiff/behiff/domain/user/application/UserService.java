@@ -1,10 +1,16 @@
 package hiff.hiff.behiff.domain.user.application;
 
-import hiff.hiff.behiff.domain.user.domain.entity.*;
-import hiff.hiff.behiff.domain.user.domain.enums.*;
+import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
+import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
+import hiff.hiff.behiff.domain.user.domain.enums.Role;
+import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +22,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-// TODO: 유저 간략 정보 조회, 직종 조회, 본인 인증
+// TODO: 본인 인증
 public class UserService {
 
     private final UserHobbyService userHobbyService;
@@ -101,9 +107,9 @@ public class UserService {
 
     public UserUpdateResponse updateJob(Long userId, JobRequest request) {
         User user = userCRUDService.findUserById(userId);
-        if(request.getJobId() != null && request.getNewJobName() == null) {
+        if (request.getJobId() != null && request.getNewJobName() == null) {
             userJobService.updateOriginJob(user, request.getJobId());
-        } else if(request.getNewJobName() != null && request.getJobId() == null){
+        } else if (request.getNewJobName() != null && request.getJobId() == null) {
             userJobService.updateNewJob(user, request.getNewJobName());
         } else {
             throw new UserException(ErrorCode.JOB_UPDATE_REQUEST_ERROR);
@@ -159,10 +165,10 @@ public class UserService {
     public List<TagResponse> getHobbies() {
         return userHobbyService.getAllHobbies()
                 .stream().map(hobby ->
-                    TagResponse.builder()
-                            .id(hobby.getId())
-                            .name(hobby.getName())
-                            .build())
+                        TagResponse.builder()
+                                .id(hobby.getId())
+                                .name(hobby.getName())
+                                .build())
                 .toList();
     }
 

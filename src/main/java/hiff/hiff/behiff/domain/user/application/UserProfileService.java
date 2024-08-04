@@ -70,11 +70,13 @@ public class UserProfileService {
 
     private void checkNicknameDuplication(String nickname) {
         userRepository.findByNickname(nickname)
-                .ifPresent(user -> {throw new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS);});
+                .ifPresent(user -> {
+                    throw new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS);
+                });
     }
 
     private static void checkDistanceRange(DistanceRequest request) {
-        if(request.getMinDistance() > request.getMaxDistance()) {
+        if (request.getMinDistance() > request.getMaxDistance()) {
             throw new UserException(ErrorCode.DISTANCE_RANGE_REVERSE);
         }
     }
