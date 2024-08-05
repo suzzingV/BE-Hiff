@@ -103,6 +103,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Integer appearanceCount;
 
+    private String mainPhoto;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;

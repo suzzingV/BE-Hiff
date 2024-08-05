@@ -14,4 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.nickname = :nickname AND u.deletedAt IS NULL")
     Optional<User> findByNickname(String nickname);
+
+    @Query("SELECT u FROM User u WHERE u.id NOT IN (SELECT e.evaluatedId FROM Evaluation e WHERE e.evaluatedId = u.id AND e.evaluatorId = :userId) AND u.id != :userId ORDER BY RAND() LIMIT 1")
+    Optional<User> findRandomByEvaluation(Long userId);
 }

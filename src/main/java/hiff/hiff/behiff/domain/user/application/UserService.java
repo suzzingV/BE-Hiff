@@ -22,7 +22,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-// TODO: 본인 인증
 public class UserService {
 
     private final UserHobbyService userHobbyService;
