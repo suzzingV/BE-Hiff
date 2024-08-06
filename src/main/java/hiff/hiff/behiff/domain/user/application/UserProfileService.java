@@ -87,4 +87,11 @@ public class UserProfileService {
         }
         return user.getEvaluatedScore();
     }
+
+    public void updateHeart(User user, Integer usage) {
+        if(user.getHeart() + usage < 0) {
+            throw new UserException(ErrorCode.LACK_OF_HEART);
+        }
+        user.updateHeart(usage);
+    }
 }

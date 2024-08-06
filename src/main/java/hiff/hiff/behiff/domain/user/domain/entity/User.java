@@ -213,4 +213,8 @@ public class User implements UserDetails {
     public void updateAge() {
         this.age = AgeCalculator.calculateAge(this.birth);
     }
+
+    public void updateHeart(Integer usage) {
+        this.heart += usage;
+    }
 }
