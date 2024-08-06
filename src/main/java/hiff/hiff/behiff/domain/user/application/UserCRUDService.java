@@ -7,6 +7,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -44,17 +45,14 @@ public class UserCRUDService {
                 .orElseThrow(() -> new UserException(ErrorCode.EVALUATED_USER_NOT_FOUND));
     }
 
-    public void withdraw(User user, Optional<String> accessToken, Optional<String> refreshToken) {
+    public void withdraw(User user, Optional<String> access, Optional<String> refresh) {
         user.delete();
+        String accessToken = access.orElseThrow(() -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
+        String refreshToken = refresh.orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
 
-        String access = accessToken
-                .orElseThrow(() -> new UserException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
-        String refresh = refreshToken
-                .orElseThrow(() -> new UserException(ErrorCode.REFRESH_TOKEN_REQUIRED));
-
-        jwtService.isTokenValid(refresh);
-        jwtService.isTokenValid(access);
-        jwtService.deleteRefreshToken(refresh);
-        jwtService.invalidAccessToken(access);
+        jwtService.isTokenValid(refreshToken);
+        jwtService.isTokenValid(accessToken);
+        jwtService.deleteRefreshToken(refreshToken);
+        jwtService.invalidAccessToken(accessToken);
     }
 }

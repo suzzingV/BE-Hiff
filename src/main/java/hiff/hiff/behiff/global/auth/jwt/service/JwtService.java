@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
+
+import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +44,8 @@ public class JwtService {
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String EMAIL_CLAIM = "email";
+    private static final String LOGOUT = "logout";
     private static final String BEARER = "Bearer ";
-    private static final String NOT_EXIST = "false";
 
     private final UserRepository userRepository;
     private final RedisService redisService;
@@ -64,7 +67,8 @@ public class JwtService {
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
-    public String reissueRefreshToken(String email) {
+    public String reissueRefreshToken(String refreshToken, String email) {
+        deleteRefreshToken(refreshToken);
         String reissuedRefreshToken = createRefreshToken();
         updateRefreshToken(reissuedRefreshToken, email);
         return reissuedRefreshToken;
@@ -72,8 +76,8 @@ public class JwtService {
 
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(refreshHeader))
-                .filter(refreshToken -> refreshToken.startsWith(BEARER))
-                .map(refreshToken -> refreshToken.replace(BEARER, ""));
+                .filter(header -> header.startsWith(BEARER))
+                .map(header -> header.replace(BEARER, ""));
     }
 
     public Optional<String> extractAccessToken(HttpServletRequest request) {
@@ -105,7 +109,7 @@ public class JwtService {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
         } catch (JWTVerificationException e) {
-            return false;
+            throw new AuthException(ErrorCode.SECURITY_INVALID_TOKEN);
         }
     }
 
@@ -117,30 +121,14 @@ public class JwtService {
     }
 
     public void invalidAccessToken(String accessToken) {
-        redisService.setValues(accessToken, "logout",
+        redisService.setValues(accessToken, LOGOUT,
                 Duration.ofMillis(accessTokenExpirationPeriod));
     }
 
-    public String findRefreshTokenAndExtractEmail(String refreshToken) {
-        String email = redisService.getValues(refreshToken);
-
-        if (email.equals(NOT_EXIST)) {
+    public String checkRefreshToken(String refreshToken) {
+        if(redisService.getValues(refreshToken).equals(NOT_EXIST)) {
             throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
         }
-        return email;
-    }
-
-    private void sendTokens(HttpServletResponse response, String reissuedAccessToken,
-                            String reissuedRefreshToken) {
-        response.setHeader(accessHeader, BEARER + reissuedAccessToken);
-        response.setHeader(refreshHeader, BEARER + reissuedRefreshToken);
-    }
-
-    public void reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
-        String email = findRefreshTokenAndExtractEmail(refreshToken);
-        String reissuedRefreshToken = reissueRefreshToken(email);
-        String reissuedAccessToken = createAccessToken(email);
-
-        sendTokens(response, reissuedAccessToken, reissuedRefreshToken);
+        return redisService.getValues(refreshToken);
     }
 }

@@ -12,6 +12,7 @@ public enum ErrorCode {
 
     // 400
     REFRESH_TOKEN_REQUIRED(BAD_REQUEST, "refresh token이 필요합니다."),
+    ACCESS_TOKEN_REQUIRED(BAD_REQUEST, "access token이 필요합니다."),
     EMAIL_NOT_EXTRACTED(BAD_REQUEST, "이메일을 추출할 수 없습니다."),
     S3_ACCESS_DENIED(BAD_REQUEST, "s3에 접근할 수 없습니다."),
     PHOTO_QUANTITY_ERROR(BAD_REQUEST, "사진은 2개 이상 등록해야 합니다."),
@@ -31,7 +32,6 @@ public enum ErrorCode {
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
     SECURITY_INVALID_TOKEN(UNAUTHORIZED, "토큰이 유효하지 않습니다."),
     SECURITY_INVALID_REFRESH_TOKEN(UNAUTHORIZED, "refresh token이 유효하지 않습니다."),
-    SECURITY_INVALID_ACCESS_TOKEN(UNAUTHORIZED, "access token이 유효하지 않습니다."),
 
     // 403
     SECURITY_ACCESS_DENIED(FORBIDDEN, "접근 권한이 없습니다."),

@@ -1,11 +1,9 @@
 package hiff.hiff.behiff.global.common.redis;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -17,8 +15,9 @@ public class RedisService {
 
     private final RedisTemplate<String, String> strRedisTemplate;
     private final RedisTemplate<String, Integer> integerRedisTemplate;
-    private static final String EVALUATION_PREFIX = "eval_";
-    private static final Duration EVALUATION_DURATION = Duration.ofDays(1);
+    public static final String EVALUATION_PREFIX = "eval_";
+    public static final String NOT_EXIST = "false";
+    public static final Duration EVALUATION_DURATION = Duration.ofDays(1);
 
     public void setValues(String key, String data, Duration duration) {
         ValueOperations<String, String> values = strRedisTemplate.opsForValue();
@@ -58,16 +57,12 @@ public class RedisService {
     public String getValues(String key) {
         ValueOperations<String, String> values = strRedisTemplate.opsForValue();
         if (values.get(key) == null) {
-            return "false";
+            return NOT_EXIST;
         }
         return values.get(key);
     }
 
     public void delete(String key) {
         strRedisTemplate.delete(key);
-    }
-
-    protected boolean checkExistsValue(String value) {
-        return !value.equals("false");
     }
 }

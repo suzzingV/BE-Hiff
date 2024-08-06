@@ -1,9 +1,11 @@
 package hiff.hiff.behiff.global.auth.presentation.controller;
 
 import hiff.hiff.behiff.global.auth.application.AuthService;
+import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
-import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -22,13 +24,15 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/reissue")
-    public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
-        authService.reissueTokens(request, response);
+    public ResponseEntity<TokenResponse> reissueTokens(HttpServletRequest request) {
+        Optional<String> refreshToken = jwtService.extractRefreshToken(request);
+        TokenResponse response = authService.reissueTokens(refreshToken);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/logout")

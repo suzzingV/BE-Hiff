@@ -5,18 +5,16 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class LoginResponse {
+public class TokenResponse {
 
     private String accessToken;
     private String refreshToken;
-    private Long userId;
     private String email;
-    private boolean isJoined;
+    private Boolean isJoined;
 
-    public static LoginResponse of(Long userId, String accessToken, String refreshToken,
+    public static TokenResponse of(String accessToken, String refreshToken,
                                    String email, boolean isJoined) {
-        return LoginResponse.builder()
-                .userId(userId)
+        return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .email(email)

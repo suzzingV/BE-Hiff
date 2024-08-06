@@ -8,10 +8,9 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
-import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,46 +26,56 @@ public class AuthService {
     public final UserRepository userRepository;
     public final UserService userService;
 
-    public LoginResponse login(LoginRequest request) {
+    public TokenResponse login(LoginRequest request) {
         String email = request.getEmail();
         SocialType socialType = request.getSocialType();
         String socialId = request.getSocialId();
 
         String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
+        jwtService.updateRefreshToken(refreshToken, email);
+
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             User newUser = userService.registerUser(email, socialId,
                     socialType, Role.USER);
-            return LoginResponse.of(newUser.getId(), accessToken, refreshToken, email, false);
+            newUser.updateAge();
+            return TokenResponse.of(accessToken, refreshToken, email, false);
         }
 
         User user = userOptional.get();
         user.updateAge();
-        return LoginResponse.of(user.getId(), accessToken, refreshToken, email, true);
+        return TokenResponse.of(accessToken, refreshToken, email, true);
     }
 
-    public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = jwtService.extractRefreshToken(request)
+    public TokenResponse reissueTokens(Optional<String> refresh) {
+        String refreshToken = refresh
                 .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+        String email = checkRefreshToken(refreshToken);
+        String reissuedAccessToken = jwtService.createAccessToken(email);
+        String reissuedRefreshToken = jwtService.reissueRefreshToken(refreshToken, email);
+
+        return TokenResponse.builder()
+                .accessToken(reissuedAccessToken)
+                .refreshToken(reissuedRefreshToken)
+                .isJoined(true)
+                .email(email)
+                .build();
+    }
+
+    private String checkRefreshToken(String refreshToken) {
         jwtService.isTokenValid(refreshToken);
-
-        jwtService.reissueAndSendTokens(response, refreshToken);
+        return jwtService.checkRefreshToken(refreshToken);
     }
 
-    public void logout(Optional<String> accessToken, Optional<String> refreshToken) {
-        String access = accessToken
-                .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
-        String refresh = refreshToken
-                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
-        jwtService.extractEmail(access)
-                .orElseThrow(() -> new AuthException(ErrorCode.EMAIL_NOT_EXTRACTED));
-
-        jwtService.isTokenValid(refresh);
-        jwtService.isTokenValid(access);
+    public void logout(Optional<String> access, Optional<String> refresh) {
+        String accessToken = access.orElseThrow(() -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
+        String refreshToken = refresh.orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+        jwtService.isTokenValid(refreshToken);
+        jwtService.isTokenValid(accessToken);
         //refresh token 삭제
-        jwtService.deleteRefreshToken(refresh);
+        jwtService.deleteRefreshToken(refreshToken);
         //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationProcessingFilter에서 인증처리 거부
-        jwtService.invalidAccessToken(access);
+        jwtService.invalidAccessToken(accessToken);
     }
 }
