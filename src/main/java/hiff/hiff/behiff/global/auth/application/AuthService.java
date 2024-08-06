@@ -34,17 +34,16 @@ public class AuthService {
         String refreshToken = jwtService.createRefreshToken();
         jwtService.updateRefreshToken(refreshToken, email);
 
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isEmpty()) {
-            User newUser = userService.registerUser(email, socialId,
-                    socialType, Role.USER);
-            newUser.updateAge();
-            return TokenResponse.of(accessToken, refreshToken, email, false);
-        }
-
-        User user = userOptional.get();
-        user.updateAge();
-        return TokenResponse.of(accessToken, refreshToken, email, true);
+        return userRepository.findByEmail(email)
+                .map(user -> {
+                    user.updateAge();
+                    return TokenResponse.of(accessToken, refreshToken, email, false);
+                })
+                .orElseGet(() -> {
+                    User newUser = userService.registerUser(email, socialId, socialType, Role.USER);
+                    newUser.updateAge();
+                    return TokenResponse.of(accessToken, refreshToken, email, true);
+                });
     }
 
     public TokenResponse reissueTokens(Optional<String> refresh) {
@@ -57,14 +56,9 @@ public class AuthService {
         return TokenResponse.builder()
                 .accessToken(reissuedAccessToken)
                 .refreshToken(reissuedRefreshToken)
-                .isJoined(true)
+                .isNew(true)
                 .email(email)
                 .build();
-    }
-
-    private String checkRefreshToken(String refreshToken) {
-        jwtService.isTokenValid(refreshToken);
-        return jwtService.checkRefreshToken(refreshToken);
     }
 
     public void logout(Optional<String> access, Optional<String> refresh) {
@@ -72,9 +66,12 @@ public class AuthService {
         String refreshToken = refresh.orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
         jwtService.isTokenValid(refreshToken);
         jwtService.isTokenValid(accessToken);
-        //refresh token 삭제
         jwtService.deleteRefreshToken(refreshToken);
-        //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationProcessingFilter에서 인증처리 거부
         jwtService.invalidAccessToken(accessToken);
+    }
+
+    private String checkRefreshToken(String refreshToken) {
+        jwtService.isTokenValid(refreshToken);
+        return jwtService.checkRefreshToken(refreshToken);
     }
 }
