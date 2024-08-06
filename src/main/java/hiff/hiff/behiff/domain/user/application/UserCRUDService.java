@@ -1,6 +1,8 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.evaluation.exception.EvaluationException;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
@@ -35,6 +37,11 @@ public class UserCRUDService {
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public User findRandomByEvaluation(Long userId, Gender gender) {
+        return userRepository.findRandomByEvaluation(userId, gender)
+                .orElseThrow(() -> new UserException(ErrorCode.EVALUATED_USER_NOT_FOUND));
     }
 
     public void withdraw(User user, Optional<String> accessToken, Optional<String> refreshToken) {

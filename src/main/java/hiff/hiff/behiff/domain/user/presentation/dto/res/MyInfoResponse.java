@@ -98,7 +98,7 @@ public class MyInfoResponse {
                 .hopeMinAge(user.getHopeMinAge())
                 .hopeMaxAge(user.getHopeMaxAge())
                 .heart(user.getHeart())
-                .appearanceScore(user.getAppearanceScore())
+                .appearanceScore(user.getEvaluatedScore())
                 .build();
     }
 }

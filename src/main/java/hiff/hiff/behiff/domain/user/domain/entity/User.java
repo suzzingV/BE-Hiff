@@ -98,10 +98,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Integer heart;
 
-    private Double appearanceScore;
+    private Double evaluatedScore;
 
     @Column(nullable = false)
-    private Integer appearanceCount;
+    private Integer evaluatedCount;
 
     private String mainPhoto;
 
@@ -123,7 +123,8 @@ public class User implements UserDetails {
         this.maxDistance = 700;
         this.minDistance = 0;
         this.heart = 0;
-        this.appearanceCount = 0;
+        this.evaluatedCount = 0;
+        this.evaluatedScore = 0.0;
         this.income = Income.PRIVATE;
         this.education = Education.PRIVATE;
         this.birth = LocalDate.now();
@@ -183,6 +184,14 @@ public class User implements UserDetails {
 
     public void changeMinDistance(Integer minDistance) {
         this.minDistance = minDistance;
+    }
+
+    public void updateEvaluatedScore(Integer score) {
+        int originalEvaluatedCount = this.evaluatedCount;
+        double total = this.evaluatedScore * originalEvaluatedCount;
+        total += score;
+        this.evaluatedScore = (double) Math.round(total / (originalEvaluatedCount + 1));
+        this.evaluatedCount ++;
     }
 
     @Override

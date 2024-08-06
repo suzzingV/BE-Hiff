@@ -5,7 +5,9 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class EvaluationResponse {
+public class EvaluatedResponse {
 
     private Long evaluatedId;
+
+    private String photo;
 }

@@ -27,7 +27,7 @@ public class UserHobbyService {
         List<String> newHobbies = request.getNewHobbies();
 
         updateUserHobbies(userId, originHobbies);
-        registerNewHobbies(userId, newHobbies);
+        registerNewHobbies(userId, newHobbies); // TODO : 24시간마다 업뎃
 
         return UserUpdateResponse.from(userId);
     }

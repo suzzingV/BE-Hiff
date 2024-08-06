@@ -21,6 +21,9 @@ public enum ErrorCode {
     LIFESTYLE_ALREADY_EXISTS(BAD_REQUEST, "이미 존재하는 라이프스타일입니다."),
     DISTANCE_RANGE_REVERSE(BAD_REQUEST, "거리의 최대값보다 최소값이 클 수 없습니다."),
     JOB_UPDATE_REQUEST_ERROR(BAD_REQUEST, "job id와 new job name 중 반드시 하나만 값이 존재해야 합니다."),
+    EVALUATION_INVALID_GENDER(BAD_REQUEST, "첫인상 평가 대상의 성별이 적절하지 않습니다."),
+    EVALUATION_COUNT_EXCEED(BAD_REQUEST, "첫인상 평가 횟수를 초과했습니다."),
+    EVALUATION_ALREADY(BAD_REQUEST, "이미 첫인상 평가를 한 대상입니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
