@@ -23,9 +23,9 @@ public class EvaluationController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/free")
-    public ResponseEntity<EvaluationResponse> freeEvaluate(@AuthenticationPrincipal User user, @RequestBody EvaluationRequest request) {
-        EvaluationResponse response = evaluationService.freeEvaluate(user.getId(), request);
+    @PostMapping
+    public ResponseEntity<EvaluationResponse> evaluate(@AuthenticationPrincipal User user, @RequestBody EvaluationRequest request) {
+        EvaluationResponse response = evaluationService.evaluate(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

@@ -11,6 +11,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +35,14 @@ public class EvaluationService {
                 .build();
     }
 
-    public EvaluationResponse freeEvaluate(Long evaluatorId, EvaluationRequest request) {
+    public EvaluationResponse evaluate(Long evaluatorId, EvaluationRequest request) {
         Long evaluatedId = request.getEvaluatedId();
         Integer score = request.getScore();
 
         checkEvaluationAvailable(evaluatorId, evaluatedId);
         updateEvaluatedScore(evaluatedId, score);
         createAndCountEvaluation(evaluatorId, evaluatedId, score);
+        handleFreeCount(request.getIsPaid(), evaluatorId);
 
         return EvaluationResponse.builder()
                 .evaluatedId(evaluatedId)
@@ -54,7 +56,12 @@ public class EvaluationService {
                 .score(score)
                 .build();
         evaluationRepository.save(evaluation);
-        redisService.updateEvaluationValues(String.valueOf(evaluatorId));
+    }
+
+    private void handleFreeCount(boolean isPaid, Long evaluatorId) {
+        if(!isPaid) {
+            redisService.updateEvaluationValues(String.valueOf(evaluatorId));
+        }
     }
 
     private void updateEvaluatedScore(Long evaluatedId, Integer score) {

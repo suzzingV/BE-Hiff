@@ -26,7 +26,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "user_TB")
-@Slf4j
 public class User implements UserDetails {
 
     @Id
@@ -192,7 +191,6 @@ public class User implements UserDetails {
         int originalEvaluatedCount = this.evaluatedCount;
         double total = this.evaluatedScore * originalEvaluatedCount;
         total += score;
-        log.info("total: " + total);
         this.evaluatedScore = Math.round(total / (originalEvaluatedCount + 1) * 100) / 100.0;
         this.evaluatedCount ++;
     }
