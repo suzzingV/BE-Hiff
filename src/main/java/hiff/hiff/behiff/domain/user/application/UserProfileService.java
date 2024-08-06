@@ -80,4 +80,11 @@ public class UserProfileService {
             throw new UserException(ErrorCode.DISTANCE_RANGE_REVERSE);
         }
     }
+
+    public Double getEvaluatedScore(User user) {
+        if(user.getEvaluatedCount() < 10) {
+            throw new UserException(ErrorCode.EVALUATION_COUNT_NOT_ENOUGH);
+        }
+        return user.getEvaluatedScore();
+    }
 }

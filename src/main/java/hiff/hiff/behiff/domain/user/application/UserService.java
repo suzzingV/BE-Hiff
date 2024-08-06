@@ -7,10 +7,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -191,5 +188,14 @@ public class UserService {
                                 .name(job.getName())
                                 .build())
                 .toList();
+    }
+
+    public UserEvaluatedScoreResponse getEvaluatedScore(Long userId) {
+        User user = userCRUDService.findUserById(userId);
+        Double score = userProfileService.getEvaluatedScore(user);
+        return UserEvaluatedScoreResponse.builder()
+                .evaluatedScore(score)
+                .userId(userId)
+                .build();
     }
 }

@@ -3,10 +3,7 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -160,6 +157,12 @@ public class UserController {
     @PutMapping("/weight-value")
     public ResponseEntity<UserUpdateResponse> updateWeight(@AuthenticationPrincipal User user, @Valid @RequestBody WeightValueRequest request) {
         UserUpdateResponse response = userService.updateWeightValue(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/evaluated-score")
+    public ResponseEntity<UserEvaluatedScoreResponse> getEvaluatedScore(@AuthenticationPrincipal User user) {
+        UserEvaluatedScoreResponse response = userService.getEvaluatedScore(user.getId());
         return ResponseEntity.ok(response);
     }
 

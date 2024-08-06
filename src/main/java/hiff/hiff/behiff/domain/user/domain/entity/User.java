@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +26,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "user_TB")
+@Slf4j
 public class User implements UserDetails {
 
     @Id
@@ -190,7 +192,8 @@ public class User implements UserDetails {
         int originalEvaluatedCount = this.evaluatedCount;
         double total = this.evaluatedScore * originalEvaluatedCount;
         total += score;
-        this.evaluatedScore = (double) Math.round(total / (originalEvaluatedCount + 1));
+        log.info("total: " + total);
+        this.evaluatedScore = Math.round(total / (originalEvaluatedCount + 1) * 100) / 100.0;
         this.evaluatedCount ++;
     }
 
