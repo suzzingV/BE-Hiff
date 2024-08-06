@@ -27,11 +27,11 @@ public class RedisService {
     public void updateEvaluationValues(String userId) {
         ValueOperations<String, Integer> values = integerRedisTemplate.opsForValue();
         String key = EVALUATION_PREFIX + userId;
-        if(getEvaluationValues(key) == 0) {
+        if (getEvaluationValues(key) == 0) {
             values.set(key, 1);
         } else {
             int count = getEvaluationValues(key);
-            if(count >= 4) {
+            if (count >= 4) {
                 values.set(key, 5, EVALUATION_DURATION);
             } else {
                 values.set(key, count + 1);

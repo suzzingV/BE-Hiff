@@ -11,7 +11,6 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +58,7 @@ public class EvaluationService {
     }
 
     private void handleFreeCount(boolean isPaid, Long evaluatorId) {
-        if(!isPaid) {
+        if (!isPaid) {
             redisService.updateEvaluationValues(String.valueOf(evaluatorId));
         }
     }

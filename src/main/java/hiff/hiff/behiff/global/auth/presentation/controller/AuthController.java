@@ -1,13 +1,10 @@
 package hiff.hiff.behiff.global.auth.presentation.controller;
 
 import hiff.hiff.behiff.global.auth.application.AuthService;
-import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
-import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

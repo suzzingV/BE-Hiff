@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.user.application;
 
-import hiff.hiff.behiff.domain.evaluation.exception.EvaluationException;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
