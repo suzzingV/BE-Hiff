@@ -166,12 +166,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/heart")
-    public ResponseEntity<UserUpdateResponse> updateHeart(@AuthenticationPrincipal User user, @RequestBody UserHeartRequest request) {
-        UserUpdateResponse response = userService.updateHeart(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
-
     @DeleteMapping
     public ResponseEntity<Void> withdraw(HttpServletRequest request,
                                          @AuthenticationPrincipal User user) {

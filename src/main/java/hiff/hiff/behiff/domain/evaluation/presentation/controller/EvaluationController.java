@@ -19,7 +19,7 @@ public class EvaluationController {
 
     @GetMapping
     public ResponseEntity<EvaluatedResponse> getEvaluated(@AuthenticationPrincipal User user) {
-        EvaluatedResponse response = evaluationService.getEvaluated(user.getId());
+        EvaluatedResponse response = evaluationService.getEvaluated(user);
         return ResponseEntity.ok(response);
     }
 

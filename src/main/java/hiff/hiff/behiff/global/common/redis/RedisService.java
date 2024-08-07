@@ -17,21 +17,20 @@ public class RedisService {
     private final RedisTemplate<String, Integer> integerRedisTemplate;
     public static final String EVALUATION_PREFIX = "eval_";
     public static final String NOT_EXIST = "false";
-    public static final Duration EVALUATION_DURATION = Duration.ofDays(1);
+    private static final Duration EVALUATION_DURATION = Duration.ofDays(1);
 
-    public void setValues(String key, String data, Duration duration) {
+    public void setStrValue(String key, String data, Duration duration) {
         ValueOperations<String, String> values = strRedisTemplate.opsForValue();
         values.set(key, data, duration);
     }
 
-    public void updateEvaluationValues(String userId) {
+    public void updateIntValue(String key) {
         ValueOperations<String, Integer> values = integerRedisTemplate.opsForValue();
-        String key = EVALUATION_PREFIX + userId;
-        if (getEvaluationValues(key) == 0) {
+        int count = getIntValue(key);
+        if (count == 0) {
             values.set(key, 1);
         } else {
-            int count = getEvaluationValues(key);
-            if (count >= 4) {
+            if(count == 4) {
                 values.set(key, 5, EVALUATION_DURATION);
             } else {
                 values.set(key, count + 1);
@@ -39,25 +38,20 @@ public class RedisService {
         }
     }
 
-    public boolean isEvaluationAvailable(String userId) {
-        String key = EVALUATION_PREFIX + userId;
-        return !(getEvaluationValues(key) == 5);
-    }
-
     @Transactional(readOnly = true)
-    public Integer getEvaluationValues(String key) {
-        ValueOperations<String, Integer> values = integerRedisTemplate.opsForValue();
+    public String getStrValue(String key) {
+        ValueOperations<String, String> values = strRedisTemplate.opsForValue();
         if (values.get(key) == null) {
-            return 0;
+            return NOT_EXIST;
         }
         return values.get(key);
     }
 
     @Transactional(readOnly = true)
-    public String getValues(String key) {
-        ValueOperations<String, String> values = strRedisTemplate.opsForValue();
+    public int getIntValue(String key) {
+        ValueOperations<String, Integer> values = integerRedisTemplate.opsForValue();
         if (values.get(key) == null) {
-            return NOT_EXIST;
+            return 0;
         }
         return values.get(key);
     }

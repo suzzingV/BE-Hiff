@@ -15,6 +15,4 @@ public class EvaluationRequest {
     @Min(1)
     @Max(5)
     private Integer score;
-
-    private Boolean isPaid;
 }

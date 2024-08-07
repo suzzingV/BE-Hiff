@@ -198,13 +198,4 @@ public class UserService {
                 .userId(userId)
                 .build();
     }
-
-    public UserUpdateResponse updateHeart(Long userId, UserHeartRequest request) {
-        User user = userCRUDService.findUserById(userId);
-        userProfileService.updateHeart(user, request.getUsage());
-
-        return UserUpdateResponse.builder()
-                .userId(userId)
-                .build();
-    }
 }

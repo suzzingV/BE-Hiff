@@ -47,7 +47,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private void checkLogout(HttpServletRequest request) {
         jwtService.extractAccessToken(request).ifPresent(accessToken -> {
-            String value = redisService.getValues(accessToken);
+            String value = redisService.getStrValue(accessToken);
             if (value.equals("logout")) {
                 throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
             }

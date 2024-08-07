@@ -8,4 +8,6 @@ import lombok.Getter;
 public class EvaluationResponse {
 
     private Long evaluatedId;
+
+    private Boolean isHeartProvided;
 }

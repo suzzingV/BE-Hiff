@@ -81,17 +81,11 @@ public class UserProfileService {
         }
     }
 
+    // TODO: 첫인상 점수 볼 때마다 하트 지불?
     public Double getEvaluatedScore(User user) {
         if (user.getEvaluatedCount() < 10) {
             throw new UserException(ErrorCode.EVALUATION_COUNT_NOT_ENOUGH);
         }
         return user.getEvaluatedScore();
-    }
-
-    public void updateHeart(User user, Integer usage) {
-        if (user.getHeart() + usage < 0) {
-            throw new UserException(ErrorCode.LACK_OF_HEART);
-        }
-        user.updateHeart(usage);
     }
 }

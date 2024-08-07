@@ -98,7 +98,7 @@ public class JwtService {
 
     //RefreshToken redis 저장
     public void updateRefreshToken(String refreshToken, String email) {
-        redisService.setValues(refreshToken, email,
+        redisService.setStrValue(refreshToken, email,
                 Duration.ofMillis(refreshTokenExpirationPeriod));
     }
 
@@ -119,14 +119,14 @@ public class JwtService {
     }
 
     public void invalidAccessToken(String accessToken) {
-        redisService.setValues(accessToken, LOGOUT,
+        redisService.setStrValue(accessToken, LOGOUT,
                 Duration.ofMillis(accessTokenExpirationPeriod));
     }
 
     public String checkRefreshToken(String refreshToken) {
-        if (redisService.getValues(refreshToken).equals(NOT_EXIST)) {
+        if (redisService.getStrValue(refreshToken).equals(NOT_EXIST)) {
             throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
         }
-        return redisService.getValues(refreshToken);
+        return redisService.getStrValue(refreshToken);
     }
 }

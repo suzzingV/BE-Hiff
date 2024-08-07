@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static hiff.hiff.behiff.global.common.redis.RedisService.EVALUATION_PREFIX;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -23,10 +25,9 @@ public class EvaluationService {
     private final UserCRUDService userCRUDService;
     private final RedisService redisService;
 
-    public EvaluatedResponse getEvaluated(Long evaluatorId) {
-        User evaluator = userCRUDService.findUserById(evaluatorId);
-        User evaluated = userCRUDService.findRandomByEvaluation(evaluatorId, evaluator.getGender());
-        checkEvaluationAvailable(evaluatorId, evaluated.getId());
+    public EvaluatedResponse getEvaluated(User evaluator) {
+        User evaluated = userCRUDService.findRandomByEvaluation(evaluator.getId(), evaluator.getGender());
+        checkEvaluationAvailable(evaluator, evaluated);
 
         return EvaluatedResponse.builder()
                 .evaluatedId(evaluated.getId())
@@ -35,44 +36,48 @@ public class EvaluationService {
     }
 
     public EvaluationResponse evaluate(Long evaluatorId, EvaluationRequest request) {
-        Long evaluatedId = request.getEvaluatedId();
+        User evaluator = userCRUDService.findUserById(evaluatorId);
+        User evaluated = userCRUDService.findUserById(request.getEvaluatedId());
         Integer score = request.getScore();
 
-        checkEvaluationAvailable(evaluatorId, evaluatedId);
-        updateEvaluatedScore(evaluatedId, score);
-        createAndCountEvaluation(evaluatorId, evaluatedId, score);
-        handleFreeCount(request.getIsPaid(), evaluatorId);
+        checkEvaluationAvailable(evaluator, evaluated);
+        updateEvaluatedScore(evaluated, score);
+        createEvaluation(evaluator, evaluated, score);
+        boolean isHeartProvided = countEvaluation(evaluator);
 
         return EvaluationResponse.builder()
-                .evaluatedId(evaluatedId)
+                .evaluatedId(evaluated.getId())
+                .isHeartProvided(isHeartProvided)
                 .build();
     }
 
-    private void createAndCountEvaluation(Long evaluatorId, Long evaluatedId, Integer score) {
+    private void createEvaluation(User evaluator, User evaluated, Integer score) {
         Evaluation evaluation = Evaluation.builder()
-                .evaluatedId(evaluatedId)
-                .evaluatorId(evaluatorId)
+                .evaluatedId(evaluated.getId())
+                .evaluatorId(evaluator.getId())
                 .score(score)
                 .build();
         evaluationRepository.save(evaluation);
     }
 
-    private void handleFreeCount(boolean isPaid, Long evaluatorId) {
-        if (!isPaid) {
-            redisService.updateEvaluationValues(String.valueOf(evaluatorId));
+    private boolean countEvaluation(User evaluator) {
+        String key = EVALUATION_PREFIX + evaluator.getId();
+        if(redisService.getIntValue(key) == 4) {
+            redisService.updateIntValue(key);
+            evaluator.addHeart(1);
+            return true;
         }
+        redisService.updateIntValue(key);
+        return false;
     }
 
-    private void updateEvaluatedScore(Long evaluatedId, Integer score) {
-        User evaluated = userCRUDService.findUserById(evaluatedId);
+    private void updateEvaluatedScore(User evaluated, Integer score) {
         evaluated.updateEvaluatedScore(score);
     }
 
-    private void checkEvaluationAvailable(Long evaluatorId, Long evaluatedId) {
-        User evaluator = userCRUDService.findUserById(evaluatorId);
-        User evaluated = userCRUDService.findUserById(evaluatedId);
-
-        if (!redisService.isEvaluationAvailable(String.valueOf(evaluatorId))) {
+    private void checkEvaluationAvailable(User evaluator, User evaluated) {
+        String key = EVALUATION_PREFIX + evaluator.getId();
+        if (redisService.getIntValue(key) >= 5) {
             throw new EvaluationException(ErrorCode.EVALUATION_COUNT_EXCEED);
         }
 
@@ -80,7 +85,7 @@ public class EvaluationService {
             throw new EvaluationException(ErrorCode.EVALUATION_INVALID_GENDER);
         }
 
-        evaluationRepository.findByEvaluatedIdAndEvaluatorId(evaluatedId, evaluatorId)
+        evaluationRepository.findByEvaluatedIdAndEvaluatorId(evaluated.getId(), evaluator.getId())
                 .ifPresent(evaluation -> {
                     throw new EvaluationException(ErrorCode.EVALUATION_ALREADY);
                 });

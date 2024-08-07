@@ -213,7 +213,7 @@ public class User implements UserDetails {
         this.age = AgeCalculator.calculateAge(this.birth);
     }
 
-    public void updateHeart(Integer usage) {
-        this.heart += usage;
+    public void addHeart(Integer amount) {
+        this.heart += amount;
     }
 }
