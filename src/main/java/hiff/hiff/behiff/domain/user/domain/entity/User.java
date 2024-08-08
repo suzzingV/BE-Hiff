@@ -54,6 +54,7 @@ public class User implements UserDetails {
     private String socialId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
@@ -128,6 +129,7 @@ public class User implements UserDetails {
         this.income = Income.PRIVATE;
         this.education = Education.PRIVATE;
         this.birth = LocalDate.now();
+        this.gender = Gender.MALE;
     }
 
     public void delete() {

@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.global.auth.application;
 
+import hiff.hiff.behiff.domain.evaluation.application.EvaluationService;
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
@@ -21,9 +22,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    public final JwtService jwtService;
-    public final UserRepository userRepository;
-    public final UserService userService;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final EvaluationService evaluationService;
+    private final UserService userService;
 
     public TokenResponse login(LoginRequest request) {
         String email = request.getEmail();
@@ -42,6 +44,8 @@ public class AuthService {
                 .orElseGet(() -> {
                     User newUser = userService.registerUser(email, socialId, socialType, Role.USER);
                     newUser.updateAge();
+                    evaluationService.addEvaluatedUser(newUser.getId(), newUser.getGender());
+                    evaluationService.addEvaluatedUser(newUser.getId(), newUser.getGender());
                     return TokenResponse.of(accessToken, refreshToken, email, true);
                 });
     }

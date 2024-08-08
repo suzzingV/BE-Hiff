@@ -1,7 +1,9 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
+import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
@@ -20,6 +22,7 @@ public class UserProfileService {
 
     private final UserRepository userRepository;
     private final UserPosRepository userPosRepository;
+    private final EvaluatedUserRepository evaluatedUserRepository;
 
     public void updateNickname(User user, NicknameRequest request) {
         checkNicknameDuplication(request.getNickname());
@@ -31,7 +34,9 @@ public class UserProfileService {
     }
 
     public void updateGender(User user, GenderRequest request) {
-        user.changeGender(request.getGender());
+        Gender gender = request.getGender();
+        user.changeGender(gender);
+        changeEvaluatedUserGender(user, gender);
     }
 
     public void updateMbti(User user, MbtiRequest request) {
@@ -81,11 +86,18 @@ public class UserProfileService {
         }
     }
 
-    // TODO: 첫인상 점수 볼 때마다 하트 지불?
     public Double getEvaluatedScore(User user) {
         if (user.getEvaluatedCount() < 10) {
             throw new UserException(ErrorCode.EVALUATION_COUNT_NOT_ENOUGH);
         }
         return user.getEvaluatedScore();
+    }
+
+    private void changeEvaluatedUserGender(User user, Gender gender) {
+        evaluatedUserRepository.findByUserId(user.getId())
+                .forEach(evaluatedUser -> {
+                    evaluatedUser.changeGender(gender);
+                    evaluatedUserRepository.save(evaluatedUser);
+                });
     }
 }

@@ -1,18 +1,23 @@
 package hiff.hiff.behiff.domain.evaluation.application;
 
+import hiff.hiff.behiff.domain.evaluation.domain.entity.EvaluatedUser;
 import hiff.hiff.behiff.domain.evaluation.domain.entity.Evaluation;
 import hiff.hiff.behiff.domain.evaluation.exception.EvaluationException;
+import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository;
 import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluationRepository;
 import hiff.hiff.behiff.domain.evaluation.presentation.dto.req.EvaluationRequest;
 import hiff.hiff.behiff.domain.evaluation.presentation.dto.res.EvaluatedResponse;
 import hiff.hiff.behiff.domain.evaluation.presentation.dto.res.EvaluationResponse;
 import hiff.hiff.behiff.domain.user.application.UserCRUDService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static hiff.hiff.behiff.global.common.redis.RedisService.EVALUATION_PREFIX;
 
@@ -22,12 +27,15 @@ import static hiff.hiff.behiff.global.common.redis.RedisService.EVALUATION_PREFI
 public class EvaluationService {
 
     private final EvaluationRepository evaluationRepository;
+    private final EvaluatedUserRepository evaluatedUserRepository;
     private final UserCRUDService userCRUDService;
     private final RedisService redisService;
 
     public EvaluatedResponse getEvaluated(User evaluator) {
-        User evaluated = userCRUDService.findRandomByEvaluation(evaluator.getId(), evaluator.getGender());
-        checkEvaluationAvailable(evaluator, evaluated);
+        checkEvaluationCount(evaluator.getId());
+        EvaluatedUser evaluatedUser = evaluatedUserRepository.findByRandom(evaluator.getId(), evaluator.getGender())
+                .orElseThrow(() -> new EvaluationException(ErrorCode.EVALUATION_NOT_FOUND));
+        User evaluated = userCRUDService.findUserById(evaluatedUser.getUserId());
 
         return EvaluatedResponse.builder()
                 .evaluatedId(evaluated.getId())
@@ -51,6 +59,14 @@ public class EvaluationService {
                 .build();
     }
 
+    public void addEvaluatedUser(Long userId, Gender gender) {
+        EvaluatedUser evaluatedUser = EvaluatedUser.builder()
+                .userId(userId)
+                .gender(gender)
+                .build();
+        evaluatedUserRepository.save(evaluatedUser);
+    }
+
     private void createEvaluation(User evaluator, User evaluated, Integer score) {
         Evaluation evaluation = Evaluation.builder()
                 .evaluatedId(evaluated.getId())
@@ -62,7 +78,7 @@ public class EvaluationService {
 
     private boolean countEvaluation(User evaluator) {
         String key = EVALUATION_PREFIX + evaluator.getId();
-        if(redisService.getIntValue(key) == 4) {
+        if (redisService.getIntValue(key) == 4) {
             redisService.updateIntValue(key);
             evaluator.addHeart(1);
             return true;
@@ -72,14 +88,16 @@ public class EvaluationService {
     }
 
     private void updateEvaluatedScore(User evaluated, Integer score) {
+        if (evaluated.getEvaluatedCount() == 9) {
+            List<EvaluatedUser> evaluatedUsers = evaluatedUserRepository.findByUserId(evaluated.getId());
+            Long evaluatedUserId = evaluatedUsers.get(0).getId();
+            evaluatedUserRepository.deleteById(evaluatedUserId);
+        }
         evaluated.updateEvaluatedScore(score);
     }
 
     private void checkEvaluationAvailable(User evaluator, User evaluated) {
-        String key = EVALUATION_PREFIX + evaluator.getId();
-        if (redisService.getIntValue(key) >= 5) {
-            throw new EvaluationException(ErrorCode.EVALUATION_COUNT_EXCEED);
-        }
+        checkEvaluationCount(evaluator.getId());
 
         if (evaluated.getGender() == evaluator.getGender()) {
             throw new EvaluationException(ErrorCode.EVALUATION_INVALID_GENDER);
@@ -89,5 +107,12 @@ public class EvaluationService {
                 .ifPresent(evaluation -> {
                     throw new EvaluationException(ErrorCode.EVALUATION_ALREADY);
                 });
+    }
+
+    private void checkEvaluationCount(Long evaluatorId) {
+        String key = EVALUATION_PREFIX + evaluatorId;
+        if (redisService.getIntValue(key) >= 5) {
+            throw new EvaluationException(ErrorCode.EVALUATION_COUNT_EXCEED);
+        }
     }
 }

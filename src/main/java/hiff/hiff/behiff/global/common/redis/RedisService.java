@@ -30,7 +30,7 @@ public class RedisService {
         if (count == 0) {
             values.set(key, 1);
         } else {
-            if(count == 4) {
+            if (count == 4) {
                 values.set(key, 5, EVALUATION_DURATION);
             } else {
                 values.set(key, count + 1);

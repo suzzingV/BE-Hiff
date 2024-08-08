@@ -1,5 +1,7 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.evaluation.domain.entity.EvaluatedUser;
+import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
@@ -13,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +25,7 @@ public class UserCRUDService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final EvaluatedUserRepository evaluatedUserRepository;
 
     public User registerUser(String email, String socialId, SocialType socialType,
                              Role role) {
@@ -45,7 +49,10 @@ public class UserCRUDService {
     }
 
     public void withdraw(User user, Optional<String> access, Optional<String> refresh) {
+        List<EvaluatedUser> evaluatedUsers = evaluatedUserRepository.findByUserId(user.getId());
+        evaluatedUserRepository.deleteAll(evaluatedUsers);
         user.delete();
+
         String accessToken = access.orElseThrow(() -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
         String refreshToken = refresh.orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
 
