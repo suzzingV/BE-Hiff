@@ -43,11 +43,6 @@ public class UserCRUDService {
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public User findRandomByEvaluation(Long userId, Gender gender) {
-        return userRepository.findRandomByEvaluation(userId, gender)
-                .orElseThrow(() -> new UserException(ErrorCode.EVALUATED_USER_NOT_FOUND));
-    }
-
     public void withdraw(User user, Optional<String> access, Optional<String> refresh) {
         List<EvaluatedUser> evaluatedUsers = evaluatedUserRepository.findByUserId(user.getId());
         evaluatedUserRepository.deleteAll(evaluatedUsers);

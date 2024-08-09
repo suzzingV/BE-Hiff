@@ -9,5 +9,5 @@ public class LifeStyleRequest {
 
     private List<Long> originLifeStyles;
 
-    private List<String> newLifeStyles;
+//    private List<String> newLifeStyles;
 }

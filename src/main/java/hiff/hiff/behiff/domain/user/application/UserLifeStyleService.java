@@ -24,10 +24,10 @@ public class UserLifeStyleService {
 
     public UserUpdateResponse updateLifeStyle(Long userId, LifeStyleRequest request) {
         List<Long> originLifeStyles = request.getOriginLifeStyles();
-        List<String> newLifeStyles = request.getNewLifeStyles();
+//        List<String> newLifeStyles = request.getNewLifeStyles();
 
         updateUserLifeStyles(userId, originLifeStyles);
-        registerNewLifeStyles(userId, newLifeStyles);
+//        registerNewLifeStyles(userId, newLifeStyles);
 
         return UserUpdateResponse.from(userId);
     }
@@ -46,16 +46,16 @@ public class UserLifeStyleService {
         return lifeStyleRepository.findAll();
     }
 
-    private void registerNewLifeStyles(Long userId, List<String> newLifeStyles) {
-        for (String lifeStyleName : newLifeStyles) {
-            LifeStyle lifeStyle = createLifeStyle(lifeStyleName);
-            UserLifeStyle userLifeStyle = UserLifeStyle.builder()
-                    .userId(userId)
-                    .lifeStyleId(lifeStyle.getId())
-                    .build();
-            userLifeStyleRepository.save(userLifeStyle);
-        }
-    }
+//    private void registerNewLifeStyles(Long userId, List<String> newLifeStyles) {
+//        for (String lifeStyleName : newLifeStyles) {
+//            LifeStyle lifeStyle = createLifeStyle(lifeStyleName);
+//            UserLifeStyle userLifeStyle = UserLifeStyle.builder()
+//                    .userId(userId)
+//                    .lifeStyleId(lifeStyle.getId())
+//                    .build();
+//            userLifeStyleRepository.save(userLifeStyle);
+//        }
+//    }
 
     private void updateUserLifeStyles(Long userId, List<Long> originLifeStyles) {
         List<UserLifeStyle> oldLifeStyles = userLifeStyleRepository.findByUserId(userId);
@@ -72,17 +72,17 @@ public class UserLifeStyleService {
         }
     }
 
-    private LifeStyle createLifeStyle(String lifeStyleName) {
-        lifeStyleRepository.findByName(lifeStyleName)
-                .ifPresent(lifeStyle -> {
-                    throw new UserException(ErrorCode.LIFESTYLE_ALREADY_EXISTS);
-                });
-        LifeStyle lifeStyle = LifeStyle.builder()
-                .name(lifeStyleName)
-                .build();
-        lifeStyleRepository.save(lifeStyle);
-        return lifeStyle;
-    }
+//    private LifeStyle createLifeStyle(String lifeStyleName) {
+//        lifeStyleRepository.findByName(lifeStyleName)
+//                .ifPresent(lifeStyle -> {
+//                    throw new UserException(ErrorCode.LIFESTYLE_ALREADY_EXISTS);
+//                });
+//        LifeStyle lifeStyle = LifeStyle.builder()
+//                .name(lifeStyleName)
+//                .build();
+//        lifeStyleRepository.save(lifeStyle);
+//        return lifeStyle;
+//    }
 
     private LifeStyle findLifeStyleById(Long lifeStyleId) {
         return lifeStyleRepository.findById(lifeStyleId)

@@ -9,5 +9,5 @@ public class HobbyRequest {
 
     private List<Long> originHobbies;
 
-    private List<String> newHobbies;
+//    private List<String> newHobbies;
 }

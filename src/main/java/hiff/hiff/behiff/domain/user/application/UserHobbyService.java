@@ -24,10 +24,10 @@ public class UserHobbyService {
 
     public UserUpdateResponse updateHobby(Long userId, HobbyRequest request) {
         List<Long> originHobbies = request.getOriginHobbies();
-        List<String> newHobbies = request.getNewHobbies();
+//        List<String> newHobbies = request.getNewHobbies();
 
         updateUserHobbies(userId, originHobbies);
-        registerNewHobbies(userId, newHobbies); // TODO : 24시간마다 업뎃
+//        registerNewHobbies(userId, newHobbies); // TODO : 레디스 캐싱
 
         return UserUpdateResponse.from(userId);
     }
@@ -47,16 +47,16 @@ public class UserHobbyService {
         return hobbyRepository.findAll();
     }
 
-    private void registerNewHobbies(Long userId, List<String> newHobbies) {
-        for (String hobbyName : newHobbies) {
-            Hobby hobby = createHobby(hobbyName);
-            UserHobby userHobby = UserHobby.builder()
-                    .userId(userId)
-                    .hobbyId(hobby.getId())
-                    .build();
-            userHobbyRepository.save(userHobby);
-        }
-    }
+//    private void registerNewHobbies(Long userId, List<String> newHobbies) {
+//        for (String hobbyName : newHobbies) {
+//            Hobby hobby = createHobby(hobbyName);
+//            UserHobby userHobby = UserHobby.builder()
+//                    .userId(userId)
+//                    .hobbyId(hobby.getId())
+//                    .build();
+//            userHobbyRepository.save(userHobby);
+//        }
+//    }
 
     private void updateUserHobbies(Long userId, List<Long> originHobbies) {
         List<UserHobby> oldHobbies = userHobbyRepository.findByUserId(userId);
@@ -73,17 +73,17 @@ public class UserHobbyService {
         }
     }
 
-    private Hobby createHobby(String hobbyName) {
-        hobbyRepository.findByName(hobbyName)
-                .ifPresent(hobby -> {
-                    throw new UserException(ErrorCode.HOBBY_ALREADY_EXISTS);
-                });
-        Hobby hobby = Hobby.builder()
-                .name(hobbyName)
-                .build();
-        hobbyRepository.save(hobby);
-        return hobby;
-    }
+//    private Hobby createHobby(String hobbyName) {
+//        hobbyRepository.findByName(hobbyName)
+//                .ifPresent(hobby -> {
+//                    throw new UserException(ErrorCode.HOBBY_ALREADY_EXISTS);
+//                });
+//        Hobby hobby = Hobby.builder()
+//                .name(hobbyName)
+//                .build();
+//        hobbyRepository.save(hobby);
+//        return hobby;
+//    }
 
     private Hobby findHobbyById(Long hobbyId) {
         return hobbyRepository.findById(hobbyId)
