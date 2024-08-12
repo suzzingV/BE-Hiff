@@ -10,14 +10,15 @@ import java.util.Set;
 @RequiredArgsConstructor
 public enum Income {
 
-    PRIVATE("비공개"),
-    FROM_0_TO_200("0 ~ 200만원"),
-    FROM_200_TO_300("200 ~ 300만원"),
-    FROM_300_TO_400("300 ~ 400만원"),
-    FROM_400_TO_500("400 ~ 500만원"),
-    FROM_500("500만원 이상");
+    PRIVATE("비공개", 0),
+    FROM_0_TO_200("0 ~ 200만원", 0),
+    FROM_200_TO_300("200 ~ 300만원", 200),
+    FROM_300_TO_400("300 ~ 400만원", 300),
+    FROM_400_TO_500("400 ~ 500만원", 400),
+    FROM_500("500만원 이상", 500);
 
-    private final String key;
+    private final String text;
+    private final int startValue;
 
     public static final Set<Income> ALL_VALUES = EnumSet.allOf(Income.class);
 }

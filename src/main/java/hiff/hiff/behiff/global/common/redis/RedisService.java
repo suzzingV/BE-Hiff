@@ -1,7 +1,11 @@
 package hiff.hiff.behiff.global.common.redis;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,10 @@ public class RedisService {
     private final RedisTemplate<String, Integer> integerRedisTemplate;
     public static final String EVALUATION_PREFIX = "eval_";
     public static final String NOT_EXIST = "false";
+    public static final String HOBBY_PREFIX = "hobby_";
+    public static final String MBTI_PREFIX = "mbti_";
+    public static final String LIFESTYLE_PREFIX = "lifestyle_";
+    public static final String INCOME_PREFIX = "income_";
     private static final Duration EVALUATION_DURATION = Duration.ofDays(1);
 
     public void setStrValue(String key, String data, Duration duration) {
@@ -54,6 +62,26 @@ public class RedisService {
             return 0;
         }
         return values.get(key);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> scanKeysWithPrefix(String prefix) {
+        List<String> keys = new ArrayList<>();
+
+        strRedisTemplate.execute(redisConnection -> {
+            Cursor<byte[]> cursor = connection.scan(
+                ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
+            );
+            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+
+            cursor.forEachRemaining(key -> {
+                keys.add(serializer.deserialize(key));
+            });
+
+            return null;
+        });
+
+        return keys;
     }
 
     public void delete(String key) {

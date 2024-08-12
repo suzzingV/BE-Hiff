@@ -51,7 +51,7 @@ public class UserDetailResponse {
         return UserDetailResponse.builder()
                 .nickname(user.getNickname())
                 .age(user.getAge())
-                .income(user.getIncome().getKey())
+                .income(user.getIncome().getText())
                 .addr(user.getAddr())
                 .job(user.getJob())
                 .photos(photos)

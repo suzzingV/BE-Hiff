@@ -13,6 +13,13 @@ public interface EvaluatedUserRepository extends JpaRepository<EvaluatedUser, Lo
     @Query("SELECT e FROM EvaluatedUser e WHERE e.userId = :userId")
     List<EvaluatedUser> findByUserId(Long userId);
 
-    @Query("SELECT u FROM EvaluatedUser u WHERE u.userId NOT IN (SELECT e.evaluatedId FROM Evaluation e WHERE e.evaluatedId = u.userId AND e.evaluatorId = :evaluatorId) AND u.userId != :evaluatorId AND u.gender != :gender ORDER BY RAND() LIMIT 1")
+    @Query("""
+        SELECT u FROM EvaluatedUser u
+        WHERE u.userId NOT IN (SELECT e.evaluatedId FROM Evaluation e
+                                WHERE e.evaluatedId = u.userId AND e.evaluatorId = :evaluatorId)
+        AND u.userId != :evaluatorId
+        AND u.gender != :gender
+        ORDER BY RAND() LIMIT 1
+        """)
     Optional<EvaluatedUser> findByRandom(Long evaluatorId, Gender gender);
 }

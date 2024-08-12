@@ -46,6 +46,9 @@ public class WeightValue {
     @Column(nullable = false)
     private Integer mbti;
 
+    @Column(nullable = false)
+    private Integer total;
+
     @Builder
     private WeightValue(Long userId) {
         this.userId = userId;
@@ -54,6 +57,7 @@ public class WeightValue {
         this.hobby = 3;
         this.lifeStyle = 3;
         this.mbti = 3;
+        this.total = 3 * 5;
     }
 
     public void changeWeightValue(Integer income, Integer appearance, Integer hobby, Integer lifeStyle, Integer mbti) {
@@ -62,5 +66,6 @@ public class WeightValue {
         this.hobby = hobby;
         this.lifeStyle = lifeStyle;
         this.mbti = mbti;
+        this.total = income + appearance + hobby + lifeStyle + mbti;
     }
 }
