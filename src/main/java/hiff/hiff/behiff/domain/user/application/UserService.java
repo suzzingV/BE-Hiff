@@ -28,6 +28,7 @@ public class UserService {
     private final UserPhotoService userPhotoService;
     private final UserProfileService userProfileService;
     private final UserCRUDService userCRUDService;
+    private final UserPosService userPosService;
 
     public User registerUser(String email, String socialId, SocialType socialType,
                              Role role) {
@@ -35,6 +36,10 @@ public class UserService {
         userWeightValueService.createWeightValue(user.getId());
         return user;
     }
+
+    public UserUpdateResponse createPos(Long userId, PosRequest request) {{
+        return userPosService.createPos(userId, request);
+    }}
 
     public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {
         User user = userCRUDService.findUserById(userId);
@@ -134,6 +139,10 @@ public class UserService {
         userWeightValueService.updateWeightValue(userId, request);
         return UserUpdateResponse.from(userId);
     }
+
+    public UserUpdateResponse updatePos(Long userId, PosRequest request) {{
+        return userPosService.updatePos(userId, request);
+    }}
 
     public MyInfoResponse getMyInfo(Long userId) {
         User user = userCRUDService.findUserById(userId);

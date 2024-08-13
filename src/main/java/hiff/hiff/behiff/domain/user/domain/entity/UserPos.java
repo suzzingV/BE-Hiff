@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.joda.time.LocalDateTime;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,9 +38,9 @@ public class UserPos {
         this.userId = userId;
     }
 
-    public void changePos(String x, String y, LocalDateTime updatedAt) {
+    public void changePos(String x, String y) {
         this.x = x;
         this.y = y;
-        this.updatedAt = updatedAt;
+        this.updatedAt = LocalDateTime.now();
     }
 }

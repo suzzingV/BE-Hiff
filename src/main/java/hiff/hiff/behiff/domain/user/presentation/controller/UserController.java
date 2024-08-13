@@ -166,6 +166,18 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/pos")
+    public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user, @RequestBody PosRequest request) {
+        UserUpdateResponse response = userService.updatePos(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/pos")
+    public ResponseEntity<UserUpdateResponse> createPos(@AuthenticationPrincipal User user, @RequestBody PosRequest request) {
+        UserUpdateResponse response = userService.createPos(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> withdraw(HttpServletRequest request,
                                          @AuthenticationPrincipal User user) {
