@@ -229,4 +229,8 @@ public class User implements UserDetails {
     public void addHeart(Integer amount) {
         this.heart += amount;
     }
+
+    public void subtractHeart(Integer amount) {
+        this.heart -= amount;
+    }
 }

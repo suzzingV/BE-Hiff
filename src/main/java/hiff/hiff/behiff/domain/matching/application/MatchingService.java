@@ -36,7 +36,7 @@ public class MatchingService {
     private final MatchingRepository matchingRepository;
     private final SimilarityFactory similarityFactory;
 
-    public List<MatchingSimpleResponse> getFreeDailyMatching(Long userId) {
+    public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
         User matcher = userCRUDService.findUserById(userId);
         List<String> matchings = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
 
@@ -46,6 +46,19 @@ public class MatchingService {
         }
 
         redisService.setIntValue(MATCHING_PREFIX + userId, 0, MATCHING_DURATION);
+        matchings.forEach(redisService::delete);
+
+        return userRepository.getFiveMatched(userId, matcher.getGender())
+            .stream()
+            .map(matched -> getNewMatching(userId, matched, matcher)).toList();
+    }
+
+    public List<MatchingSimpleResponse> getPaidDailyMatching(Long userId) {
+        //TODO: 유료결제 했는데 딱 쿨타임 돌면 어떡해?
+        User matcher = userCRUDService.findUserById(userId);
+        matcher.subtractHeart(1);
+        List<String> matchings = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
+
         matchings.forEach(redisService::delete);
 
         return userRepository.getFiveMatched(userId, matcher.getGender())

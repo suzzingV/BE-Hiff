@@ -18,10 +18,17 @@ public class MatchingController {
 
     private final MatchingService matchingService;
 
-    @GetMapping("/daily/free")
-    public ResponseEntity<List<MatchingSimpleResponse>> getFreeDailyMatching(
+    @GetMapping("/daily")
+    public ResponseEntity<List<MatchingSimpleResponse>> getDailyMatching(
         @AuthenticationPrincipal User user) {
-        List<MatchingSimpleResponse> responses = matchingService.getFreeDailyMatching(user.getId());
+        List<MatchingSimpleResponse> responses = matchingService.getDailyMatching(user.getId());
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/daily/paid")
+    public ResponseEntity<List<MatchingSimpleResponse>> getPaidDailyMatching(
+        @AuthenticationPrincipal User user) {
+        List<MatchingSimpleResponse> responses = matchingService.getPaidDailyMatching(user.getId());
         return ResponseEntity.ok(responses);
     }
 }
