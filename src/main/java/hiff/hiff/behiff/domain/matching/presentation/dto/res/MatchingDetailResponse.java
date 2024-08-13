@@ -1,7 +1,7 @@
 package hiff.hiff.behiff.domain.matching.presentation.dto.res;
 
-import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingScoreDto;
+import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
@@ -43,7 +43,9 @@ public class MatchingDetailResponse {
 
     private Integer lifeStyleSimilarity;
 
-    public static MatchingDetailResponse of(User matcher, User matched, Double distance, List<String> photos, MatchingScoreDto matchingScores, List<NameWithCommonDto> hobbies, List<NameWithCommonDto> lifeStyles) {
+    public static MatchingDetailResponse of(User matcher, User matched, Double distance,
+        List<String> photos, MatchingScoreDto matchingScores, List<NameWithCommonDto> hobbies,
+        List<NameWithCommonDto> lifeStyles) {
         return MatchingDetailResponse.builder()
             .matchedId(matched.getId())
             .nickname(matched.getNickname())

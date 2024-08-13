@@ -7,12 +7,12 @@ import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingScoreDto;
+import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
 import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
-import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
 import hiff.hiff.behiff.domain.user.application.UserCRUDService;
 import hiff.hiff.behiff.domain.user.application.UserHobbyService;
@@ -99,7 +99,8 @@ public class MatchingService {
         Double distance = getDistance(matcherId, matchedId);
         MatchingScoreDto matchingScoreDto = getCachedMatchingScore(matcherId, matchedId);
 
-        return MatchingDetailResponse.of(matcher, matched, distance, photos, matchingScoreDto, hobbies, lifeStyles);
+        return MatchingDetailResponse.of(matcher, matched, distance, photos, matchingScoreDto,
+            hobbies, lifeStyles);
     }
 
     private String getCachedMatchingValue(Long matcherId, Long matchedId) {
@@ -180,7 +181,8 @@ public class MatchingService {
             .build();
     }
 
-    private MatchingScoreDto getNewMatchingScore(User matcher, User matched, WeightValue matcherWV) {
+    private MatchingScoreDto getNewMatchingScore(User matcher, User matched,
+        WeightValue matcherWV) {
         int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcher, matched);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcher, matched);
@@ -223,7 +225,9 @@ public class MatchingService {
     private void cachMatchingScore(User matcher, User matched, MatchingScoreDto matchingScoreDto) {
         String key = MATCHING_PREFIX + matcher.getId() + "_" + matched.getId();
         String value =
-            matchingScoreDto.getTotalScore() + "/" + matchingScoreDto.getMbtiSimilarity() + "/" + matchingScoreDto.getHobbySimilarity() + "/" + matchingScoreDto.getLifeStyleSimilarity()
+            matchingScoreDto.getTotalScore() + "/" + matchingScoreDto.getMbtiSimilarity() + "/"
+                + matchingScoreDto.getHobbySimilarity() + "/"
+                + matchingScoreDto.getLifeStyleSimilarity()
                 + "/" + matchingScoreDto.getIncomeSimilarity();
         redisService.setStrValue(key, value, MATCHING_DURATION);
     }

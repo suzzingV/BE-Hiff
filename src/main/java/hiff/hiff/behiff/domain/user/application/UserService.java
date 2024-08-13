@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
