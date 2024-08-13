@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -70,7 +71,7 @@ public class RedisService {
     public List<String> scanKeysWithPrefix(String prefix) {
         List<String> keys = new ArrayList<>();
 
-        Cursor<byte[]> cursor = strRedisTemplate.getConnectionFactory().getConnection()
+        Cursor<byte[]> cursor = Objects.requireNonNull(strRedisTemplate.getConnectionFactory()).getConnection()
             .keyCommands().scan(
                 ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
             );

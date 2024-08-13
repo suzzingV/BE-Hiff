@@ -4,12 +4,19 @@ import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
 import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
 import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_PREFIX;
+import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 
 import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
+import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.NameWithCommonDto;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
 import hiff.hiff.behiff.domain.user.application.UserCRUDService;
+import hiff.hiff.behiff.domain.user.application.UserHobbyService;
+import hiff.hiff.behiff.domain.user.application.UserLifeStyleService;
+import hiff.hiff.behiff.domain.user.application.UserPhotoService;
 import hiff.hiff.behiff.domain.user.application.UserPosService;
 import hiff.hiff.behiff.domain.user.application.UserWeightValueService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
@@ -17,15 +24,18 @@ import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MatchingService {
 
     private final UserCRUDService userCRUDService;
@@ -35,43 +45,119 @@ public class MatchingService {
     private final RedisService redisService;
     private final MatchingRepository matchingRepository;
     private final SimilarityFactory similarityFactory;
+    private final UserHobbyService userHobbyService;
+    private final UserLifeStyleService userLifeStyleService;
+    private final UserPhotoService userPhotoService;
 
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
+        //TODO: 거리계산 논의 필요
         User matcher = userCRUDService.findUserById(userId);
-        List<String> matchings = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
+        List<String> matchingScores = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
 
         if (redisService.isExistInt(MATCHING_PREFIX + userId)) {
-            return matchings.stream()
+            return matchingScores.stream()
                 .map(key -> getCachedMatching(userId, key)).toList();
         }
 
-        redisService.setIntValue(MATCHING_PREFIX + userId, 0, MATCHING_DURATION);
-        matchings.forEach(redisService::delete);
-
-        return userRepository.getFiveMatched(userId, matcher.getGender())
+        //TODO: 더이상 새로 매칭할 사람이 없거나 5명 이하면 어떡해?
+        List<MatchingSimpleResponse> responses = userRepository.getFiveMatched(userId,
+                matcher.getGender())
             .stream()
-            .map(matched -> getNewMatching(userId, matched, matcher)).toList();
+            .map(matched -> getNewMatching(matched, matcher)).toList();
+
+        redisService.setIntValue(MATCHING_PREFIX + userId, 0, MATCHING_DURATION);
+        matchingScores.forEach(redisService::delete);
+        return responses;
     }
 
     public List<MatchingSimpleResponse> getPaidDailyMatching(Long userId) {
         //TODO: 유료결제 했는데 딱 쿨타임 돌면 어떡해?
         User matcher = userCRUDService.findUserById(userId);
         matcher.subtractHeart(1);
-        List<String> matchings = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
-
-        matchings.forEach(redisService::delete);
-
-        return userRepository.getFiveMatched(userId, matcher.getGender())
+        List<String> matchingScores = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
+        List<MatchingSimpleResponse> responses = userRepository.getFiveMatched(userId,
+                matcher.getGender())
             .stream()
-            .map(matched -> getNewMatching(userId, matched, matcher)).toList();
+            .map(matched -> getNewMatching(matched, matcher)).toList();
+
+        matchingScores.forEach(redisService::delete);
+        return responses;
     }
 
-    private MatchingSimpleResponse getNewMatching(Long userId, User matched,
-        User matcher) {
+    public MatchingDetailResponse getDailyMatchingDetails(Long matcherId, Long matchedId) {
+        checkMatching(matcherId, matchedId);
+        User matcher = userCRUDService.findUserById(matcherId);
+        User matched = userCRUDService.findUserById(matchedId);
+
+        List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
+
+        List<String> matcherHobbies = userHobbyService.findHobbiesByUser(matcherId);
+        List<String> matchedHobbies = userHobbyService.findHobbiesByUser(matchedId);
+
+        List<NameWithCommonDto> hobbies = matchedHobbies.stream()
+            .map(hobby -> {
+                boolean isCommon = matcherHobbies.contains(hobby);
+                return NameWithCommonDto.builder()
+                    .name(hobby)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
+
+        List<String> matcherLifeStyles = userLifeStyleService.findLifeStylesByUser(matcherId);
+        List<String> matchedLifeStyles = userLifeStyleService.findLifeStylesByUser(matchedId);
+
+        List<NameWithCommonDto> lifeStyles = matchedLifeStyles.stream()
+            .map(lifeStyle -> {
+                boolean isCommon = matcherLifeStyles.contains(lifeStyle);
+                return NameWithCommonDto.builder()
+                    .name(lifeStyle)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
+
+        String key = MATCHING_PREFIX + matcherId + "_" + matchedId;
+        String matchingScore = redisService.getStrValue(key);
+        if(matchingScore.equals(NOT_EXIST)) {
+            throw new MatchingException(ErrorCode.MATCHING_SCORE_NOT_FOUND);
+        }
+
+        StringTokenizer st = new StringTokenizer(matchingScore, "/");
+        int totalScore = Integer.parseInt(st.nextToken());
+        int mbtiSimilarity = Integer.parseInt(st.nextToken());
+        int hobbySimilarity = Integer.parseInt(st.nextToken());
+        int lifeStyleSimilarity = Integer.parseInt(st.nextToken());
+        int incomeSimilarity = Integer.parseInt(st.nextToken());
+
+        return MatchingDetailResponse.builder()
+            .matchedId(matchedId)
+            .nickname(matched.getNickname())
+            .age(matched.getAge())
+            .distance(getDistance(matcherId, matchedId))
+            .photos(photos)
+            .totalScore(totalScore)
+            .myMbti(matcher.getMbti())
+            .matchedMbti(matched.getMbti())
+            .mbtiSimilarity(mbtiSimilarity)
+            .myIncome(matcher.getIncome())
+            .matchedIncome(matched.getIncome())
+            .incomeSimilarity(incomeSimilarity)
+            .hobbies(hobbies)
+            .hobbySimilarity(hobbySimilarity)
+            .lifeStyles(lifeStyles)
+            .lifeStyleSimilarity(lifeStyleSimilarity)
+            .build();
+    }
+
+    private void checkMatching(Long matcherId, Long matchedId) {
+        matchingRepository.findByMatcherIdAndMatchedId(matcherId, matchedId)
+            .orElseThrow(() -> new MatchingException(ErrorCode.MATCHING_NOT_FOUND));
+    }
+
+    private MatchingSimpleResponse getNewMatching(User matched, User matcher) {
         WeightValue matcherWV = userWeightValueService.findByUserId(matcher.getId());
         Integer totalScore = calculateTotalScoreAndCach(matcher, matched, matcherWV);
 
-        recordMatchingHistory(userId, matched);
+        recordMatchingHistory(matcher.getId(), matched);
 
         return MatchingSimpleResponse.builder()
             .userId(matched.getId())
@@ -79,7 +165,7 @@ public class MatchingService {
             .nickname(matched.getNickname())
             .mainPhoto(matched.getMainPhoto())
             .totalScore(totalScore)
-            .distance(getDistance(userId, matched.getId()))
+            .distance(getDistance(matcher.getId(), matched.getId()))
             .build();
     }
 
