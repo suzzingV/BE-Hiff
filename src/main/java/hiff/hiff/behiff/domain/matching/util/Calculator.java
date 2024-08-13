@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Calculator {
 
     public static Integer computeTotalScoreByMatcher(WeightValue matcherWV, int mbtiSimilarity, int hobbySimilarity, int lifeStyleSimilarity, int incomeSimilarity) {
-        // TODO: 구체적인 계산 다시.
+        // TODO: 구체적인 계산 다시
         if(incomeSimilarity == 0) {
             return (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity + matcherWV.getLifeStyle() * lifeStyleSimilarity) / (matcherWV.getTotal() - matcherWV.getIncome());
         }
@@ -18,7 +18,7 @@ public class Calculator {
     }
 
     public static int computeIntAvg(int sum, int count) {
-        return (int) Math.round((double)sum / count);
+        return count == 0 ? 0 : (int) Math.round((double)sum / count);
     }
 
     public static Double computeDistance(double x1, double y1, double x2, double y2) {

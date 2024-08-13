@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
@@ -39,5 +40,10 @@ public class UserPosService {
         return UserUpdateResponse.builder()
                 .userId(userId)
                 .build();
+    }
+
+    public UserPos findPosByUserId(Long userId) {
+        return userPosRepository.findByUserId(userId)
+            .orElseThrow(() -> new MatchingException(ErrorCode.USER_POS_NOT_FOUND));
     }
 }
