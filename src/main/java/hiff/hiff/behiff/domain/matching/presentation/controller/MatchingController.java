@@ -20,9 +20,10 @@ public class MatchingController {
 
     private final MatchingService matchingService;
 
+    // TODO: daily 매칭으로 이름 변경
     @GetMapping("/normal")
-    public ResponseEntity<List<MatchingSimpleResponse>> getGeneralMatching(@AuthenticationPrincipal User user, @RequestBody MatchingRequest request) {
-        List<MatchingSimpleResponse> responses = matchingService.getGeneralMatching(user.getId(), request);
+    public ResponseEntity<List<MatchingSimpleResponse>> getGeneralMatching(@AuthenticationPrincipal User user) {
+        List<MatchingSimpleResponse> responses = matchingService.getGeneralMatching(user.getId());
         return ResponseEntity.ok(responses);
     }
 }

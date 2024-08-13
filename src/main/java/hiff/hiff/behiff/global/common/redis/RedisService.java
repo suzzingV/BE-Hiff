@@ -1,16 +1,20 @@
 package hiff.hiff.behiff.global.common.redis;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -25,7 +29,9 @@ public class RedisService {
     public static final String MBTI_PREFIX = "mbti_";
     public static final String LIFESTYLE_PREFIX = "lifestyle_";
     public static final String INCOME_PREFIX = "income_";
+    public static final String MATCHING_PREFIX = "matching_";
     private static final Duration EVALUATION_DURATION = Duration.ofDays(1);
+    public static final Duration MATCHING_DURATION = Duration.ofDays(1);
 
     public void setStrValue(String key, String data, Duration duration) {
         ValueOperations<String, String> values = strRedisTemplate.opsForValue();
@@ -68,23 +74,29 @@ public class RedisService {
     public List<String> scanKeysWithPrefix(String prefix) {
         List<String> keys = new ArrayList<>();
 
-        strRedisTemplate.execute(redisConnection -> {
-            Cursor<byte[]> cursor = connection.scan(
+            Cursor<byte[]> cursor = strRedisTemplate.getConnectionFactory().getConnection().keyCommands().scan(
                 ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
             );
-            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
 
-            cursor.forEachRemaining(key -> {
-                keys.add(serializer.deserialize(key));
-            });
+            while(cursor.hasNext()) {
+                String key = new String(cursor.next(), StandardCharsets.UTF_8);
 
-            return null;
-        });
+                keys.add(key);
+            }
 
         return keys;
     }
 
+    public boolean isExistInt(String key) {
+        return Boolean.TRUE.equals(integerRedisTemplate.hasKey(key));
+    }
+
     public void delete(String key) {
         strRedisTemplate.delete(key);
+    }
+
+    public void setIntValue(String key, Integer data, Duration duration) {
+        ValueOperations<String, Integer> values = integerRedisTemplate.opsForValue();
+        values.set(key, data, duration);
     }
 }
