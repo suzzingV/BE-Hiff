@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.domain.matching.presentation.controller;
 
-import hiff.hiff.behiff.domain.matching.application.MatchingService;
+import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
