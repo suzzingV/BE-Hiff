@@ -36,7 +36,7 @@ public class MatchingService {
     private final MatchingRepository matchingRepository;
     private final SimilarityFactory similarityFactory;
 
-    public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
+    public List<MatchingSimpleResponse> getFreeDailyMatching(Long userId) {
         User matcher = userCRUDService.findUserById(userId);
         List<String> matchings = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
 
