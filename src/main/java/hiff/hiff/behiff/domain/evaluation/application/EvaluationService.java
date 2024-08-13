@@ -1,5 +1,7 @@
 package hiff.hiff.behiff.domain.evaluation.application;
 
+import static hiff.hiff.behiff.global.common.redis.RedisService.EVALUATION_PREFIX;
+
 import hiff.hiff.behiff.domain.evaluation.domain.entity.EvaluatedUser;
 import hiff.hiff.behiff.domain.evaluation.domain.entity.Evaluation;
 import hiff.hiff.behiff.domain.evaluation.exception.EvaluationException;
@@ -13,13 +15,10 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static hiff.hiff.behiff.global.common.redis.RedisService.EVALUATION_PREFIX;
 
 @Service
 @Transactional
@@ -33,14 +32,15 @@ public class EvaluationService {
 
     public EvaluatedResponse getEvaluated(User evaluator) {
         checkEvaluationCount(evaluator.getId());
-        EvaluatedUser evaluatedUser = evaluatedUserRepository.findByRandom(evaluator.getId(), evaluator.getGender())
-                .orElseThrow(() -> new EvaluationException(ErrorCode.EVALUATION_NOT_FOUND));
+        EvaluatedUser evaluatedUser = evaluatedUserRepository.findByRandom(evaluator.getId(),
+                evaluator.getGender())
+            .orElseThrow(() -> new EvaluationException(ErrorCode.EVALUATION_NOT_FOUND));
         User evaluated = userCRUDService.findUserById(evaluatedUser.getUserId());
 
         return EvaluatedResponse.builder()
-                .evaluatedId(evaluated.getId())
-                .photo(evaluated.getMainPhoto())
-                .build();
+            .evaluatedId(evaluated.getId())
+            .photo(evaluated.getMainPhoto())
+            .build();
     }
 
     public EvaluationResponse evaluate(Long evaluatorId, EvaluationRequest request) {
@@ -54,25 +54,25 @@ public class EvaluationService {
         boolean isHeartProvided = countEvaluation(evaluator);
 
         return EvaluationResponse.builder()
-                .evaluatedId(evaluated.getId())
-                .isHeartProvided(isHeartProvided)
-                .build();
+            .evaluatedId(evaluated.getId())
+            .isHeartProvided(isHeartProvided)
+            .build();
     }
 
     public void addEvaluatedUser(Long userId, Gender gender) {
         EvaluatedUser evaluatedUser = EvaluatedUser.builder()
-                .userId(userId)
-                .gender(gender)
-                .build();
+            .userId(userId)
+            .gender(gender)
+            .build();
         evaluatedUserRepository.save(evaluatedUser);
     }
 
     private void createEvaluation(User evaluator, User evaluated, Integer score) {
         Evaluation evaluation = Evaluation.builder()
-                .evaluatedId(evaluated.getId())
-                .evaluatorId(evaluator.getId())
-                .score(score)
-                .build();
+            .evaluatedId(evaluated.getId())
+            .evaluatorId(evaluator.getId())
+            .score(score)
+            .build();
         evaluationRepository.save(evaluation);
     }
 
@@ -89,7 +89,8 @@ public class EvaluationService {
 
     private void updateEvaluatedScore(User evaluated, Integer score) {
         if (evaluated.getEvaluatedCount() == 9) {
-            List<EvaluatedUser> evaluatedUsers = evaluatedUserRepository.findByUserId(evaluated.getId());
+            List<EvaluatedUser> evaluatedUsers = evaluatedUserRepository.findByUserId(
+                evaluated.getId());
             Long evaluatedUserId = evaluatedUsers.get(0).getId();
             evaluatedUserRepository.deleteById(evaluatedUserId);
         }
@@ -104,9 +105,9 @@ public class EvaluationService {
         }
 
         evaluationRepository.findByEvaluatedIdAndEvaluatorId(evaluated.getId(), evaluator.getId())
-                .ifPresent(evaluation -> {
-                    throw new EvaluationException(ErrorCode.EVALUATION_ALREADY);
-                });
+            .ifPresent(evaluation -> {
+                throw new EvaluationException(ErrorCode.EVALUATION_ALREADY);
+            });
     }
 
     private void checkEvaluationCount(Long evaluatorId) {

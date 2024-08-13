@@ -3,7 +3,6 @@ package hiff.hiff.behiff.domain.user.application;
 import hiff.hiff.behiff.domain.evaluation.domain.entity.EvaluatedUser;
 import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
@@ -12,11 +11,10 @@ import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
@@ -28,19 +26,19 @@ public class UserCRUDService {
     private final EvaluatedUserRepository evaluatedUserRepository;
 
     public User registerUser(String email, String socialId, SocialType socialType,
-                             Role role) {
+        Role role) {
         User user = User.builder()
-                .role(role)
-                .socialType(socialType)
-                .socialId(socialId)
-                .email(email)
-                .build();
+            .role(role)
+            .socialType(socialType)
+            .socialId(socialId)
+            .email(email)
+            .build();
         return userRepository.save(user);
     }
 
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
     public void withdraw(User user, Optional<String> access, Optional<String> refresh) {
@@ -48,8 +46,10 @@ public class UserCRUDService {
         evaluatedUserRepository.deleteAll(evaluatedUsers);
         user.delete();
 
-        String accessToken = access.orElseThrow(() -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
-        String refreshToken = refresh.orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+        String accessToken = access.orElseThrow(
+            () -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
+        String refreshToken = refresh.orElseThrow(
+            () -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
 
         jwtService.isTokenValid(refreshToken);
         jwtService.isTokenValid(accessToken);

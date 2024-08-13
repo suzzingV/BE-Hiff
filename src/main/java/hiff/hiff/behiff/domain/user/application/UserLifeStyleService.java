@@ -9,10 +9,9 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,12 +33,12 @@ public class UserLifeStyleService {
 
     public List<String> getLifeStylesOfUser(Long userId) {
         return userLifeStyleRepository.findByUserId(userId)
-                .stream()
-                .map(userLifeStyle -> {
-                    LifeStyle lifeStyle = findLifeStyleById(userLifeStyle.getLifeStyleId());
-                    return lifeStyle.getName();
-                })
-                .toList();
+            .stream()
+            .map(userLifeStyle -> {
+                LifeStyle lifeStyle = findLifeStyleById(userLifeStyle.getLifeStyleId());
+                return lifeStyle.getName();
+            })
+            .toList();
     }
 
     public List<LifeStyle> getAllLifeStyles() {
@@ -65,9 +64,9 @@ public class UserLifeStyleService {
             LifeStyle lifeStyle = findLifeStyleById(lifeStyleId);
             lifeStyle.addCount();
             UserLifeStyle userLifeStyle = UserLifeStyle.builder()
-                    .userId(userId)
-                    .lifeStyleId(lifeStyle.getId())
-                    .build();
+                .userId(userId)
+                .lifeStyleId(lifeStyle.getId())
+                .build();
             userLifeStyleRepository.save(userLifeStyle);
         }
     }
@@ -86,6 +85,6 @@ public class UserLifeStyleService {
 
     private LifeStyle findLifeStyleById(Long lifeStyleId) {
         return lifeStyleRepository.findById(lifeStyleId)
-                .orElseThrow(() -> new UserException(ErrorCode.LIFESTYLE_NOT_FOUND));
+            .orElseThrow(() -> new UserException(ErrorCode.LIFESTYLE_NOT_FOUND));
     }
 }

@@ -5,11 +5,10 @@ import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +34,9 @@ public class UserPhotoService {
 
     public List<String> getPhotosOfUser(Long userId) {
         return userPhotoRepository.findByUserId(userId)
-                .stream()
-                .map(UserPhoto::getPhotoUrl)
-                .toList();
+            .stream()
+            .map(UserPhoto::getPhotoUrl)
+            .toList();
     }
 
     private void checkPhotoQuantity(List<MultipartFile> photos) {

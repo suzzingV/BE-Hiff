@@ -1,11 +1,11 @@
 package hiff.hiff.behiff.domain.matching.application;
 
-import static hiff.hiff.behiff.domain.matching.util.Calculator.*;
-import static hiff.hiff.behiff.global.common.redis.RedisService.*;
+import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
+import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
+import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
+import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_PREFIX;
 
 import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
-import hiff.hiff.behiff.domain.matching.domain.enums.SimilarityType;
-import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
@@ -15,13 +15,10 @@ import hiff.hiff.behiff.domain.user.application.UserWeightValueService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
-import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
-import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,9 +40,9 @@ public class MatchingService {
         User matcher = userCRUDService.findUserById(userId);
         List<String> matchings = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
 
-        if(redisService.isExistInt(MATCHING_PREFIX + userId)) {
+        if (redisService.isExistInt(MATCHING_PREFIX + userId)) {
             return matchings.stream()
-                    .map(key -> getCachedMatching(userId, key)).toList();
+                .map(key -> getCachedMatching(userId, key)).toList();
         }
 
         redisService.setIntValue(MATCHING_PREFIX + userId, 0, MATCHING_DURATION);
@@ -101,10 +98,12 @@ public class MatchingService {
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcher, matched);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcher, matched);
         int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
-        Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity, lifeStyleSimilarity, incomeSimilarity);
+        Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
+            lifeStyleSimilarity, incomeSimilarity);
 
         String key = MATCHING_PREFIX + matcher.getId() + "_" + matched.getId();
-        String value = totalScore + "/" + mbtiSimilarity + "/" + hobbySimilarity + "/" + lifeStyleSimilarity
+        String value =
+            totalScore + "/" + mbtiSimilarity + "/" + hobbySimilarity + "/" + lifeStyleSimilarity
                 + "/" + incomeSimilarity;
         redisService.setStrValue(key, value, MATCHING_DURATION);
         return totalScore;

@@ -20,26 +20,26 @@ public class UserPosService {
 
     public UserUpdateResponse createPos(Long userId, PosRequest request) {
         UserPos userPos = UserPos.builder()
-                .userId(userId)
-                .x(request.getX())
-                .y(request.getY())
-                .build();
+            .userId(userId)
+            .x(request.getX())
+            .y(request.getY())
+            .build();
 
         userPosRepository.save(userPos);
 
         return UserUpdateResponse.builder()
-                .userId(userId)
-                .build();
+            .userId(userId)
+            .build();
     }
 
     public UserUpdateResponse updatePos(Long userId, PosRequest request) {
         UserPos userPos = userPosRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.USER_POS_NOT_FOUND));
+            .orElseThrow(() -> new UserException(ErrorCode.USER_POS_NOT_FOUND));
         userPos.changePos(request.getX(), request.getY());
 
         return UserUpdateResponse.builder()
-                .userId(userId)
-                .build();
+            .userId(userId)
+            .build();
     }
 
     public UserPos findPosByUserId(Long userId) {

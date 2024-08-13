@@ -13,12 +13,12 @@ public class TokenResponse {
     private Boolean isNew;
 
     public static TokenResponse of(String accessToken, String refreshToken,
-                                   String email, boolean isNew) {
+        String email, boolean isNew) {
         return TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .email(email)
-                .isNew(isNew)
-                .build();
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .email(email)
+            .isNew(isNew)
+            .build();
     }
 }

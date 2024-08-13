@@ -3,10 +3,9 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder
@@ -42,26 +41,27 @@ public class UserDetailResponse {
 
     public static UserDetailResponseBuilder getPosBuilder(UserPos userPos) {
         return UserDetailResponse.builder()
-                .posX(userPos.getX())
-                .posY(userPos.getY());
+            .posX(userPos.getX())
+            .posY(userPos.getY());
     }
 
-    public static UserDetailResponse of(User user, List<String> photos, List<String> hobbies, List<String> lifeStyles, String posX, String posY) {
+    public static UserDetailResponse of(User user, List<String> photos, List<String> hobbies,
+        List<String> lifeStyles, String posX, String posY) {
 
         return UserDetailResponse.builder()
-                .nickname(user.getNickname())
-                .age(user.getAge())
-                .income(user.getIncome().getText())
-                .addr(user.getAddr())
-                .job(user.getJob())
-                .photos(photos)
-                .lifeStyles(lifeStyles)
-                .hobbies(hobbies)
-                .mbti(user.getMbti())
-                .education(user.getEducation().getKey())
-                .school(user.getSchool())
-                .posX(posX)
-                .posY(posY)
-                .build();
+            .nickname(user.getNickname())
+            .age(user.getAge())
+            .income(user.getIncome().getText())
+            .addr(user.getAddr())
+            .job(user.getJob())
+            .photos(photos)
+            .lifeStyles(lifeStyles)
+            .hobbies(hobbies)
+            .mbti(user.getMbti())
+            .education(user.getEducation().getKey())
+            .school(user.getSchool())
+            .posX(posX)
+            .posY(posY)
+            .build();
     }
 }

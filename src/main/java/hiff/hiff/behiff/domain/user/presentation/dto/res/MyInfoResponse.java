@@ -6,11 +6,10 @@ import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder
@@ -70,35 +69,36 @@ public class MyInfoResponse {
 
     private Double appearanceScore;
 
-    public static MyInfoResponse of(User user, List<String> hobbies, List<String> photos, List<String> lifeStyles, WeightValue weightValue) {
+    public static MyInfoResponse of(User user, List<String> hobbies, List<String> photos,
+        List<String> lifeStyles, WeightValue weightValue) {
         return MyInfoResponse.builder()
-                .userId(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .birth(user.getBirth())
-                .age(user.getAge())
-                .maxDistance(user.getMaxDistance())
-                .minDistance(user.getMinDistance())
-                .photos(photos)
-                .hobbies(hobbies)
-                .lifeStyles(lifeStyles)
-                .incomeWeight(weightValue.getIncome())
-                .lifeStyleWeight(weightValue.getLifeStyle())
-                .hobbyWeight(weightValue.getHobby())
-                .appearanceWeight(weightValue.getAppearance())
-                .mbtiWeight(weightValue.getMbti())
-                .phoneNum(user.getPhoneNum())
-                .gender(user.getGender())
-                .mbti(user.getMbti())
-                .income(user.getIncome())
-                .addr(user.getAddr())
-                .education(user.getEducation())
-                .school(user.getSchool())
-                .job(user.getJob())
-                .hopeMinAge(user.getHopeMinAge())
-                .hopeMaxAge(user.getHopeMaxAge())
-                .heart(user.getHeart())
-                .appearanceScore(user.getEvaluatedScore())
-                .build();
+            .userId(user.getId())
+            .email(user.getEmail())
+            .nickname(user.getNickname())
+            .birth(user.getBirth())
+            .age(user.getAge())
+            .maxDistance(user.getMaxDistance())
+            .minDistance(user.getMinDistance())
+            .photos(photos)
+            .hobbies(hobbies)
+            .lifeStyles(lifeStyles)
+            .incomeWeight(weightValue.getIncome())
+            .lifeStyleWeight(weightValue.getLifeStyle())
+            .hobbyWeight(weightValue.getHobby())
+            .appearanceWeight(weightValue.getAppearance())
+            .mbtiWeight(weightValue.getMbti())
+            .phoneNum(user.getPhoneNum())
+            .gender(user.getGender())
+            .mbti(user.getMbti())
+            .income(user.getIncome())
+            .addr(user.getAddr())
+            .education(user.getEducation())
+            .school(user.getSchool())
+            .job(user.getJob())
+            .hopeMinAge(user.getHopeMinAge())
+            .hopeMaxAge(user.getHopeMaxAge())
+            .heart(user.getHeart())
+            .appearanceScore(user.getEvaluatedScore())
+            .build();
     }
 }

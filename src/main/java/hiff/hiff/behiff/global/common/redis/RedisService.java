@@ -1,20 +1,16 @@
 package hiff.hiff.behiff.global.common.redis;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Duration;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -74,15 +70,16 @@ public class RedisService {
     public List<String> scanKeysWithPrefix(String prefix) {
         List<String> keys = new ArrayList<>();
 
-            Cursor<byte[]> cursor = strRedisTemplate.getConnectionFactory().getConnection().keyCommands().scan(
+        Cursor<byte[]> cursor = strRedisTemplate.getConnectionFactory().getConnection()
+            .keyCommands().scan(
                 ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
             );
 
-            while(cursor.hasNext()) {
-                String key = new String(cursor.next(), StandardCharsets.UTF_8);
+        while (cursor.hasNext()) {
+            String key = new String(cursor.next(), StandardCharsets.UTF_8);
 
-                keys.add(key);
-            }
+            keys.add(key);
+        }
 
         return keys;
     }

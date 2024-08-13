@@ -19,7 +19,8 @@ public class MatchingController {
     private final MatchingService matchingService;
 
     @GetMapping("/daily")
-    public ResponseEntity<List<MatchingSimpleResponse>> getDailyMatching(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<MatchingSimpleResponse>> getDailyMatching(
+        @AuthenticationPrincipal User user) {
         List<MatchingSimpleResponse> responses = matchingService.getDailyMatching(user.getId());
         return ResponseEntity.ok(responses);
     }
