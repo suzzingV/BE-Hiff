@@ -31,7 +31,7 @@ public class UserLifeStyleService {
         return UserUpdateResponse.from(userId);
     }
 
-    public List<String> getLifeStylesOfUser(Long userId) {
+    public List<String> findLifeStylesByUser(Long userId) {
         return userLifeStyleRepository.findByUserId(userId)
             .stream()
             .map(userLifeStyle -> {

@@ -31,7 +31,7 @@ public class UserHobbyService {
         return UserUpdateResponse.from(userId);
     }
 
-    public List<String> getHobbiesOfUser(Long userId) {
+    public List<String> findHobbiesByUser(Long userId) {
         return userHobbyRepository.findByUserId(userId)
             .stream()
             .map(userHobby -> {

@@ -168,8 +168,8 @@ public class UserService {
     public MyInfoResponse getMyInfo(Long userId) {
         User user = userCRUDService.findUserById(userId);
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
-        List<String> hobbies = userHobbyService.getHobbiesOfUser(userId);
-        List<String> lifeStyles = userLifeStyleService.getLifeStylesOfUser(userId);
+        List<String> hobbies = userHobbyService.findHobbiesByUser(userId);
+        List<String> lifeStyles = userLifeStyleService.findLifeStylesByUser(userId);
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
 
         return MyInfoResponse.of(user, hobbies, photos, lifeStyles, weightValue);
@@ -178,8 +178,8 @@ public class UserService {
     public UserDetailResponse getUserDetail(Long myId, Long userId) {
         User user = userCRUDService.findUserById(userId);
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
-        List<String> hobbies = userHobbyService.getHobbiesOfUser(userId);
-        List<String> lifeStyles = userLifeStyleService.getLifeStylesOfUser(userId);
+        List<String> hobbies = userHobbyService.findHobbiesByUser(userId);
+        List<String> lifeStyles = userLifeStyleService.findLifeStylesByUser(userId);
         Optional<UserPos> userPos = userProfileService.findUserPosByUserId(userId);
         String posX = userPos.map(UserPos::getX).orElse(null);
         String posY = userPos.map(UserPos::getY).orElse(null);
