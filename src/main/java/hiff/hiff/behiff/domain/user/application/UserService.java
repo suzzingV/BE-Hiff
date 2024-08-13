@@ -23,7 +23,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserEvaluatedScoreResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
@@ -173,18 +172,6 @@ public class UserService {
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
 
         return MyInfoResponse.of(user, hobbies, photos, lifeStyles, weightValue);
-    }
-
-    public UserDetailResponse getUserDetail(Long myId, Long userId) {
-        User user = userCRUDService.findUserById(userId);
-        List<String> photos = userPhotoService.getPhotosOfUser(userId);
-        List<String> hobbies = userHobbyService.findHobbiesByUser(userId);
-        List<String> lifeStyles = userLifeStyleService.findLifeStylesByUser(userId);
-        Optional<UserPos> userPos = userProfileService.findUserPosByUserId(userId);
-        String posX = userPos.map(UserPos::getX).orElse(null);
-        String posY = userPos.map(UserPos::getY).orElse(null);
-
-        return UserDetailResponse.of(user, photos, hobbies, lifeStyles, posX, posY);
     }
 
     @Transactional(readOnly = true)

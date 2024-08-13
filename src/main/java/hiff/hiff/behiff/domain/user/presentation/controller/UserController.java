@@ -19,7 +19,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserDetailResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserEvaluatedScoreResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
@@ -69,13 +68,6 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<MyInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
         MyInfoResponse response = userService.getMyInfo(user.getId());
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDetailResponse> getUserInfo(@AuthenticationPrincipal User me,
-        @PathVariable Long userId) {
-        UserDetailResponse response = userService.getUserDetail(me.getId(), userId);
         return ResponseEntity.ok(response);
     }
 
