@@ -35,8 +35,10 @@ public class MatchingController {
     }
 
     @GetMapping("/daily/{matchedId}")
-    public ResponseEntity<MatchingDetailResponse> getDailyMatchingDetails(@AuthenticationPrincipal User user, @PathVariable Long matchedId) {
-        MatchingDetailResponse response = matchingService.getDailyMatchingDetails(user.getId(), matchedId);
+    public ResponseEntity<MatchingDetailResponse> getDailyMatchingDetails(
+        @AuthenticationPrincipal User user, @PathVariable Long matchedId) {
+        MatchingDetailResponse response = matchingService.getDailyMatchingDetails(user.getId(),
+            matchedId);
         return ResponseEntity.ok(response);
     }
 }

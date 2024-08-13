@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.matching.presentation.dto.res;
 
-import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
 import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import java.util.List;

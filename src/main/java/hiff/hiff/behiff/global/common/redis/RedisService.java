@@ -71,7 +71,8 @@ public class RedisService {
     public List<String> scanKeysWithPrefix(String prefix) {
         List<String> keys = new ArrayList<>();
 
-        Cursor<byte[]> cursor = Objects.requireNonNull(strRedisTemplate.getConnectionFactory()).getConnection()
+        Cursor<byte[]> cursor = Objects.requireNonNull(strRedisTemplate.getConnectionFactory())
+            .getConnection()
             .keyCommands().scan(
                 ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
             );

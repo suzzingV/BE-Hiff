@@ -52,7 +52,8 @@ public class MatchingService {
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
         //TODO: 거리계산 논의 필요
         User matcher = userCRUDService.findUserById(userId);
-        List<String> matchingScores = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
+        List<String> matchingScores = redisService.scanKeysWithPrefix(
+            MATCHING_PREFIX + userId + "_");
 
         if (redisService.isExistInt(MATCHING_PREFIX + userId)) {
             return matchingScores.stream()
@@ -74,7 +75,8 @@ public class MatchingService {
         //TODO: 유료결제 했는데 딱 쿨타임 돌면 어떡해?
         User matcher = userCRUDService.findUserById(userId);
         matcher.subtractHeart(1);
-        List<String> matchingScores = redisService.scanKeysWithPrefix(MATCHING_PREFIX + userId + "_");
+        List<String> matchingScores = redisService.scanKeysWithPrefix(
+            MATCHING_PREFIX + userId + "_");
         List<MatchingSimpleResponse> responses = userRepository.getFiveMatched(userId,
                 matcher.getGender())
             .stream()
@@ -90,36 +92,11 @@ public class MatchingService {
         User matched = userCRUDService.findUserById(matchedId);
 
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
-
-        List<String> matcherHobbies = userHobbyService.findHobbiesByUser(matcherId);
-        List<String> matchedHobbies = userHobbyService.findHobbiesByUser(matchedId);
-
-        List<NameWithCommonDto> hobbies = matchedHobbies.stream()
-            .map(hobby -> {
-                boolean isCommon = matcherHobbies.contains(hobby);
-                return NameWithCommonDto.builder()
-                    .name(hobby)
-                    .isCommon(isCommon)
-                    .build();
-            }).toList();
-
-        List<String> matcherLifeStyles = userLifeStyleService.findLifeStylesByUser(matcherId);
-        List<String> matchedLifeStyles = userLifeStyleService.findLifeStylesByUser(matchedId);
-
-        List<NameWithCommonDto> lifeStyles = matchedLifeStyles.stream()
-            .map(lifeStyle -> {
-                boolean isCommon = matcherLifeStyles.contains(lifeStyle);
-                return NameWithCommonDto.builder()
-                    .name(lifeStyle)
-                    .isCommon(isCommon)
-                    .build();
-            }).toList();
+        List<NameWithCommonDto> hobbies = getHobbiesWithCommon(matcherId, matchedId);
+        List<NameWithCommonDto> lifeStyles = getLifeStylesWithCommon(matcherId, matchedId);
 
         String key = MATCHING_PREFIX + matcherId + "_" + matchedId;
-        String matchingScore = redisService.getStrValue(key);
-        if(matchingScore.equals(NOT_EXIST)) {
-            throw new MatchingException(ErrorCode.MATCHING_SCORE_NOT_FOUND);
-        }
+        String matchingScore = getMatchingScore(key);
 
         StringTokenizer st = new StringTokenizer(matchingScore, "/");
         int totalScore = Integer.parseInt(st.nextToken());
@@ -146,6 +123,42 @@ public class MatchingService {
             .lifeStyles(lifeStyles)
             .lifeStyleSimilarity(lifeStyleSimilarity)
             .build();
+    }
+
+    private String getMatchingScore(String key) {
+        String matchingScore = redisService.getStrValue(key);
+        if (matchingScore.equals(NOT_EXIST)) {
+            throw new MatchingException(ErrorCode.MATCHING_SCORE_NOT_FOUND);
+        }
+        return matchingScore;
+    }
+
+    private List<NameWithCommonDto> getLifeStylesWithCommon(Long matcherId, Long matchedId) {
+        List<String> matcherLifeStyles = userLifeStyleService.findLifeStylesByUser(matcherId);
+        List<String> matchedLifeStyles = userLifeStyleService.findLifeStylesByUser(matchedId);
+
+        return matchedLifeStyles.stream()
+            .map(lifeStyle -> {
+                boolean isCommon = matcherLifeStyles.contains(lifeStyle);
+                return NameWithCommonDto.builder()
+                    .name(lifeStyle)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
+    }
+
+    private List<NameWithCommonDto> getHobbiesWithCommon(Long matcherId, Long matchedId) {
+        List<String> matcherHobbies = userHobbyService.findHobbiesByUser(matcherId);
+        List<String> matchedHobbies = userHobbyService.findHobbiesByUser(matchedId);
+
+        return matchedHobbies.stream()
+            .map(hobby -> {
+                boolean isCommon = matcherHobbies.contains(hobby);
+                return NameWithCommonDto.builder()
+                    .name(hobby)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
     }
 
     private void checkMatching(Long matcherId, Long matchedId) {
