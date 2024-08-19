@@ -3,6 +3,7 @@ package hiff.hiff.behiff.global.validation.annotation;
 import hiff.hiff.behiff.global.validation.validator.EducationValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

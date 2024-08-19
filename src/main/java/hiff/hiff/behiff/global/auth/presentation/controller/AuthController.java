@@ -1,7 +1,5 @@
 package hiff.hiff.behiff.global.auth.presentation.controller;
 
-import hiff.hiff.behiff.domain.user.application.UserService;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
@@ -9,14 +7,11 @@ import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor

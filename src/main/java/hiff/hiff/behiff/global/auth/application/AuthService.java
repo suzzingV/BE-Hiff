@@ -12,10 +12,11 @@ import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -63,7 +64,7 @@ public class AuthService {
         User user = userService.findByEmail(request.getEmail());
         response.changeUserId(user.getId());
 
-        if(response.getIsNew()) {
+        if (response.getIsNew()) {
             userService.createPos(response.getUserId(), request.getPosX(), request.getPosY());
         } else {
             userService.updatePos(response.getUserId(), request.getPosX(), request.getPosY());
@@ -74,22 +75,22 @@ public class AuthService {
 
     public TokenResponse reissueTokens(Optional<String> refresh) {
         String refreshToken = refresh
-            .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
         String email = checkRefreshToken(refreshToken);
         String reissuedAccessToken = jwtService.createAccessToken(email);
         String reissuedRefreshToken = jwtService.reissueRefreshToken(refreshToken, email);
 
         return TokenResponse.builder()
-            .accessToken(reissuedAccessToken)
-            .refreshToken(reissuedRefreshToken)
-            .build();
+                .accessToken(reissuedAccessToken)
+                .refreshToken(reissuedRefreshToken)
+                .build();
     }
 
     public void logout(Optional<String> access, Optional<String> refresh) {
         String accessToken = access.orElseThrow(
-            () -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
+                () -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
         String refreshToken = refresh.orElseThrow(
-            () -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+                () -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
         jwtService.isTokenValid(refreshToken);
         jwtService.isTokenValid(accessToken);
         jwtService.deleteRefreshToken(refreshToken);

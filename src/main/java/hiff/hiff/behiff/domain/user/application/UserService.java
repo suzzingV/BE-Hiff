@@ -5,30 +5,18 @@ import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserEvaluatedScoreResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +33,7 @@ public class UserService {
     private final UserPosService userPosService;
 
     public User registerUser(String email, String socialId, SocialType socialType,
-        Role role) {
+                             Role role) {
         User user = userCRUDService.registerUser(email, socialId, socialType, role);
         userWeightValueService.createWeightValue(user.getId());
         return user;
@@ -56,7 +44,7 @@ public class UserService {
     }
 
     public void createPos(Long userId, String x, String y) {
-            userPosService.createPos(userId, x, y);
+        userPosService.createPos(userId, x, y);
     }
 
     public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {
@@ -159,7 +147,7 @@ public class UserService {
     }
 
     public UserUpdateResponse updatePos(Long userId, String x, String y) {
-            return userPosService.updatePos(userId, x, y);
+        return userPosService.updatePos(userId, x, y);
     }
 
     public MyInfoResponse getMyInfo(Long userId) {
@@ -175,42 +163,42 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<TagResponse> getHobbies() {
         return userHobbyService.getAllHobbies()
-            .stream().map(hobby ->
-                TagResponse.builder()
-                    .id(hobby.getId())
-                    .name(hobby.getName())
-                    .build())
-            .toList();
+                .stream().map(hobby ->
+                        TagResponse.builder()
+                                .id(hobby.getId())
+                                .name(hobby.getName())
+                                .build())
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<TagResponse> getLifeStyles() {
         return userLifeStyleService.getAllLifeStyles()
-            .stream().map(lifeStyle ->
-                TagResponse.builder()
-                    .id(lifeStyle.getId())
-                    .name(lifeStyle.getName())
-                    .build())
-            .toList();
+                .stream().map(lifeStyle ->
+                        TagResponse.builder()
+                                .id(lifeStyle.getId())
+                                .name(lifeStyle.getName())
+                                .build())
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<TagResponse> getJobs() {
         return userJobService.getAllJobs()
-            .stream().map(job ->
-                TagResponse.builder()
-                    .id(job.getId())
-                    .name(job.getName())
-                    .build())
-            .toList();
+                .stream().map(job ->
+                        TagResponse.builder()
+                                .id(job.getId())
+                                .name(job.getName())
+                                .build())
+                .toList();
     }
 
     public UserEvaluatedScoreResponse getEvaluatedScore(Long userId) {
         User user = userCRUDService.findById(userId);
         Double score = userProfileService.getEvaluatedScore(user);
         return UserEvaluatedScoreResponse.builder()
-            .evaluatedScore(score)
-            .userId(userId)
-            .build();
+                .evaluatedScore(score)
+                .userId(userId)
+                .build();
     }
 }

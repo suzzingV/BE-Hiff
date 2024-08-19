@@ -1,9 +1,10 @@
 package hiff.hiff.behiff.domain.user.domain.enums;
 
-import java.util.EnumSet;
-import java.util.Set;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor

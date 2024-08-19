@@ -1,10 +1,5 @@
 package hiff.hiff.behiff.global.common.redis;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +7,12 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -72,10 +73,10 @@ public class RedisService {
         List<String> keys = new ArrayList<>();
 
         Cursor<byte[]> cursor = Objects.requireNonNull(strRedisTemplate.getConnectionFactory())
-            .getConnection()
-            .keyCommands().scan(
-                ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
-            );
+                .getConnection()
+                .keyCommands().scan(
+                        ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
+                );
 
         while (cursor.hasNext()) {
             String key = new String(cursor.next(), StandardCharsets.UTF_8);

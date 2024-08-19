@@ -11,7 +11,7 @@ public class UserUpdateResponse {
 
     public static UserUpdateResponse from(Long userId) {
         return UserUpdateResponse.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
     }
 }

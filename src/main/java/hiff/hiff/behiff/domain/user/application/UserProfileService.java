@@ -7,21 +7,13 @@ import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -83,9 +75,9 @@ public class UserProfileService {
 
     private void checkNicknameDuplication(String nickname) {
         userRepository.findByNickname(nickname)
-            .ifPresent(user -> {
-                throw new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS);
-            });
+                .ifPresent(user -> {
+                    throw new UserException(ErrorCode.NICKNAME_ALREADY_EXISTS);
+                });
     }
 
     private static void checkDistanceRange(DistanceRequest request) {
@@ -103,9 +95,9 @@ public class UserProfileService {
 
     private void changeEvaluatedUserGender(User user, Gender gender) {
         evaluatedUserRepository.findByUserId(user.getId())
-            .forEach(evaluatedUser -> {
-                evaluatedUser.changeGender(gender);
-                evaluatedUserRepository.save(evaluatedUser);
-            });
+                .forEach(evaluatedUser -> {
+                    evaluatedUser.changeGender(gender);
+                    evaluatedUserRepository.save(evaluatedUser);
+                });
     }
 }

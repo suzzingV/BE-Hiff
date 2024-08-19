@@ -8,10 +8,11 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -33,12 +34,12 @@ public class UserHobbyService {
 
     public List<String> findHobbiesByUser(Long userId) {
         return userHobbyRepository.findByUserId(userId)
-            .stream()
-            .map(userHobby -> {
-                Hobby hobby = findHobbyById(userHobby.getHobbyId());
-                return hobby.getName();
-            })
-            .toList();
+                .stream()
+                .map(userHobby -> {
+                    Hobby hobby = findHobbyById(userHobby.getHobbyId());
+                    return hobby.getName();
+                })
+                .toList();
     }
 
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
@@ -65,9 +66,9 @@ public class UserHobbyService {
             Hobby hobby = findHobbyById(hobbyId);
             hobby.addCount();
             UserHobby userHobby = UserHobby.builder()
-                .userId(userId)
-                .hobbyId(hobbyId)
-                .build();
+                    .userId(userId)
+                    .hobbyId(hobbyId)
+                    .build();
             userHobbyRepository.save(userHobby);
         }
     }
@@ -86,6 +87,6 @@ public class UserHobbyService {
 
     private Hobby findHobbyById(Long hobbyId) {
         return hobbyRepository.findById(hobbyId)
-            .orElseThrow(() -> new UserException(ErrorCode.HOBBY_NOT_FOUND));
+                .orElseThrow(() -> new UserException(ErrorCode.HOBBY_NOT_FOUND));
     }
 }

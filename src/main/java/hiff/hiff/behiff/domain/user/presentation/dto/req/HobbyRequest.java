@@ -1,7 +1,8 @@
 package hiff.hiff.behiff.domain.user.presentation.dto.req;
 
-import java.util.List;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class HobbyRequest {
