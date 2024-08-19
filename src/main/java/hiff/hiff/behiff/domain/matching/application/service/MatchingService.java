@@ -50,9 +50,9 @@ public class MatchingService {
     private final UserLifeStyleService userLifeStyleService;
     private final UserPhotoService userPhotoService;
 
+    // TODO: 나이 거리 매칭 고려
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
-        //TODO: 거리계산 논의 필요
-        User matcher = userCRUDService.findUserById(userId);
+        User matcher = userCRUDService.findById(userId);
         List<String> matchingScores = redisService.scanKeysWithPrefix(
             MATCHING_PREFIX + userId + "_");
 
@@ -61,7 +61,7 @@ public class MatchingService {
                 .map(key -> getCachedMatching(userId, key)).toList();
         }
 
-        //TODO: 더이상 새로 매칭할 사람이 없거나 5명 이하면 어떡해?
+        // TODO: 더이상 새로 매칭할 사람이 없거나 5명 이하면 어떡해?
         List<MatchingSimpleResponse> responses = userRepository.getFiveMatched(userId,
                 matcher.getGender())
             .stream()
@@ -74,7 +74,7 @@ public class MatchingService {
 
     public List<MatchingSimpleResponse> getPaidDailyMatching(Long userId) {
         //TODO: 유료결제 했는데 딱 쿨타임 돌면 어떡해?
-        User matcher = userCRUDService.findUserById(userId);
+        User matcher = userCRUDService.findById(userId);
         matcher.subtractHeart(1);
         List<String> matchingScores = redisService.scanKeysWithPrefix(
             MATCHING_PREFIX + userId + "_");
@@ -89,8 +89,8 @@ public class MatchingService {
 
     public MatchingDetailResponse getDailyMatchingDetails(Long matcherId, Long matchedId) {
         checkMatching(matcherId, matchedId);
-        User matcher = userCRUDService.findUserById(matcherId);
-        User matched = userCRUDService.findUserById(matchedId);
+        User matcher = userCRUDService.findById(matcherId);
+        User matched = userCRUDService.findById(matchedId);
 
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
         List<NameWithCommonDto> hobbies = getHobbiesWithCommon(matcherId, matchedId);
@@ -201,7 +201,7 @@ public class MatchingService {
 
     private MatchingSimpleResponse getCachedMatching(Long userId, String key) {
         Long matchedId = getMatchedId(key);
-        User matched = userCRUDService.findUserById(matchedId);
+        User matched = userCRUDService.findById(matchedId);
         int totalScore = getTotalScore(key);
 
         return MatchingSimpleResponse.builder()

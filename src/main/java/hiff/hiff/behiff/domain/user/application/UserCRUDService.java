@@ -36,9 +36,16 @@ public class UserCRUDService {
         return userRepository.save(user);
     }
 
-    public User findUserById(Long userId) {
+
+
+    public User findById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
     public void withdraw(User user, Optional<String> access, Optional<String> refresh) {

@@ -1,8 +1,11 @@
 package hiff.hiff.behiff.global.auth.presentation.controller;
 
+import hiff.hiff.behiff.domain.user.application.UserService;
+import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -24,8 +27,11 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        TokenResponse tokenResponse = authService.createTokens(request);
+        LoginResponse response = authService.login(request, tokenResponse);
+        authService.updatePos(request, response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/reissue")

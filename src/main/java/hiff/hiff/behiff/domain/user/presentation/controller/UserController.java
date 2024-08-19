@@ -15,7 +15,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
@@ -185,20 +184,6 @@ public class UserController {
     public ResponseEntity<UserEvaluatedScoreResponse> getEvaluatedScore(
         @AuthenticationPrincipal User user) {
         UserEvaluatedScoreResponse response = userService.getEvaluatedScore(user.getId());
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping("/pos")
-    public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user,
-        @RequestBody PosRequest request) {
-        UserUpdateResponse response = userService.updatePos(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/pos")
-    public ResponseEntity<UserUpdateResponse> createPos(@AuthenticationPrincipal User user,
-        @RequestBody PosRequest request) {
-        UserUpdateResponse response = userService.createPos(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

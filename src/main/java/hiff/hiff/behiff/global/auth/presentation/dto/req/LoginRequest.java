@@ -23,4 +23,10 @@ public class LoginRequest {
 
     @ValidSocialType
     private SocialType socialType;
+
+    @NotEmpty
+    private String posX;
+
+    @NotEmpty
+    private String posY;
 }

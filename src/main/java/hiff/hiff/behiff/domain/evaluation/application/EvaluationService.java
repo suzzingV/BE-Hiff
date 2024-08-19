@@ -35,7 +35,7 @@ public class EvaluationService {
         EvaluatedUser evaluatedUser = evaluatedUserRepository.findByRandom(evaluator.getId(),
                 evaluator.getGender())
             .orElseThrow(() -> new EvaluationException(ErrorCode.EVALUATION_NOT_FOUND));
-        User evaluated = userCRUDService.findUserById(evaluatedUser.getUserId());
+        User evaluated = userCRUDService.findById(evaluatedUser.getUserId());
 
         return EvaluatedResponse.builder()
             .evaluatedId(evaluated.getId())
@@ -44,8 +44,8 @@ public class EvaluationService {
     }
 
     public EvaluationResponse evaluate(Long evaluatorId, EvaluationRequest request) {
-        User evaluator = userCRUDService.findUserById(evaluatorId);
-        User evaluated = userCRUDService.findUserById(request.getEvaluatedId());
+        User evaluator = userCRUDService.findById(evaluatorId);
+        User evaluated = userCRUDService.findById(request.getEvaluatedId());
         Integer score = request.getScore();
 
         checkEvaluationAvailable(evaluator, evaluated);

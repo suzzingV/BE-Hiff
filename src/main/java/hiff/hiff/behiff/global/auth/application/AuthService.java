@@ -9,6 +9,7 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.Optional;
@@ -26,27 +27,49 @@ public class AuthService {
     private final EvaluationService evaluationService;
     private final UserService userService;
 
-    public TokenResponse login(LoginRequest request) {
+    public TokenResponse createTokens(LoginRequest request) {
         String email = request.getEmail();
-        SocialType socialType = request.getSocialType();
-        String socialId = request.getSocialId();
 
         String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
         jwtService.updateRefreshToken(refreshToken, email);
 
+        return TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public LoginResponse login(LoginRequest request, TokenResponse tokenResponse) {
+        String email = request.getEmail();
+        SocialType socialType = request.getSocialType();
+        String socialId = request.getSocialId();
+
         return userRepository.findByEmail(email)
-            .map(user -> {
-                user.updateAge();
-                return TokenResponse.of(accessToken, refreshToken, email, false);
-            })
-            .orElseGet(() -> {
-                User newUser = userService.registerUser(email, socialId, socialType, Role.USER);
-                newUser.updateAge();
-                evaluationService.addEvaluatedUser(newUser.getId(), newUser.getGender());
-                evaluationService.addEvaluatedUser(newUser.getId(), newUser.getGender());
-                return TokenResponse.of(accessToken, refreshToken, email, true);
-            });
+                .map(user -> {
+                    user.updateAge();
+                    return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), false, email);
+                })
+                .orElseGet(() -> {
+                    User newUser = userService.registerUser(email, socialId, socialType, Role.USER);
+                    newUser.updateAge();
+                    evaluationService.addEvaluatedUser(newUser.getId(), newUser.getGender());
+                    evaluationService.addEvaluatedUser(newUser.getId(), newUser.getGender());
+                    return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), true, email);
+                });
+    }
+
+    public LoginResponse updatePos(LoginRequest request, LoginResponse response) {
+        User user = userService.findByEmail(request.getEmail());
+        response.changeUserId(user.getId());
+
+        if(response.getIsNew()) {
+            userService.createPos(response.getUserId(), request.getPosX(), request.getPosY());
+        } else {
+            userService.updatePos(response.getUserId(), request.getPosX(), request.getPosY());
+        }
+
+        return response;
     }
 
     public TokenResponse reissueTokens(Optional<String> refresh) {
@@ -59,8 +82,6 @@ public class AuthService {
         return TokenResponse.builder()
             .accessToken(reissuedAccessToken)
             .refreshToken(reissuedRefreshToken)
-            .isNew(true)
-            .email(email)
             .build();
     }
 

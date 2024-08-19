@@ -4,7 +4,6 @@ import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +17,20 @@ public class UserPosService {
 
     private final UserPosRepository userPosRepository;
 
-    public UserUpdateResponse createPos(Long userId, PosRequest request) {
+    public void createPos(Long userId, String x, String y) {
         UserPos userPos = UserPos.builder()
             .userId(userId)
-            .x(request.getX())
-            .y(request.getY())
+            .x(x)
+            .y(y)
             .build();
 
         userPosRepository.save(userPos);
-
-        return UserUpdateResponse.builder()
-            .userId(userId)
-            .build();
     }
 
-    public UserUpdateResponse updatePos(Long userId, PosRequest request) {
+    public UserUpdateResponse updatePos(Long userId, String x, String y) {
         UserPos userPos = userPosRepository.findByUserId(userId)
             .orElseThrow(() -> new UserException(ErrorCode.USER_POS_NOT_FOUND));
-        userPos.changePos(request.getX(), request.getY());
+        userPos.changePos(x, y);
 
         return UserUpdateResponse.builder()
             .userId(userId)

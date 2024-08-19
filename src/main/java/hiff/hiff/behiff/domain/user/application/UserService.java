@@ -18,7 +18,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
@@ -52,14 +51,16 @@ public class UserService {
         return user;
     }
 
-    public UserUpdateResponse createPos(Long userId, PosRequest request) {
-        {
-            return userPosService.createPos(userId, request);
-        }
+    public User findByEmail(String email) {
+        return userCRUDService.findByEmail(email);
+    }
+
+    public void createPos(Long userId, String x, String y) {
+            userPosService.createPos(userId, x, y);
     }
 
     public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userCRUDService.withdraw(user, accessToken, refreshToken);
     }
 
@@ -70,61 +71,61 @@ public class UserService {
 //    }
 
     public UserUpdateResponse updateNickname(Long userId, NicknameRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateNickname(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateBirth(Long userId, BirthRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateBirth(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateGender(Long userId, GenderRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateGender(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateMbti(Long userId, MbtiRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateMbti(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateIncome(Long userId, IncomeRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateIncome(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateAddress(Long userId, AddressRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateAddress(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateEducation(Long userId, EducationRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateEducation(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updatePhoneNum(Long userId, PhoneNumRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updatePhoneNum(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateHopeAge(Long userId, HopeAgeRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateHopeAge(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateJob(Long userId, JobRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         if (request.getJobId() != null && request.getNewJobName() == null) {
             userJobService.updateOriginJob(user, request.getJobId());
         } else if (request.getNewJobName() != null && request.getJobId() == null) {
@@ -136,35 +137,33 @@ public class UserService {
     }
 
     public UserUpdateResponse updateHobby(Long userId, HobbyRequest request) {
-        userCRUDService.findUserById(userId);
+        userCRUDService.findById(userId);
         return userHobbyService.updateHobby(userId, request);
     }
 
     public UserUpdateResponse updateLifeStyle(Long userId, LifeStyleRequest request) {
-        userCRUDService.findUserById(userId);
+        userCRUDService.findById(userId);
         return userLifeStyleService.updateLifeStyle(userId, request);
     }
 
     public UserUpdateResponse updateDistance(Long userId, DistanceRequest request) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         userProfileService.updateDistance(user, request);
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateWeightValue(Long userId, WeightValueRequest request) {
-        userCRUDService.findUserById(userId);
+        userCRUDService.findById(userId);
         userWeightValueService.updateWeightValue(userId, request);
         return UserUpdateResponse.from(userId);
     }
 
-    public UserUpdateResponse updatePos(Long userId, PosRequest request) {
-        {
-            return userPosService.updatePos(userId, request);
-        }
+    public UserUpdateResponse updatePos(Long userId, String x, String y) {
+            return userPosService.updatePos(userId, x, y);
     }
 
     public MyInfoResponse getMyInfo(Long userId) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
         List<String> hobbies = userHobbyService.findHobbiesByUser(userId);
         List<String> lifeStyles = userLifeStyleService.findLifeStylesByUser(userId);
@@ -207,7 +206,7 @@ public class UserService {
     }
 
     public UserEvaluatedScoreResponse getEvaluatedScore(Long userId) {
-        User user = userCRUDService.findUserById(userId);
+        User user = userCRUDService.findById(userId);
         Double score = userProfileService.getEvaluatedScore(user);
         return UserEvaluatedScoreResponse.builder()
             .evaluatedScore(score)
