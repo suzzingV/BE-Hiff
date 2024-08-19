@@ -56,6 +56,7 @@ public class MatchingService {
     // TODO: 힢 매칭 나이 거리 매칭 고려
     // TODO: 힢 매칭 보너스
     // TODO: 스케줄러로 00시마다 매칭 레디스 초기화
+    // TODO: 외모 점수는 총 점수에 영향 안주나?
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
         User matcher = userCRUDService.findById(userId);
         List<String> originalMatching = redisService.scanKeysWithPrefix(

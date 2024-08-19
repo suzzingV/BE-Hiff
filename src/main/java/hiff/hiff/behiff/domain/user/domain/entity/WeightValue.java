@@ -26,7 +26,7 @@ public class WeightValue {
     @Column(nullable = false)
     private Long userId;
 
-    @Min(1)
+    @Min(0)
     @Max(5)
     @Column(nullable = false)
     private Integer income;
@@ -62,7 +62,7 @@ public class WeightValue {
         this.hobby = 3;
         this.lifeStyle = 3;
         this.mbti = 3;
-        this.total = 3 * 5;
+        this.total = 3 * 3;
     }
 
     public void changeWeightValue(Integer income, Integer appearance, Integer hobby,
@@ -72,6 +72,6 @@ public class WeightValue {
         this.hobby = hobby;
         this.lifeStyle = lifeStyle;
         this.mbti = mbti;
-        this.total = income + appearance + hobby + lifeStyle + mbti;
+        this.total = income + hobby + lifeStyle + mbti;
     }
 }

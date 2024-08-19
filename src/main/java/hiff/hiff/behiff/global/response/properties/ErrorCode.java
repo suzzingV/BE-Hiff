@@ -28,6 +28,7 @@ public enum ErrorCode {
     EVALUATION_COUNT_NOT_ENOUGH(BAD_REQUEST, "받은 첫인상 평가 횟수가 충분하지 않습니다."),
     LACK_OF_HEART(BAD_REQUEST, "하트가 부족합니다."),
     INVALID_SIMILARITY_TYPE(BAD_REQUEST, "적절한 유사도 타입이 아닙니다."),
+    INCOME_WEIGHT_VALUE_PRIVATE(BAD_REQUEST, "소득이 비공개일 경우 가중치는 0이어야 합니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
