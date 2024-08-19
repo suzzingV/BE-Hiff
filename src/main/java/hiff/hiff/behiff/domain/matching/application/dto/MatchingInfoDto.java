@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MatchingScoreDto {
+public class MatchingInfoDto {
 
     private Integer mbtiSimilarity;
 

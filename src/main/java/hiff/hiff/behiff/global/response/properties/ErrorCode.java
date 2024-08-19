@@ -47,7 +47,8 @@ public enum ErrorCode {
     EVALUATED_USER_NOT_FOUND(NOT_FOUND, "첫인상 평가 대상이 존재하지 않습니다."),
     EVALUATION_NOT_FOUND(NOT_FOUND, "첫인상 평가 대상을 찾을 수 없습니다."),
     USER_POS_NOT_FOUND(NOT_FOUND, "사용자의 위치를 찾을 수 없습니다."),
-    MATCHING_NOT_FOUND(NOT_FOUND, "매칭 내역이 존재하지 않습니다."),
+    MATCHING_HISTORY_NOT_FOUND(NOT_FOUND, "매칭 내역이 존재하지 않습니다."),
+    MATCHING_NOT_FOUND(NOT_FOUND, "매칭 상대가 존재하지 않습니다."),
     MATCHING_SCORE_NOT_FOUND(NOT_FOUND, "매칭 점수 내역이 존재하지 않습니다."),
 
     // 500

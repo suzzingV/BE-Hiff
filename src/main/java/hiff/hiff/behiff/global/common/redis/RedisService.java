@@ -28,6 +28,7 @@ public class RedisService {
     public static final String LIFESTYLE_PREFIX = "lifestyle_";
     public static final String INCOME_PREFIX = "income_";
     public static final String MATCHING_PREFIX = "matching_";
+    public static final String PAID_MATCHING_PREFIX = "paidMatching_";
     private static final Duration EVALUATION_DURATION = Duration.ofDays(1);
     public static final Duration MATCHING_DURATION = Duration.ofDays(1);
 

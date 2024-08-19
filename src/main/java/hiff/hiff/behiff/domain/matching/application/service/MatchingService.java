@@ -1,6 +1,13 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
-import hiff.hiff.behiff.domain.matching.application.dto.MatchingScoreDto;
+import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
+import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
+import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
+import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_PREFIX;
+import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
+import static hiff.hiff.behiff.global.common.redis.RedisService.PAID_MATCHING_PREFIX;
+
+import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
 import hiff.hiff.behiff.domain.matching.exception.MatchingException;
@@ -8,24 +15,24 @@ import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
-import hiff.hiff.behiff.domain.user.application.*;
+import hiff.hiff.behiff.domain.user.application.UserCRUDService;
+import hiff.hiff.behiff.domain.user.application.UserHobbyService;
+import hiff.hiff.behiff.domain.user.application.UserLifeStyleService;
+import hiff.hiff.behiff.domain.user.application.UserPhotoService;
+import hiff.hiff.behiff.domain.user.application.UserPosService;
+import hiff.hiff.behiff.domain.user.application.UserWeightValueService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import java.util.List;
+import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.StringTokenizer;
-
-import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
-import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
-import static hiff.hiff.behiff.global.common.redis.RedisService.*;
 
 @Service
 @Transactional
@@ -44,45 +51,36 @@ public class MatchingService {
     private final UserLifeStyleService userLifeStyleService;
     private final UserPhotoService userPhotoService;
 
-    // TODO: 나이 거리 매칭 고려
+    private static final Integer DAILY_MATCHING_HEART = 1;
+
+    // TODO: 힢 매칭 나이 거리 매칭 고려
+    // TODO: 힢 매칭 보너스
+    // TODO: 스케줄러로 00시마다 매칭 레디스 초기화
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
         User matcher = userCRUDService.findById(userId);
-        List<String> matchingScores = redisService.scanKeysWithPrefix(
-                MATCHING_PREFIX + userId + "_");
-
-        if (redisService.isExistInt(MATCHING_PREFIX + userId)) {
-            return matchingScores.stream()
-                    .map(key -> getCachedMatching(userId, key)).toList();
+        List<String> originalMatching = redisService.scanKeysWithPrefix(
+            MATCHING_PREFIX + userId + "_");
+        if (!originalMatching.isEmpty()) {
+            return getCachedMatching(userId, originalMatching);
         }
 
-        // TODO: 더이상 새로 매칭할 사람이 없거나 5명 이하면 어떡해?
-        List<MatchingSimpleResponse> responses = userRepository.getFiveMatched(userId,
-                        matcher.getGender())
-                .stream()
-                .map(matched -> getNewMatching(matched, matcher)).toList();
-
-        redisService.setIntValue(MATCHING_PREFIX + userId, 0, MATCHING_DURATION);
-        matchingScores.forEach(redisService::delete);
-        return responses;
+        return getNewDailyMatching(matcher, MATCHING_PREFIX);
     }
 
     public List<MatchingSimpleResponse> getPaidDailyMatching(Long userId) {
-        //TODO: 유료결제 했는데 딱 쿨타임 돌면 어떡해?
         User matcher = userCRUDService.findById(userId);
-        matcher.subtractHeart(1);
-        List<String> matchingScores = redisService.scanKeysWithPrefix(
-                MATCHING_PREFIX + userId + "_");
-        List<MatchingSimpleResponse> responses = userRepository.getFiveMatched(userId,
-                        matcher.getGender())
-                .stream()
-                .map(matched -> getNewMatching(matched, matcher)).toList();
+        useHeart(matcher);
+        List<String> originalMatching = redisService.scanKeysWithPrefix(
+            PAID_MATCHING_PREFIX + userId + "_");
+        List<MatchingSimpleResponse> newMatching = getNewDailyMatching(matcher,
+            PAID_MATCHING_PREFIX);
 
-        matchingScores.forEach(redisService::delete);
-        return responses;
+        originalMatching.forEach(redisService::delete);
+        return newMatching;
     }
 
     public MatchingDetailResponse getDailyMatchingDetails(Long matcherId, Long matchedId) {
-        checkMatching(matcherId, matchedId);
+        checkMatchingHistory(matcherId, matchedId);
         User matcher = userCRUDService.findById(matcherId);
         User matched = userCRUDService.findById(matchedId);
 
@@ -91,10 +89,47 @@ public class MatchingService {
         List<NameWithCommonDto> lifeStyles = getLifeStylesWithCommon(matcherId, matchedId);
 
         Double distance = getDistance(matcherId, matchedId);
-        MatchingScoreDto matchingScoreDto = getCachedMatchingScore(matcherId, matchedId);
+        MatchingInfoDto matchingInfoDto = getCachedMatchingInfo(matcherId, matchedId);
 
-        return MatchingDetailResponse.of(matcher, matched, distance, photos, matchingScoreDto,
-                hobbies, lifeStyles);
+        return MatchingDetailResponse.of(matcher, matched, distance, photos, matchingInfoDto,
+            hobbies, lifeStyles);
+    }
+
+    private void useHeart(User matcher) {
+        if (matcher.getHeart() < DAILY_MATCHING_HEART) {
+            throw new MatchingException(ErrorCode.LACK_OF_HEART);
+        }
+        matcher.subtractHeart(DAILY_MATCHING_HEART);
+    }
+
+    private List<MatchingSimpleResponse> getCachedMatching(Long userId,
+        List<String> originalMatching) {
+        return originalMatching.stream()
+            .map(key -> {
+                Long matchedId = getMatchedId(key);
+                User matched = userCRUDService.findById(matchedId);
+                int totalScore = getTotalScore(key);
+
+                return MatchingSimpleResponse.builder()
+                    .userId(matchedId)
+                    .age(matched.getAge())
+                    .nickname(matched.getNickname())
+                    .mainPhoto(matched.getMainPhoto())
+                    .totalScore(totalScore)
+                    .distance(getDistance(userId, matchedId))
+                    .build();
+            }).toList();
+    }
+
+    private List<MatchingSimpleResponse> getNewDailyMatching(User matcher, String prefix) {
+        List<MatchingSimpleResponse> responses = userRepository.getFiveMatched(matcher.getId(),
+                matcher.getGender())
+            .stream()
+            .map(matched -> getAndRecordMatchingInfo(matched, matcher, prefix)).toList();
+        if (responses.isEmpty()) {
+            throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
+        }
+        return responses;
     }
 
     private String getCachedMatchingValue(Long matcherId, Long matchedId) {
@@ -106,7 +141,7 @@ public class MatchingService {
         return matchingValue;
     }
 
-    private MatchingScoreDto getCachedMatchingScore(Long matcherId, Long matchedId) {
+    private MatchingInfoDto getCachedMatchingInfo(Long matcherId, Long matchedId) {
         String matchingValue = getCachedMatchingValue(matcherId, matchedId);
 
         StringTokenizer st = new StringTokenizer(matchingValue, "/");
@@ -116,13 +151,13 @@ public class MatchingService {
         int lifeStyleSimilarity = Integer.parseInt(st.nextToken());
         int incomeSimilarity = Integer.parseInt(st.nextToken());
 
-        return MatchingScoreDto.builder()
-                .totalScore(totalScore)
-                .mbtiSimilarity(mbtiSimilarity)
-                .hobbySimilarity(hobbySimilarity)
-                .incomeSimilarity(incomeSimilarity)
-                .lifeStyleSimilarity(lifeStyleSimilarity)
-                .build();
+        return MatchingInfoDto.builder()
+            .totalScore(totalScore)
+            .mbtiSimilarity(mbtiSimilarity)
+            .hobbySimilarity(hobbySimilarity)
+            .incomeSimilarity(incomeSimilarity)
+            .lifeStyleSimilarity(lifeStyleSimilarity)
+            .build();
     }
 
     private List<NameWithCommonDto> getLifeStylesWithCommon(Long matcherId, Long matchedId) {
@@ -130,13 +165,13 @@ public class MatchingService {
         List<String> matchedLifeStyles = userLifeStyleService.findLifeStylesByUser(matchedId);
 
         return matchedLifeStyles.stream()
-                .map(lifeStyle -> {
-                    boolean isCommon = matcherLifeStyles.contains(lifeStyle);
-                    return NameWithCommonDto.builder()
-                            .name(lifeStyle)
-                            .isCommon(isCommon)
-                            .build();
-                }).toList();
+            .map(lifeStyle -> {
+                boolean isCommon = matcherLifeStyles.contains(lifeStyle);
+                return NameWithCommonDto.builder()
+                    .name(lifeStyle)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
     }
 
     private List<NameWithCommonDto> getHobbiesWithCommon(Long matcherId, Long matchedId) {
@@ -144,85 +179,72 @@ public class MatchingService {
         List<String> matchedHobbies = userHobbyService.findHobbiesByUser(matchedId);
 
         return matchedHobbies.stream()
-                .map(hobby -> {
-                    boolean isCommon = matcherHobbies.contains(hobby);
-                    return NameWithCommonDto.builder()
-                            .name(hobby)
-                            .isCommon(isCommon)
-                            .build();
-                }).toList();
+            .map(hobby -> {
+                boolean isCommon = matcherHobbies.contains(hobby);
+                return NameWithCommonDto.builder()
+                    .name(hobby)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
     }
 
-    private void checkMatching(Long matcherId, Long matchedId) {
+    private void checkMatchingHistory(Long matcherId, Long matchedId) {
         matchingRepository.findByMatcherIdAndMatchedId(matcherId, matchedId)
-                .orElseThrow(() -> new MatchingException(ErrorCode.MATCHING_NOT_FOUND));
+            .orElseThrow(() -> new MatchingException(ErrorCode.MATCHING_HISTORY_NOT_FOUND));
     }
 
-    private MatchingSimpleResponse getNewMatching(User matched, User matcher) {
+    private MatchingSimpleResponse getAndRecordMatchingInfo(User matched, User matcher,
+        String prefix) {
         WeightValue matcherWV = userWeightValueService.findByUserId(matcher.getId());
-        MatchingScoreDto matchingScoreDto = getNewMatchingScore(matcher, matched, matcherWV);
+        MatchingInfoDto matchingInfoDto = getNewMatchingInfo(matcher, matched, matcherWV);
 
-        cachMatchingScore(matcher, matched, matchingScoreDto);
+        cachMatchingScore(matcher, matched, matchingInfoDto, prefix);
         recordMatchingHistory(matcher.getId(), matched);
 
         return MatchingSimpleResponse.builder()
-                .userId(matched.getId())
-                .age(matched.getAge())
-                .nickname(matched.getNickname())
-                .mainPhoto(matched.getMainPhoto())
-                .totalScore(matchingScoreDto.getTotalScore())
-                .distance(getDistance(matcher.getId(), matched.getId()))
-                .build();
+            .userId(matched.getId())
+            .age(matched.getAge())
+            .nickname(matched.getNickname())
+            .mainPhoto(matched.getMainPhoto())
+            .totalScore(matchingInfoDto.getTotalScore())
+            .distance(getDistance(matcher.getId(), matched.getId()))
+            .build();
     }
 
-    private MatchingScoreDto getNewMatchingScore(User matcher, User matched,
-                                                 WeightValue matcherWV) {
+    private MatchingInfoDto getNewMatchingInfo(User matcher, User matched,
+        WeightValue matcherWV) {
         int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcher, matched);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcher, matched);
         int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
         Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
-                lifeStyleSimilarity, incomeSimilarity);
+            lifeStyleSimilarity, incomeSimilarity);
 
-        return MatchingScoreDto.builder()
-                .mbtiSimilarity(mbtiSimilarity)
-                .hobbySimilarity(hobbySimilarity)
-                .lifeStyleSimilarity(lifeStyleSimilarity)
-                .incomeSimilarity(incomeSimilarity)
-                .totalScore(totalScore)
-                .build();
-    }
-
-    private MatchingSimpleResponse getCachedMatching(Long userId, String key) {
-        Long matchedId = getMatchedId(key);
-        User matched = userCRUDService.findById(matchedId);
-        int totalScore = getTotalScore(key);
-
-        return MatchingSimpleResponse.builder()
-                .userId(matchedId)
-                .age(matched.getAge())
-                .nickname(matched.getNickname())
-                .mainPhoto(matched.getMainPhoto())
-                .totalScore(totalScore)
-                .distance(getDistance(userId, matchedId))
-                .build();
+        return MatchingInfoDto.builder()
+            .mbtiSimilarity(mbtiSimilarity)
+            .hobbySimilarity(hobbySimilarity)
+            .lifeStyleSimilarity(lifeStyleSimilarity)
+            .incomeSimilarity(incomeSimilarity)
+            .totalScore(totalScore)
+            .build();
     }
 
     private void recordMatchingHistory(Long userId, User matched) {
         Matching matching = Matching.builder()
-                .matchedId(matched.getId())
-                .matcherId(userId)
-                .build();
+            .matchedId(matched.getId())
+            .matcherId(userId)
+            .build();
         matchingRepository.save(matching);
     }
 
-    private void cachMatchingScore(User matcher, User matched, MatchingScoreDto matchingScoreDto) {
-        String key = MATCHING_PREFIX + matcher.getId() + "_" + matched.getId();
+    private void cachMatchingScore(User matcher, User matched, MatchingInfoDto matchingInfoDto,
+        String prefix) {
+        String key = prefix + matcher.getId() + "_" + matched.getId();
         String value =
-                matchingScoreDto.getTotalScore() + "/" + matchingScoreDto.getMbtiSimilarity() + "/"
-                        + matchingScoreDto.getHobbySimilarity() + "/"
-                        + matchingScoreDto.getLifeStyleSimilarity()
-                        + "/" + matchingScoreDto.getIncomeSimilarity();
+            matchingInfoDto.getTotalScore() + "/" + matchingInfoDto.getMbtiSimilarity() + "/"
+                + matchingInfoDto.getHobbySimilarity() + "/"
+                + matchingInfoDto.getLifeStyleSimilarity()
+                + "/" + matchingInfoDto.getIncomeSimilarity();
         redisService.setStrValue(key, value, MATCHING_DURATION);
     }
 
