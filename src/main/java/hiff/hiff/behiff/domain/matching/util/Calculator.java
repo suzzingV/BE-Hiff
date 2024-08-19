@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 public class Calculator {
 
     public static Integer computeTotalScoreByMatcher(WeightValue matcherWV, int mbtiSimilarity,
-                                                     int hobbySimilarity, int lifeStyleSimilarity, int incomeSimilarity) {
+        int hobbySimilarity, int lifeStyleSimilarity, int incomeSimilarity) {
         // TODO: 구체적인 계산 다시
         if (incomeSimilarity == 0) {
             return (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity
-                    + matcherWV.getLifeStyle() * lifeStyleSimilarity) / (matcherWV.getTotal()
-                    - matcherWV.getIncome());
+                + matcherWV.getLifeStyle() * lifeStyleSimilarity) / (matcherWV.getTotal()
+                - matcherWV.getIncome());
         }
         return (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity
-                + matcherWV.getIncome() * incomeSimilarity
-                + matcherWV.getLifeStyle() * lifeStyleSimilarity) / matcherWV.getTotal();
+            + matcherWV.getIncome() * incomeSimilarity
+            + matcherWV.getLifeStyle() * lifeStyleSimilarity) / matcherWV.getTotal();
     }
 
     public static int computeIntAvg(int sum, int count) {

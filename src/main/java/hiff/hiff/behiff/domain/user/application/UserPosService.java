@@ -19,26 +19,26 @@ public class UserPosService {
 
     public void createPos(Long userId, String x, String y) {
         UserPos userPos = UserPos.builder()
-                .userId(userId)
-                .x(x)
-                .y(y)
-                .build();
+            .userId(userId)
+            .x(x)
+            .y(y)
+            .build();
 
         userPosRepository.save(userPos);
     }
 
     public UserUpdateResponse updatePos(Long userId, String x, String y) {
         UserPos userPos = userPosRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.USER_POS_NOT_FOUND));
+            .orElseThrow(() -> new UserException(ErrorCode.USER_POS_NOT_FOUND));
         userPos.changePos(x, y);
 
         return UserUpdateResponse.builder()
-                .userId(userId)
-                .build();
+            .userId(userId)
+            .build();
     }
 
     public UserPos findPosByUserId(Long userId) {
         return userPosRepository.findByUserId(userId)
-                .orElseThrow(() -> new MatchingException(ErrorCode.USER_POS_NOT_FOUND));
+            .orElseThrow(() -> new MatchingException(ErrorCode.USER_POS_NOT_FOUND));
     }
 }

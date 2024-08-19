@@ -1,10 +1,9 @@
 package hiff.hiff.behiff.domain.user.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.Period;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AgeCalculator {
