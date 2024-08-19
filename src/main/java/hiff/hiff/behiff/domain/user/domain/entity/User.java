@@ -141,6 +141,7 @@ public class User implements UserDetails {
         this.education = Education.PRIVATE;
         this.birth = LocalDate.now();
         this.gender = Gender.MALE;
+        this.age = AgeCalculator.calculateAge(LocalDate.now());
     }
 
     public void delete() {

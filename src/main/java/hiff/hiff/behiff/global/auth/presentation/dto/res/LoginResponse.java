@@ -11,14 +11,13 @@ public class LoginResponse {
     private String refreshToken;
     private Long userId;
     private Boolean isNew;
-    private String email;
 
-    public static LoginResponse of(String accessToken, String refreshToken, Boolean isNew, String email) {
+    public static LoginResponse of(String accessToken, String refreshToken, Boolean isNew, Long userId) {
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .isNew(isNew)
-                .email(email)
+                .userId(userId)
                 .build();
     }
 

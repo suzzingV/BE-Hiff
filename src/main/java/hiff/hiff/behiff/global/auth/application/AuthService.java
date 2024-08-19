@@ -25,52 +25,27 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final EvaluationService evaluationService;
     private final UserService userService;
 
-    public TokenResponse createTokens(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         String email = request.getEmail();
+        SocialType socialType = request.getSocialType();
+        String socialId = request.getSocialId();
 
         String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
         jwtService.updateRefreshToken(refreshToken, email);
 
-        return TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
-    public LoginResponse login(LoginRequest request, TokenResponse tokenResponse) {
-        String email = request.getEmail();
-        SocialType socialType = request.getSocialType();
-        String socialId = request.getSocialId();
-
         return userRepository.findByEmail(email)
                 .map(user -> {
                     user.updateAge();
-                    return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), false, email);
+                    userService.updatePos(user.getId(), request.getPosX(), request.getPosY());
+                    return LoginResponse.of(accessToken, refreshToken, false, user.getId());
                 })
                 .orElseGet(() -> {
-                    User newUser = userService.registerUser(email, socialId, socialType, Role.USER);
-                    newUser.updateAge();
-                    evaluationService.addEvaluatedUser(newUser.getId(), newUser.getGender());
-                    evaluationService.addEvaluatedUser(newUser.getId(), newUser.getGender());
-                    return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), true, email);
+                    User newUser = userService.registerUser(email, socialId, socialType, Role.USER, request.getPosX(), request.getPosY());
+                    return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());
                 });
-    }
-
-    public LoginResponse updatePos(LoginRequest request, LoginResponse response) {
-        User user = userService.findByEmail(request.getEmail());
-        response.changeUserId(user.getId());
-
-        if (response.getIsNew()) {
-            userService.createPos(response.getUserId(), request.getPosX(), request.getPosY());
-        } else {
-            userService.updatePos(response.getUserId(), request.getPosX(), request.getPosY());
-        }
-
-        return response;
     }
 
     public TokenResponse reissueTokens(Optional<String> refresh) {

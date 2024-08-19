@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.evaluation.application.EvaluationService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
@@ -43,11 +44,15 @@ public class UserService {
     private final UserProfileService userProfileService;
     private final UserCRUDService userCRUDService;
     private final UserPosService userPosService;
+    private final EvaluationService evaluationService;
 
     public User registerUser(String email, String socialId, SocialType socialType,
-        Role role) {
+        Role role, String x, String y) {
         User user = userCRUDService.registerUser(email, socialId, socialType, role);
         userWeightValueService.createWeightValue(user.getId());
+        userPosService.createPos(user.getId(), x, y);
+        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
+        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
         return user;
     }
 
