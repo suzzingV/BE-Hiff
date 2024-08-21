@@ -14,7 +14,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
@@ -38,7 +38,7 @@ public class UserService {
 
     private final UserHobbyService userHobbyService;
     private final UserLifeStyleService userLifeStyleService;
-    private final UserJobService userJobService;
+    private final UserCareerService userCareerService;
     private final UserWeightValueService userWeightValueService;
     private final UserPhotoService userPhotoService;
     private final UserProfileService userProfileService;
@@ -129,14 +129,14 @@ public class UserService {
         return UserUpdateResponse.from(userId);
     }
 
-    public UserUpdateResponse updateJob(Long userId, JobRequest request) {
+    public UserUpdateResponse updateCareer(Long userId, CareerRequest request) {
         User user = userCRUDService.findById(userId);
-        if (request.getJobId() != null && request.getNewJobName() == null) {
-            userJobService.updateOriginJob(user, request.getJobId());
-        } else if (request.getNewJobName() != null && request.getJobId() == null) {
-            userJobService.updateNewJob(user, request.getNewJobName());
+        if (request.getCareerId() != null && request.getNewCareerName() == null) {
+            userCareerService.updateOriginCareer(user, request.getCareerId());
+        } else if (request.getNewCareerName() != null && request.getCareerId() == null) {
+            userCareerService.updateNewCareer(user, request.getNewCareerName());
         } else {
-            throw new UserException(ErrorCode.JOB_UPDATE_REQUEST_ERROR);
+            throw new UserException(ErrorCode.CAREER_UPDATE_REQUEST_ERROR);
         }
         return UserUpdateResponse.from(userId);
     }
@@ -200,12 +200,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<TagResponse> getJobs() {
-        return userJobService.getAllJobs()
-            .stream().map(job ->
+    public List<TagResponse> getCareers() {
+        return userCareerService.getAllCareers()
+            .stream().map(career ->
                 TagResponse.builder()
-                    .id(job.getId())
-                    .name(job.getName())
+                    .id(career.getId())
+                    .name(career.getName())
                     .build())
             .toList();
     }

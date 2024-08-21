@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "job_TB")
-public class Job {
+@Table(name = "career_TB")
+public class Career {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Job {
     private Integer count;
 
     @Builder
-    private Job(String name) {
+    private Career(String name) {
         this.name = name;
         this.count = 1;
     }

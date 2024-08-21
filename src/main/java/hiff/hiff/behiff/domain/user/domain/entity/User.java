@@ -89,7 +89,7 @@ public class User implements UserDetails {
     @Max(80)
     private Integer age;
 
-    private String job;
+    private String career;
 
     @Min(20)
     @Max(50)
@@ -179,8 +179,8 @@ public class User implements UserDetails {
         this.school = school;
     }
 
-    public void changeJob(String job) {
-        this.job = job;
+    public void changeCareer(String career) {
+        this.career = career;
     }
 
     public void changePhoneNum(String phoneNum) {

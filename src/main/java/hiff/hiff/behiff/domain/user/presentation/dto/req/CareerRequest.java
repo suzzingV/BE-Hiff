@@ -3,9 +3,9 @@ package hiff.hiff.behiff.domain.user.presentation.dto.req;
 import lombok.Getter;
 
 @Getter
-public class JobRequest {
+public class CareerRequest {
 
-    private Long jobId;
+    private Long careerId;
 
-    private String newJobName;
+    private String newCareerName;
 }

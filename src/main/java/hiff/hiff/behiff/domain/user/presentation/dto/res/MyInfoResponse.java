@@ -59,7 +59,7 @@ public class MyInfoResponse {
 
     private String school;
 
-    private String job;
+    private String career;
 
     private Integer hopeMinAge;
 
@@ -94,7 +94,7 @@ public class MyInfoResponse {
             .addr(user.getAddr())
             .education(user.getEducation())
             .school(user.getSchool())
-            .job(user.getJob())
+            .career(user.getCareer())
             .hopeMinAge(user.getHopeMinAge())
             .hopeMaxAge(user.getHopeMaxAge())
             .heart(user.getHeart())
