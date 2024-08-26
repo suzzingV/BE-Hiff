@@ -2,10 +2,11 @@ package hiff.hiff.behiff.domain.matching.application.service;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
+import static hiff.hiff.behiff.global.common.redis.RedisService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
-import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_PREFIX;
+import static hiff.hiff.behiff.global.common.redis.RedisService.DAILY_MATCHING_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
-import static hiff.hiff.behiff.global.common.redis.RedisService.PAID_MATCHING_PREFIX;
+import static hiff.hiff.behiff.global.common.redis.RedisService.PAID_DAILY_MATCHING_PREFIX;
 
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
@@ -52,29 +53,34 @@ public class MatchingService {
     private final UserPhotoService userPhotoService;
 
     private static final Integer DAILY_MATCHING_HEART = 1;
+    private static final Integer HIFF_MATCHING_HEART = 3;
 
     // TODO: 힢 매칭 나이 거리 매칭 고려
     // TODO: 힢 매칭 보너스
+    // TODO: 힢 매칭 유효시간
+    // TODO: 힢 매칭 최대 시도 횟수 있어야하지 않을까? 아니면 배치로 하루에 한번씩 다 계산해서 캐싱해놓기(사람 많으면 좀 에바인듯)
     // TODO: 스케줄러로 00시마다 매칭 레디스 초기화
-    // TODO: 외모 점수는 총 점수에 영향 안주나?
+    // TODO: 데일리 총 매칭점수에 외모 점수 넣기
+    // TODO: 유료결제한거 계속 보여줘?
+    // TODO: 남은 시간
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
         User matcher = userCRUDService.findById(userId);
         List<String> originalMatching = redisService.scanKeysWithPrefix(
-            MATCHING_PREFIX + userId + "_");
+            DAILY_MATCHING_PREFIX + userId + "_");
         if (!originalMatching.isEmpty()) {
             return getCachedMatching(userId, originalMatching);
         }
 
-        return getNewDailyMatching(matcher, MATCHING_PREFIX);
+        return getNewDailyMatching(matcher, DAILY_MATCHING_PREFIX);
     }
 
     public List<MatchingSimpleResponse> getPaidDailyMatching(Long userId) {
         User matcher = userCRUDService.findById(userId);
-        useHeart(matcher);
+        useHeart(matcher, DAILY_MATCHING_HEART);
         List<String> originalMatching = redisService.scanKeysWithPrefix(
-            PAID_MATCHING_PREFIX + userId + "_");
+            PAID_DAILY_MATCHING_PREFIX + userId + "_");
         List<MatchingSimpleResponse> newMatching = getNewDailyMatching(matcher,
-            PAID_MATCHING_PREFIX);
+            PAID_DAILY_MATCHING_PREFIX);
 
         originalMatching.forEach(redisService::delete);
         return newMatching;
@@ -96,11 +102,36 @@ public class MatchingService {
             hobbies, lifeStyles);
     }
 
-    private void useHeart(User matcher) {
-        if (matcher.getHeart() < DAILY_MATCHING_HEART) {
+//    public List<MatchingSimpleResponse> getNewHiffMatching(Long userId) {
+//        User matcher = userCRUDService.findById(userId);
+//        useHeart(matcher, HIFF_MATCHING_HEART);
+//        List<String> originalMatching = redisService.scanKeysWithPrefix(
+//            HIFF_MATCHING_PREFIX + userId + "_");
+//        List<MatchingSimpleResponse> newMatching = getNewDailyMatching(matcher,
+//            PAID_DAILY_MATCHING_PREFIX);
+//        originalMatching.forEach(redisService::delete);
+//    }
+
+//    private List<MatchingSimpleResponse> getNewHiffMatching(User matcher) {
+//
+//    }
+
+    private List<MatchingSimpleResponse> getNewHiffMatching(User matcher, String prefix) {
+        List<MatchingSimpleResponse> responses = userRepository.getDailyMatched(matcher.getId(),
+                matcher.getGender())
+            .stream()
+            .map(matched -> getAndRecordMatchingInfo(matched, matcher, prefix)).toList();
+        if (responses.isEmpty()) {
+            throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
+        }
+        return responses;
+    }
+
+    private void useHeart(User matcher, Integer amount) {
+        if (matcher.getHeart() < amount) {
             throw new MatchingException(ErrorCode.LACK_OF_HEART);
         }
-        matcher.subtractHeart(DAILY_MATCHING_HEART);
+        matcher.subtractHeart(amount);
     }
 
     private List<MatchingSimpleResponse> getCachedMatching(Long userId,
@@ -123,7 +154,7 @@ public class MatchingService {
     }
 
     private List<MatchingSimpleResponse> getNewDailyMatching(User matcher, String prefix) {
-        List<MatchingSimpleResponse> responses = userRepository.getFiveMatched(matcher.getId(),
+        List<MatchingSimpleResponse> responses = userRepository.getDailyMatched(matcher.getId(),
                 matcher.getGender())
             .stream()
             .map(matched -> getAndRecordMatchingInfo(matched, matcher, prefix)).toList();
@@ -134,7 +165,7 @@ public class MatchingService {
     }
 
     private String getCachedMatchingValue(Long matcherId, Long matchedId) {
-        String key = MATCHING_PREFIX + matcherId + "_" + matchedId;
+        String key = DAILY_MATCHING_PREFIX + matcherId + "_" + matchedId;
         String matchingValue = redisService.getStrValue(key);
         if (matchingValue.equals(NOT_EXIST)) {
             throw new MatchingException(ErrorCode.MATCHING_SCORE_NOT_FOUND);
