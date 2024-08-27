@@ -13,7 +13,7 @@ public class MatchingInfoDto {
 
     private Integer lifeStyleSimilarity;
 
-    private Integer incomeSimilarity;
+//    private Integer incomeSimilarity;
 
     private Integer totalScore;
 }

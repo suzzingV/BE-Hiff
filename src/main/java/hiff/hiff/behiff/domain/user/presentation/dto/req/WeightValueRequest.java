@@ -8,10 +8,10 @@ import lombok.Getter;
 @Getter
 public class WeightValueRequest {
 
-    @NotNull
-    @Min(1)
-    @Max(5)
-    private Integer income;
+//    @NotNull
+//    @Min(1)
+//    @Max(5)
+//    private Integer income;
 
     @NotNull
     @Min(1)

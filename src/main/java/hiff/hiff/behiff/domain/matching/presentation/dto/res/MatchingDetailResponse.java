@@ -31,9 +31,9 @@ public class MatchingDetailResponse {
 
     private Integer mbtiSimilarity;
 
-    private Income matchedIncome;
+//    private Income matchedIncome;
 
-    private Integer incomeSimilarity;
+//    private Integer incomeSimilarity;
 
     private List<NameWithCommonDto> hobbies;
 
@@ -56,8 +56,8 @@ public class MatchingDetailResponse {
             .myMbti(matcher.getMbti())
             .matchedMbti(matched.getMbti())
             .mbtiSimilarity(matchingScores.getMbtiSimilarity())
-            .matchedIncome(matched.getIncome())
-            .incomeSimilarity(matchingScores.getIncomeSimilarity())
+//            .matchedIncome(matched.getIncome())
+//            .incomeSimilarity(matchingScores.getIncomeSimilarity())
             .hobbies(hobbies)
             .hobbySimilarity(matchingScores.getHobbySimilarity())
             .lifeStyles(lifeStyles)

@@ -40,12 +40,12 @@ public class SimilarityFactory {
         return computeIntAvg(hobbySimilaritySum, matcherHobbies.size() * matchedHobbies.size());
     }
 
-    public int getIncomeSimilarity(User matcher, User matched) {
-        String key = INCOME_PREFIX + matcher.getIncome().getStartValue() + "_" + matched.getIncome()
-            .getStartValue();
-        return redisService.getIntValue(
-            key);
-    }
+//    public int getIncomeSimilarity(User matcher, User matched) {
+//        String key = INCOME_PREFIX + matcher.getIncome().getStartValue() + "_" + matched.getIncome()
+//            .getStartValue();
+//        return redisService.getIntValue(
+//            key);
+//    }
 
     public int getLifeStyleSimilarity(User matcher, User matched) {
         List<UserLifeStyle> matcherLifeStyles = userLifeStyleRepository.findByUserId(

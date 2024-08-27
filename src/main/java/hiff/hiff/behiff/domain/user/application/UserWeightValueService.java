@@ -19,12 +19,11 @@ public class UserWeightValueService {
     private final WeightValueRepository weightValueRepository;
     private final UserCRUDService userCRUDService;
 
-    // TODO: 외모 가중치
     public void updateWeightValue(Long userId, WeightValueRequest request) {
         WeightValue weightValue = weightValueRepository.findByUserId(userId)
             .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
-        checkIncomePrivate(userId, weightValue);
-        weightValue.changeWeightValue(request.getIncome(), request.getAppearance(),
+//        checkIncomePrivate(userId, weightValue);
+        weightValue.changeWeightValue(request.getAppearance(),
             request.getHobby(),
             request.getLifeStyle(), request.getMbti());
     }
@@ -41,10 +40,10 @@ public class UserWeightValueService {
             .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
     }
 
-    private void checkIncomePrivate(Long userId, WeightValue weightValue) {
-        User user = userCRUDService.findById(userId);
-        if (user.getIncome() == Income.PRIVATE && weightValue.getIncome() != 0) {
-            throw new UserException(ErrorCode.INCOME_WEIGHT_VALUE_PRIVATE);
-        }
-    }
+//    private void checkIncomePrivate(Long userId, WeightValue weightValue) {
+//        User user = userCRUDService.findById(userId);
+//        if (user.getIncome() == Income.PRIVATE && weightValue.getIncome() != 0) {
+//            throw new UserException(ErrorCode.INCOME_WEIGHT_VALUE_PRIVATE);
+//        }
+//    }
 }

@@ -71,9 +71,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Income income;
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private Income income;
 
     private String addr;
 
@@ -137,7 +137,7 @@ public class User implements UserDetails {
         this.heart = 0;
         this.evaluatedCount = 0;
         this.evaluatedScore = 0.0;
-        this.income = Income.PRIVATE;
+//        this.income = Income.PRIVATE;
         this.education = Education.PRIVATE;
         this.birth = LocalDate.now();
         this.gender = Gender.MALE;
@@ -166,9 +166,9 @@ public class User implements UserDetails {
         this.mbti = mbti;
     }
 
-    public void changeIncome(Income income) {
-        this.income = income;
-    }
+//    public void changeIncome(Income income) {
+//        this.income = income;
+//    }
 
     public void changeAddress(String addr1, String addr2, String addr3) {
         this.addr = addr1 + " " + addr2 + " " + addr3;

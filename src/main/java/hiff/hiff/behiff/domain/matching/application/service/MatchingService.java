@@ -181,13 +181,13 @@ public class MatchingService {
         int mbtiSimilarity = Integer.parseInt(st.nextToken());
         int hobbySimilarity = Integer.parseInt(st.nextToken());
         int lifeStyleSimilarity = Integer.parseInt(st.nextToken());
-        int incomeSimilarity = Integer.parseInt(st.nextToken());
+//        int incomeSimilarity = Integer.parseInt(st.nextToken());
 
         return MatchingInfoDto.builder()
             .totalScore(totalScore)
             .mbtiSimilarity(mbtiSimilarity)
             .hobbySimilarity(hobbySimilarity)
-            .incomeSimilarity(incomeSimilarity)
+//            .incomeSimilarity(incomeSimilarity)
             .lifeStyleSimilarity(lifeStyleSimilarity)
             .build();
     }
@@ -248,15 +248,15 @@ public class MatchingService {
         int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcher, matched);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcher, matched);
-        int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
+//        int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
         Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
-            lifeStyleSimilarity, incomeSimilarity);
+            lifeStyleSimilarity, matched.getEvaluatedScore());
 
         return MatchingInfoDto.builder()
             .mbtiSimilarity(mbtiSimilarity)
             .hobbySimilarity(hobbySimilarity)
             .lifeStyleSimilarity(lifeStyleSimilarity)
-            .incomeSimilarity(incomeSimilarity)
+//            .incomeSimilarity(incomeSimilarity)
             .totalScore(totalScore)
             .build();
     }
@@ -275,8 +275,7 @@ public class MatchingService {
         String value =
             matchingInfoDto.getTotalScore() + "/" + matchingInfoDto.getMbtiSimilarity() + "/"
                 + matchingInfoDto.getHobbySimilarity() + "/"
-                + matchingInfoDto.getLifeStyleSimilarity()
-                + "/" + matchingInfoDto.getIncomeSimilarity();
+                + matchingInfoDto.getLifeStyleSimilarity();
         redisService.setStrValue(key, value, MATCHING_DURATION);
     }
 

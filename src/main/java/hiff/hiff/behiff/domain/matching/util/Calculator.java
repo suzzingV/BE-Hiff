@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 public class Calculator {
 
     public static Integer computeTotalScoreByMatcher(WeightValue matcherWV, int mbtiSimilarity,
-        int hobbySimilarity, int lifeStyleSimilarity, int incomeSimilarity) {
+        int hobbySimilarity, int lifeStyleSimilarity, double matchedEvaluatedScore) {
+        double evaluatedScore = convertEvaluatedScore(matchedEvaluatedScore);
         return (int) Math.round(
-            (double) (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity
-                + matcherWV.getIncome() * incomeSimilarity
-                + matcherWV.getLifeStyle() * lifeStyleSimilarity) / matcherWV.getTotal());
+            (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity
+                + matcherWV.getLifeStyle() * lifeStyleSimilarity + matcherWV.getAppearance() * evaluatedScore) / matcherWV.getTotal());
     }
 
     public static int computeIntAvg(int sum, int count) {
@@ -23,5 +23,9 @@ public class Calculator {
         double distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 
         return Math.round(distance * 100.0) / 100.0;
+    }
+
+    private static double convertEvaluatedScore(double evaluatedScore) {
+        return evaluatedScore / 5 * 100;
     }
 }

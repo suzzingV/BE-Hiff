@@ -99,11 +99,11 @@ public class UserService {
         return UserUpdateResponse.from(userId);
     }
 
-    public UserUpdateResponse updateIncome(Long userId, IncomeRequest request) {
-        User user = userCRUDService.findById(userId);
-        userProfileService.updateIncome(user, request);
-        return UserUpdateResponse.from(userId);
-    }
+//    public UserUpdateResponse updateIncome(Long userId, IncomeRequest request) {
+//        User user = userCRUDService.findById(userId);
+//        userProfileService.updateIncome(user, request);
+//        return UserUpdateResponse.from(userId);
+//    }
 
     public UserUpdateResponse updateAddress(Long userId, AddressRequest request) {
         User user = userCRUDService.findById(userId);

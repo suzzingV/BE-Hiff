@@ -51,9 +51,9 @@ public class UserProfileService {
         user.changeMbti(request.getMbti());
     }
 
-    public void updateIncome(User user, IncomeRequest request) {
-        user.changeIncome(request.getIncome());
-    }
+//    public void updateIncome(User user, IncomeRequest request) {
+//        user.changeIncome(request.getIncome());
+//    }
 
     public void updateAddress(User user, AddressRequest request) {
         user.changeAddress(request.getAddr1(), request.getAddr2(), request.getAddr3());

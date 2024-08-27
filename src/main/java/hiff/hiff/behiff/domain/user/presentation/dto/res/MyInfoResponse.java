@@ -35,7 +35,7 @@ public class MyInfoResponse {
 
     private List<String> lifeStyles;
 
-    private Integer incomeWeight;
+//    private Integer incomeWeight;
 
     private Integer appearanceWeight;
 
@@ -51,7 +51,7 @@ public class MyInfoResponse {
 
     private Mbti mbti;
 
-    private Income income;
+//    private Income income;
 
     private String addr;
 
@@ -82,7 +82,7 @@ public class MyInfoResponse {
             .photos(photos)
             .hobbies(hobbies)
             .lifeStyles(lifeStyles)
-            .incomeWeight(weightValue.getIncome())
+//            .incomeWeight(weightValue.getIncome())
             .lifeStyleWeight(weightValue.getLifeStyle())
             .hobbyWeight(weightValue.getHobby())
             .appearanceWeight(weightValue.getAppearance())
@@ -90,7 +90,7 @@ public class MyInfoResponse {
             .phoneNum(user.getPhoneNum())
             .gender(user.getGender())
             .mbti(user.getMbti())
-            .income(user.getIncome())
+//            .income(user.getIncome())
             .addr(user.getAddr())
             .education(user.getEducation())
             .school(user.getSchool())
