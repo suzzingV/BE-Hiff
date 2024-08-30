@@ -1,8 +1,6 @@
 package hiff.hiff.behiff.global.common.batch;
 
-import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import java.util.Date;
-import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
