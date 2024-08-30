@@ -17,7 +17,7 @@ public class UserPosService {
 
     private final UserPosRepository userPosRepository;
 
-    public void createPos(Long userId, String x, String y) {
+    public void createPos(Long userId, Double x, Double y) {
         UserPos userPos = UserPos.builder()
             .userId(userId)
             .x(x)
@@ -27,7 +27,7 @@ public class UserPosService {
         userPosRepository.save(userPos);
     }
 
-    public UserUpdateResponse updatePos(Long userId, String x, String y) {
+    public UserUpdateResponse updatePos(Long userId, Double x, Double y) {
         UserPos userPos = userPosRepository.findByUserId(userId)
             .orElseThrow(() -> new UserException(ErrorCode.USER_POS_NOT_FOUND));
         userPos.changePos(x, y);

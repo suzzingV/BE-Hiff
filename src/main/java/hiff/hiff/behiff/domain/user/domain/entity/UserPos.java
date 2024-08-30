@@ -23,11 +23,11 @@ public class UserPos {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
-    private String x;
+    @Column(nullable = false)
+    private Double x;
 
-    @Column(nullable = false, length = 20)
-    private String y;
+    @Column(nullable = false)
+    private Double y;
 
     private Long userId;
 
@@ -36,13 +36,13 @@ public class UserPos {
     private LocalDateTime updatedAt;
 
     @Builder
-    private UserPos(String x, String y, Long userId) {
+    private UserPos(Double x, Double y, Long userId) {
         this.x = x;
         this.y = y;
         this.userId = userId;
     }
 
-    public void changePos(String x, String y) {
+    public void changePos(Double x, Double y) {
         this.x = x;
         this.y = y;
         this.updatedAt = LocalDateTime.now();

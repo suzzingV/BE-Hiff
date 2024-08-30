@@ -47,7 +47,7 @@ public class UserService {
     private final EvaluationService evaluationService;
 
     public User registerUser(String email, String socialId, SocialType socialType,
-        Role role, String x, String y) {
+        Role role, Double x, Double y) {
         User user = userCRUDService.registerUser(email, socialId, socialType, role);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), x, y);
@@ -60,7 +60,7 @@ public class UserService {
         return userCRUDService.findByEmail(email);
     }
 
-    public void createPos(Long userId, String x, String y) {
+    public void createPos(Long userId, Double x, Double y) {
         userPosService.createPos(userId, x, y);
     }
 
@@ -163,7 +163,7 @@ public class UserService {
         return UserUpdateResponse.from(userId);
     }
 
-    public UserUpdateResponse updatePos(Long userId, String x, String y) {
+    public UserUpdateResponse updatePos(Long userId, Double x, Double y) {
         return userPosService.updatePos(userId, x, y);
     }
 

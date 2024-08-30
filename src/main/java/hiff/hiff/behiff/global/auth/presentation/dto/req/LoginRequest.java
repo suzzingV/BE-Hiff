@@ -25,8 +25,8 @@ public class LoginRequest {
     private SocialType socialType;
 
     @NotEmpty
-    private String posX;
+    private Double posX;
 
     @NotEmpty
-    private String posY;
+    private Double posY;
 }
