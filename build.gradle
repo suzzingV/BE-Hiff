@@ -36,6 +36,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     // mail
     implementation 'jakarta.mail:jakarta.mail-api:2.0.1'
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
     //JWT
     implementation 'com.auth0:java-jwt:4.2.1'
