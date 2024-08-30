@@ -2,7 +2,6 @@ package hiff.hiff.behiff.domain.matching.application.service;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
-import static hiff.hiff.behiff.global.common.redis.RedisService.HIFF_MATCHING_DURATION;
 import static hiff.hiff.behiff.global.common.redis.RedisService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
 import static hiff.hiff.behiff.global.common.redis.RedisService.DAILY_MATCHING_PREFIX;
@@ -49,7 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class MatchingService {
 
     private final UserCRUDService userCRUDService;
@@ -107,10 +105,8 @@ public class MatchingService {
             hobbies, lifeStyles);
     }
 
-    public void getNewHiffMatching() {
+    public void getNewHiffMatching(List<User> malesArr, List<User> femalesArr) {
         LocalDateTime start = LocalDateTime.now();
-        List<User> malesArr = userRepository.findByGender(Gender.MALE);
-        List<User> femalesArr = userRepository.findByGender(Gender.FEMALE);
 
 //        Collections.shuffle(malesArr);
         Collections.shuffle(femalesArr);
@@ -158,7 +154,6 @@ public class MatchingService {
                 }
             females.addAll(tmp);
             }
-        log.info("실행시간: " + Duration.between(LocalDateTime.now(), start).toMinutes());
         }
 
     private void useHeart(User matcher, Integer amount) {
