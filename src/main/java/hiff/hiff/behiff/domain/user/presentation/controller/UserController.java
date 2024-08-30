@@ -10,7 +10,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.JobRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
@@ -44,9 +44,9 @@ public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
 
-    @GetMapping("/job/list")
-    public ResponseEntity<List<TagResponse>> getJobs() {
-        List<TagResponse> responses = userService.getJobs();
+    @GetMapping("/career/list")
+    public ResponseEntity<List<TagResponse>> getCareers() {
+        List<TagResponse> responses = userService.getCareers();
         return ResponseEntity.ok(responses);
     }
 
@@ -105,12 +105,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/income")
-    public ResponseEntity<UserUpdateResponse> updateIncome(@AuthenticationPrincipal User user,
-        @Valid @RequestBody IncomeRequest request) {
-        UserUpdateResponse response = userService.updateIncome(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
+//    @PatchMapping("/income")
+//    public ResponseEntity<UserUpdateResponse> updateIncome(@AuthenticationPrincipal User user,
+//        @Valid @RequestBody IncomeRequest request) {
+//        UserUpdateResponse response = userService.updateIncome(user.getId(), request);
+//        return ResponseEntity.ok(response);
+//    }
 
     @PatchMapping("/address")
     public ResponseEntity<UserUpdateResponse> updateAddress(@AuthenticationPrincipal User user,
@@ -127,11 +127,11 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/job")
-    public ResponseEntity<UserUpdateResponse> updateJob(@AuthenticationPrincipal User user,
+    @PatchMapping("/career")
+    public ResponseEntity<UserUpdateResponse> updateCareer(@AuthenticationPrincipal User user,
         @RequestBody
-        JobRequest request) {
-        UserUpdateResponse response = userService.updateJob(user.getId(), request);
+        CareerRequest request) {
+        UserUpdateResponse response = userService.updateCareer(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
