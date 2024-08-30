@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.matching.application.service;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
+import static hiff.hiff.behiff.global.common.redis.RedisService.HIFF_MATCHING_DURATION;
 import static hiff.hiff.behiff.global.common.redis.RedisService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
 import static hiff.hiff.behiff.global.common.redis.RedisService.DAILY_MATCHING_PREFIX;
@@ -25,10 +26,20 @@ import hiff.hiff.behiff.domain.user.application.UserWeightValueService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
+import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,14 +66,8 @@ public class MatchingService {
     private static final Integer DAILY_MATCHING_HEART = 1;
     private static final Integer HIFF_MATCHING_HEART = 3;
 
-    // TODO: 힢 매칭 나이 거리 매칭 고려
-    // TODO: 힢 매칭 보너스
-    // TODO: 힢 매칭 유효시간
-    // TODO: 힢 매칭 최대 시도 횟수 있어야하지 않을까? 아니면 배치로 하루에 한번씩 다 계산해서 캐싱해놓기(사람 많으면 좀 에바인듯)
-    // TODO: 스케줄러로 00시마다 매칭 레디스 초기화
-    // TODO: 데일리 총 매칭점수에 외모 점수 넣기
-    // TODO: 유료결제한거 계속 보여줘?
     // TODO: 남은 시간
+    // TODO: 외모 점수 없을 때
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
         User matcher = userCRUDService.findById(userId);
         List<String> originalMatching = redisService.scanKeysWithPrefix(
@@ -102,30 +107,59 @@ public class MatchingService {
             hobbies, lifeStyles);
     }
 
-//    public List<MatchingSimpleResponse> getNewHiffMatching(Long userId) {
-//        User matcher = userCRUDService.findById(userId);
-//        useHeart(matcher, HIFF_MATCHING_HEART);
-//        List<String> originalMatching = redisService.scanKeysWithPrefix(
-//            HIFF_MATCHING_PREFIX + userId + "_");
-//        List<MatchingSimpleResponse> newMatching = getNewDailyMatching(matcher,
-//            PAID_DAILY_MATCHING_PREFIX);
-//        originalMatching.forEach(redisService::delete);
-//    }
+    public void getNewHiffMatching() {
+        LocalDateTime start = LocalDateTime.now();
+        List<User> malesArr = userRepository.findByGender(Gender.MALE);
+        List<User> femalesArr = userRepository.findByGender(Gender.FEMALE);
 
-//    private List<MatchingSimpleResponse> getNewHiffMatching(User matcher) {
-//
-//    }
-
-    private List<MatchingSimpleResponse> getNewHiffMatching(User matcher, String prefix) {
-        List<MatchingSimpleResponse> responses = userRepository.getDailyMatched(matcher.getId(),
-                matcher.getGender())
-            .stream()
-            .map(matched -> getAndRecordMatchingInfo(matched, matcher, prefix)).toList();
-        if (responses.isEmpty()) {
-            throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
+//        Collections.shuffle(malesArr);
+        Collections.shuffle(femalesArr);
+        LinkedList<User> males = new LinkedList<>(malesArr);
+        PriorityQueue<UserWithMatchCount> females = new PriorityQueue<>();
+        for (User female : femalesArr) {
+            females.add(new UserWithMatchCount(female, 0));
         }
-        return responses;
-    }
+
+        for(User male : males) {
+            List<UserWithMatchCount> tmp = new ArrayList<>();
+            while(!females.isEmpty()) {
+                UserWithMatchCount femaleWithCount = females.remove();
+                tmp.add(femaleWithCount);
+                User female = femaleWithCount.getUser();
+                List<Long> matchingHistory = matchingRepository.findByUsers(female.getId(),
+                        male.getId());
+                    if(!matchingHistory.isEmpty()) {
+                        continue;
+                    }
+                    if(female.getHopeMinAge() > male.getAge() || female.getHopeMaxAge() < male.getAge()
+                        || male.getHopeMinAge() > female.getAge() || male.getHopeMaxAge() < female.getAge()) {
+                        continue;
+                    }
+                    Double distance = getDistance(female.getId(), male.getId());
+                    if(distance > male.getMaxDistance() || distance < male.getMinDistance()
+                    || distance > female.getMaxDistance() || distance < female.getMinDistance()) {
+                        continue;
+                    }
+                    WeightValue femaleWV = userWeightValueService.findByUserId(female.getId());
+                    WeightValue maleWV = userWeightValueService.findByUserId(male.getId());
+                    LocalDate today = LocalDate.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd");
+                    String formattedDate = today.format(formatter);
+                    MatchingInfoDto maleMatchingInfo = getNewMatchingInfo(male, female, maleWV);
+                    MatchingInfoDto femaleMatchingInfo = getNewMatchingInfo(female, male, femaleWV);
+                    if(maleMatchingInfo.getTotalScore() >= 80 && femaleMatchingInfo.getTotalScore() >= 80) {
+//                        cachMatchingScore(female, male, femaleMatchingInfo, formattedDate + HIFF_MATCHING_PREFIX);
+                        cachMatchingScore(male, female, maleMatchingInfo, formattedDate + HIFF_MATCHING_PREFIX);
+                        recordMatchingHistory(female.getId(), male.getId());
+                        recordMatchingHistory(male.getId(), female.getId());
+                        femaleWithCount.increaseCount();
+                        break;
+                    }
+                }
+            females.addAll(tmp);
+            }
+        log.info("실행시간: " + Duration.between(LocalDateTime.now(), start).toMinutes());
+        }
 
     private void useHeart(User matcher, Integer amount) {
         if (matcher.getHeart() < amount) {
@@ -231,7 +265,7 @@ public class MatchingService {
         MatchingInfoDto matchingInfoDto = getNewMatchingInfo(matcher, matched, matcherWV);
 
         cachMatchingScore(matcher, matched, matchingInfoDto, prefix);
-        recordMatchingHistory(matcher.getId(), matched);
+        recordMatchingHistory(matcher.getId(), matched.getId());
 
         return MatchingSimpleResponse.builder()
             .userId(matched.getId())
@@ -261,9 +295,9 @@ public class MatchingService {
             .build();
     }
 
-    private void recordMatchingHistory(Long userId, User matched) {
+    private void recordMatchingHistory(Long userId, Long matchedId) {
         Matching matching = Matching.builder()
-            .matchedId(matched.getId())
+            .matchedId(matchedId)
             .matcherId(userId)
             .build();
         matchingRepository.save(matching);
@@ -272,10 +306,9 @@ public class MatchingService {
     private void cachMatchingScore(User matcher, User matched, MatchingInfoDto matchingInfoDto,
         String prefix) {
         String key = prefix + matcher.getId() + "_" + matched.getId();
-        String value =
-            matchingInfoDto.getTotalScore() + "/" + matchingInfoDto.getMbtiSimilarity() + "/"
-                + matchingInfoDto.getHobbySimilarity() + "/"
-                + matchingInfoDto.getLifeStyleSimilarity();
+        String value = matchingInfoDto.getTotalScore() + "/" + matchingInfoDto.getMbtiSimilarity() + "/"
+            + matchingInfoDto.getHobbySimilarity() + "/"
+            + matchingInfoDto.getLifeStyleSimilarity();
         redisService.setStrValue(key, value, MATCHING_DURATION);
     }
 
@@ -295,11 +328,6 @@ public class MatchingService {
         UserPos matcherPos = userPosService.findPosByUserId(matcherId);
         UserPos matchedPos = userPosService.findPosByUserId(matchedId);
 
-        double matcherX = Double.parseDouble(matcherPos.getX());
-        double matcherY = Double.parseDouble(matcherPos.getY());
-        double matchedX = Double.parseDouble(matchedPos.getX());
-        double matchedY = Double.parseDouble(matchedPos.getY());
-
-        return computeDistance(matcherX, matcherY, matchedX, matchedY);
+        return computeDistance(matcherPos.getX(), matcherPos.getY(), matchedPos.getX(), matchedPos.getY());
     }
 }

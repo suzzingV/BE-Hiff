@@ -24,5 +24,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
         AND u.gender != :gender
         ORDER BY RAND() LIMIT 5
         """)
-    List<User> getFiveMatched(Long matcherId, Gender gender);
+    List<User> getDailyMatched(Long matcherId, Gender gender);
+
+    @Query("""
+        SELECT u FROM User u
+        WHERE u.gender = :gender
+""")
+    List<User> findByGender(Gender gender);
 }
