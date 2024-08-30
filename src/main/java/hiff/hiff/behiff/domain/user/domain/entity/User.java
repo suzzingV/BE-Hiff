@@ -42,7 +42,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 8)
+    @Column(length = 20)
     private String nickname;
 
     @Email
