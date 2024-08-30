@@ -34,7 +34,12 @@ public class SimilarityFactory {
             for (UserHobby matchedHobby : matchedHobbies) {
                 String key =
                     HOBBY_PREFIX + matcherHobby.getHobbyId() + "_" + matchedHobby.getHobbyId();
-                hobbySimilaritySum += redisService.getIntValue(key);
+                int similarity = redisService.getIntValue(key);
+                if(similarity == 0) {
+                    key = HOBBY_PREFIX + matchedHobby.getHobbyId() + "_" + matcherHobby.getHobbyId();
+                    similarity = redisService.getIntValue(key);
+                }
+                hobbySimilaritySum += similarity;
             }
         }
         return computeIntAvg(hobbySimilaritySum, matcherHobbies.size() * matchedHobbies.size());
@@ -56,9 +61,16 @@ public class SimilarityFactory {
         int lifeStyleSimilaritySum = 0;
         for (UserLifeStyle matcherLifeStyle : matcherLifeStyles) {
             for (UserLifeStyle matchedLifeStyle : matchedLifeStyles) {
-                lifeStyleSimilaritySum += redisService.getIntValue(
+                String key =
                     LIFESTYLE_PREFIX + matcherLifeStyle.getLifeStyleId() + "_"
-                        + matchedLifeStyle.getLifeStyleId());
+                        + matchedLifeStyle.getLifeStyleId();
+                int similarity = redisService.getIntValue(key);
+                if(similarity == 0) {
+                    key = LIFESTYLE_PREFIX + matchedLifeStyle.getLifeStyleId() + "_"
+                        + matcherLifeStyle.getLifeStyleId();
+                    similarity = redisService.getIntValue(key);
+                }
+                lifeStyleSimilaritySum += similarity;
             }
         }
         return computeIntAvg(lifeStyleSimilaritySum,
@@ -67,6 +79,12 @@ public class SimilarityFactory {
 
     public int getMbtiSimilarity(User matcher, User matched) {
         String key = MBTI_PREFIX + matcher.getMbti() + "_" + matched.getMbti();
-        return redisService.getIntValue(key);
+
+        int similarity = redisService.getIntValue(key);
+        if(similarity == 0) {
+            key = MBTI_PREFIX + matched.getMbti() + "_" + matcher.getMbti();
+            similarity = redisService.getIntValue(key);
+        }
+        return similarity;
     }
 }
