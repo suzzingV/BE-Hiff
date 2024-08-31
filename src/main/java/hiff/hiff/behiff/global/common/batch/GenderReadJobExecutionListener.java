@@ -1,5 +1,8 @@
 package hiff.hiff.behiff.global.common.batch;
 
+import static hiff.hiff.behiff.global.common.batch.BatchConfig.femaleList;
+import static hiff.hiff.behiff.global.common.batch.BatchConfig.females;
+
 import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import java.util.ArrayList;
@@ -16,19 +19,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class GenderReadJobExecutionListener implements JobExecutionListener {
 
-    private List<User> females = new ArrayList<>();
-    private List<User> males = new ArrayList<>();
-
-    private final MatchingService matchingService;
     private long startTime;
-
-    public void addMales(List<? extends User> users) {
-        males.addAll(users);
-    }
-
-    public void addFemales(List<? extends User> users) {
-        females.addAll(users);
-    }
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
@@ -38,13 +29,12 @@ public class GenderReadJobExecutionListener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            long duration = System.currentTimeMillis() - startTime;
-            matchingService.getNewHiffMatching(males, females);
-            males = new ArrayList<>();
-            females = new ArrayList<>();
             log.info("Job Completed Successfully: " + jobExecution.getJobInstance()
                 .getJobName());
+            long duration = System.currentTimeMillis() - startTime;
             log.info("Job took " + duration + " ms to complete.");
+            females.clear();
+            femaleList.clear();
         } else {
             log.error("Job Failed: " + jobExecution.getJobInstance().getJobName());
         }

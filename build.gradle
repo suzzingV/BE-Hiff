@@ -34,6 +34,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     //Spring Batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
+    // Batch Integration
+    implementation 'org.springframework.batch:spring-batch-integration:5.0.2'
     // mail
     implementation 'jakarta.mail:jakarta.mail-api:2.0.1'
     // AOP
@@ -43,6 +45,7 @@ dependencies {
     implementation 'com.auth0:java-jwt:4.2.1'
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    implementation 'junit:junit:4.13.1'
     //Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

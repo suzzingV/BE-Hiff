@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -15,7 +16,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user_pos_TB")
+@Table(name = "user_pos_TB",
+    indexes = {
+        @Index(name = "idx_pos_user_id", columnList = "userId")
+    })
 @Entity
 public class UserPos {
 
