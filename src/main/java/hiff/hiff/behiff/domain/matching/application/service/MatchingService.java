@@ -2,7 +2,7 @@ package hiff.hiff.behiff.domain.matching.application.service;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
-import static hiff.hiff.behiff.global.common.batch.BatchConfig.females;
+import static hiff.hiff.behiff.global.common.batch.BatchConfig.matchedQueue;
 import static hiff.hiff.behiff.global.common.redis.RedisService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
 import static hiff.hiff.behiff.global.common.redis.RedisService.DAILY_MATCHING_PREFIX;
@@ -28,34 +28,23 @@ import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
-import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class MatchingService {
 
     private final UserCRUDService userCRUDService;
@@ -73,6 +62,7 @@ public class MatchingService {
 
     private static final Integer DAILY_MATCHING_HEART = 1;
     private static final Integer HIFF_MATCHING_HEART = 3;
+    private static final int TOTAL_SCORE_STANDARD = 80;
 
     // TODO: 남은 시간
     // TODO: 외모 점수 없을 때
@@ -100,7 +90,9 @@ public class MatchingService {
     }
 
     public MatchingDetailResponse getDailyMatchingDetails(Long matcherId, Long matchedId) {
-        checkMatchingHistory(matcherId, matchedId);
+        if(!isMatchedBefore(matcherId, matchedId)) {
+            throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
+        }
         User matcher = userCRUDService.findById(matcherId);
         User matched = userCRUDService.findById(matchedId);
 
@@ -115,90 +107,88 @@ public class MatchingService {
             hobbies, lifeStyles);
     }
 
-    public void getNewHiffMatching(User male, PriorityQueue<UserWithMatchCount> femalesArr) {
-        UserPos malePos = userPosService.findPosByUserId(male.getId());
-        WeightValue maleWV = userWeightValueService.findByUserId(male.getId());
-        List<UserHobby> maleHobbies = userHobbyRepository.findByUserId(male.getId());
-        List<UserLifeStyle> maleLifeStyles = userLifeStyleRepository.findByUserId(male.getId());
+    public void getNewHiffMatching(User matcher, PriorityQueue<UserWithMatchCount> matchedArr) {
+        UserPos matcherPos = userPosService.findPosByUserId(matcher.getId());
+        WeightValue matcherWV = userWeightValueService.findByUserId(matcher.getId());
+        List<UserHobby> matcherHobbies = userHobbyRepository.findByUserId(matcher.getId());
+        List<UserLifeStyle> matcherLifeStyles = userLifeStyleRepository.findByUserId(matcher.getId());
         PriorityQueue<UserWithMatchCount> tmp = new PriorityQueue<>();
-        while (!femalesArr.isEmpty()) {
-            Instant startTime, endTime;
 
-            startTime = Instant.now();
-            UserWithMatchCount femaleWithCount = femalesArr.remove();
-            User female = femaleWithCount.getUser();
-//            endTime = Instant.now();
-//                log.info("Checked and removed female from queue | Execution time: {} ms", Duration.between(startTime, endTime).toMillis());
+        while (!matchedArr.isEmpty()) {
+            UserWithMatchCount matchedWithCount = matchedArr.remove();
+            User matched = matchedWithCount.getUser();
 
-//            startTime = Instant.now();
-            if (female.getHopeMinAge() > male.getAge() || female.getHopeMaxAge() < male.getAge()
-                || male.getHopeMinAge() > female.getAge()
-                || male.getHopeMaxAge() < female.getAge()) {
-//                endTime = Instant.now();
-//                    log.info("Age check completed | Execution time: {} ms", Duration.between(startTime, endTime).toMillis());
-                tmp.add(femaleWithCount);
-                continue;
-            }
-//            startTime = Instant.now();
-            List<Long> matchingHistory = matchingRepository.findByUsers(female.getId(),
-                male.getId());
-//            endTime = Instant.now();
-//            log.info("matching history select: {} ms", Duration.between(startTime, endTime).toMillis());
-            if (!matchingHistory.isEmpty()) {
-                tmp.add(femaleWithCount);
-                continue;
-            }
-//            startTime = Instant.now();
-            UserPos femalePos = userPosService.findPosByUserId(female.getId());
-            Double distance = computeDistance(malePos.getX(), malePos.getY(), femalePos.getX(),
-                femalePos.getY());
-//            endTime = Instant.now();
-//                log.info("Calculated distance between male and female Execution time: {} ms", Duration.between(startTime, endTime).toMillis());
-
-            if (distance > male.getMaxDistance() || distance < male.getMinDistance()
-                || distance > female.getMaxDistance() || distance < female.getMinDistance()) {
-                tmp.add(femaleWithCount);
+            if(checkAge(matcher, matched)) {
+                tmp.add(matchedWithCount);
                 continue;
             }
 
-            WeightValue femaleWV = userWeightValueService.findByUserId(female.getId());
-//            endTime = Instant.now();
-//            log.info("wv: {} ms", Duration.between(startTime, endTime).toMillis());
-//            startTime = Instant.now();
-            LocalDate today = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd");
-            String formattedDate = today.format(formatter);
-//            startTime = Instant.now();
-            List<UserHobby> femaleHobbies = userHobbyRepository.findByUserId(female.getId());
-            List<UserLifeStyle> femaleLifeStyle = userLifeStyleRepository.findByUserId(female.getId());
-            MatchingInfoDto maleMatchingInfo = getNewHiffMatchingInfo(male, female, maleWV, maleHobbies, femaleHobbies, maleLifeStyles, femaleLifeStyle);
-//            endTime = Instant.now();
-//            log.info("getMatchingInfo: {} ms", Duration.between(startTime, endTime).toMillis());
-            MatchingInfoDto femaleMatchingInfo = getNewHiffMatchingInfo(female, male, femaleWV, femaleHobbies, maleHobbies, femaleLifeStyle, maleLifeStyles);
-            endTime = Instant.now();
-            log.info("Matching info calculation completed | Execution time: {} ms",
-                Duration.between(startTime, endTime).toMillis());
+            if(isMatchedBefore(matcher.getId(), matched.getId())) {
+                tmp.add(matchedWithCount);
+                continue;
+            }
 
-            startTime = Instant.now();
-            if (maleMatchingInfo.getTotalScore() >= 80
-                && femaleMatchingInfo.getTotalScore() >= 80) {
-                femaleWithCount.increaseCount();
-                tmp.add(femaleWithCount);
-//                    log.debug("Caching matching score between male {} and female {}", male, female);
-                cachMatchingScore(female, male, maleMatchingInfo,
-                    formattedDate + HIFF_MATCHING_PREFIX);
-                recordMatchingHistory(female.getId(), male.getId());
-                recordMatchingHistory(male.getId(), female.getId());
-                endTime = Instant.now();
-                log.info("Match caching and history recording completed | Execution time: {} ms",
-                    Duration.between(startTime, endTime).toMillis());
+            UserPos matchedPos = userPosService.findPosByUserId(matched.getId());
+            Double distance = computeDistance(matcherPos.getX(), matcherPos.getY(), matchedPos.getX(),
+                matchedPos.getY());
+            if (checkDistance(matcher, matched, distance)) {
+                tmp.add(matchedWithCount);
+                continue;
+            }
+
+            WeightValue matchedWV = userWeightValueService.findByUserId(matched.getId());
+            List<UserHobby> matchedHobbies = userHobbyRepository.findByUserId(matched.getId());
+            List<UserLifeStyle> matchedLifeStyle = userLifeStyleRepository.findByUserId(matched.getId());
+            MatchingInfoDto matcherMatchingInfo = getNewHiffMatchingInfo(matcher, matched, matcherWV, matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
+            MatchingInfoDto matchedMatchingInfo = getNewHiffMatchingInfo(matched, matcher, matchedWV, matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
+
+            if (checkTotalScore(matcherMatchingInfo, matchedMatchingInfo)) {
+                matchedWithCount.increaseCount();
+                tmp.add(matchedWithCount);
+
+                String today = getTodayDate();
+                String prefix = today + HIFF_MATCHING_PREFIX;
+                cachMatchingScore(matched, matcher, matcherMatchingInfo, prefix);
+                recordMatchingHistory(matched.getId(), matcher.getId());
+                recordMatchingHistory(matcher.getId(), matched.getId());
                 break;
             }
-            tmp.add(femaleWithCount);
+            tmp.add(matchedWithCount);
         }
-        femalesArr.addAll(tmp);
-        females = femalesArr;
+        matchedArr.addAll(tmp);
+        matchedQueue = matchedArr;
     }
+
+    private String getTodayDate() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd");
+        return today.format(formatter);
+    }
+
+    private boolean checkTotalScore(MatchingInfoDto matcherMatchingInfo,
+        MatchingInfoDto matchedMatchingInfo) {
+        return matcherMatchingInfo.getTotalScore() >= TOTAL_SCORE_STANDARD
+            && matchedMatchingInfo.getTotalScore() >= TOTAL_SCORE_STANDARD;
+    }
+
+    private boolean checkDistance(User matcher, User matched, Double distance) {
+        return distance > matcher.getMaxDistance() || distance < matcher.getMinDistance()
+            || distance > matched.getMaxDistance() || distance < matched.getMinDistance();
+    }
+
+    private boolean isMatchedBefore(Long matcherId, Long matchedId) {
+        List<Long> matchingHistory = matchingRepository.findByUsers(matcherId, matchedId);
+        return !matchingHistory.isEmpty();
+    }
+
+    private boolean checkAge(User matcher, User matched) {
+        int matcherAge = matcher.getAge();
+        int matchedAge = matched.getAge();
+        return matched.getHopeMinAge() > matcherAge || matched.getHopeMaxAge() < matcherAge
+            || matcher.getHopeMinAge() > matchedAge
+            || matcher.getHopeMaxAge() < matchedAge;
+    }
+
     private void useHeart(User matcher, Integer amount) {
         if (matcher.getHeart() < amount) {
             throw new MatchingException(ErrorCode.LACK_OF_HEART);
@@ -290,11 +280,6 @@ public class MatchingService {
                     .isCommon(isCommon)
                     .build();
             }).toList();
-    }
-
-    private void checkMatchingHistory(Long matcherId, Long matchedId) {
-        matchingRepository.findByMatcherIdAndMatchedId(matcherId, matchedId)
-            .orElseThrow(() -> new MatchingException(ErrorCode.MATCHING_HISTORY_NOT_FOUND));
     }
 
     private MatchingSimpleResponse getAndRecordMatchingInfo(User matched, User matcher,

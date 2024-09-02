@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -40,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
+// TODO: 푸시알림
 public class BatchConfig {
 
     private final CustomSkipListener customSkipListener;
@@ -51,8 +51,8 @@ public class BatchConfig {
     private final DefaultJobExecutionListener defaultJobExecutionListener;
     private final FemaleStepExecutionListener femaleStepExecutionListener;
     private final MatchingService matchingService;
-    public static PriorityQueue<UserWithMatchCount> females = new PriorityQueue<>();
-    public static List<User> femaleList = new ArrayList<>();
+    public static PriorityQueue<UserWithMatchCount> matchedQueue = new PriorityQueue<>();
+    public static List<User> matchedList = new ArrayList<>();
 
     @Bean
     public Job dailyMatchingInitJob() {
@@ -63,8 +63,17 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job getUserByGenderJob() {
-        return new JobBuilder("getUserByGenderJob", jobRepository)
+    public Job hiffMatchingByMaleJob() {
+        return new JobBuilder("hiffMatchingJob", jobRepository)
+            .listener(genderReadJobExecutionListener)
+            .start(getFemaleStep())
+            .next(getMaleStep())
+            .build();
+    }
+
+    @Bean
+    public Job hiffMatchingByFemaleJob() {
+        return new JobBuilder("hiffMatchingJob", jobRepository)
             .listener(genderReadJobExecutionListener)
             .start(getFemaleStep())
             .next(getMaleStep())
@@ -90,8 +99,8 @@ public class BatchConfig {
         return new StepBuilder("getMaleStep", jobRepository)
             .<User, Future<User>>chunk(5000, transactionManager)
             .reader(maleReader())
-            .processor(maleAsyncItemProcessor())
-            .writer(maleAsyncItemWriter())
+            .processor(matcherAsyncItemProcessor())
+            .writer(matcherAsyncItemWriter())
             .faultTolerant()
             .skip(Exception.class)
             .listener(customSkipListener)
@@ -101,53 +110,51 @@ public class BatchConfig {
     }
 
     @Bean
-    public AsyncItemWriter<User> maleAsyncItemWriter() {
+    public AsyncItemWriter<User> matcherAsyncItemWriter() {
         AsyncItemWriter<User> writer = new AsyncItemWriter<>();
-        writer.setDelegate(maleWriter());
+        writer.setDelegate(matcherWriter());
         return writer;
     }
 
     @Bean
-    public AsyncItemWriter<User> femaleAsyncItemWriter() {
+    public AsyncItemWriter<User> matchedAsyncItemWriter() {
         AsyncItemWriter<User> writer = new AsyncItemWriter<>();
-        writer.setDelegate(femaleWriter());
+        writer.setDelegate(matchedWriter());
         return writer;
     }
 
     @Bean
-    public AsyncItemProcessor<User, User> femaleAsyncItemProcessor() {
+    public AsyncItemProcessor<User, User> matchedAsyncItemProcessor() {
         AsyncItemProcessor<User, User> asyncItemProcessor = new AsyncItemProcessor<>();
         asyncItemProcessor.setTaskExecutor(taskExecutor()); // 스레드풀 지정
-        asyncItemProcessor.setDelegate(femaleItemProcessor());
+        asyncItemProcessor.setDelegate(matchedItemProcessor());
         return asyncItemProcessor;
     }
 
     @Bean
-    public AsyncItemProcessor<User, User> maleAsyncItemProcessor() {
+    public AsyncItemProcessor<User, User> matcherAsyncItemProcessor() {
         AsyncItemProcessor<User, User> asyncItemProcessor = new AsyncItemProcessor<>();
         asyncItemProcessor.setTaskExecutor(taskExecutor()); // 스레드풀 지정
-        asyncItemProcessor.setDelegate(maleItemProcessor());
+        asyncItemProcessor.setDelegate(matcherItemProcessor());
         return asyncItemProcessor;
     }
 
     @Bean
-    public ItemProcessor<User, User> maleItemProcessor() {
+    public ItemProcessor<User, User> matcherItemProcessor() {
             return new ItemProcessor<User, User>() {
                 @Override
-                public User process(User user) throws Exception {
-                    String threadName = Thread.currentThread().getName();
-//                    log.info("Processing matching in thread: " + threadName + " list: " + user.getId());
-                    PriorityQueue<UserWithMatchCount> femaleArr = new PriorityQueue<>(females);
-                    matchingService.getNewHiffMatching(user, femaleArr);
+                public User process(User user) {
+                    PriorityQueue<UserWithMatchCount> matchedArr = new PriorityQueue<>(matchedQueue);
+                    matchingService.getNewHiffMatching(user, matchedArr);
                     return null;
                 }
             };
     }
 
     @Bean
-    public ItemProcessor<User, User> femaleItemProcessor() {
+    public ItemProcessor<User, User> matchedItemProcessor() {
         return user -> {
-            femaleList.add(user);
+            matchedList.add(user);
             return null;
         };
     }
@@ -157,8 +164,8 @@ public class BatchConfig {
         return new StepBuilder("getFemaleStep", jobRepository)
             .<User, Future<User>>chunk(5000, transactionManager)
             .reader(femaleReader())
-            .processor(femaleAsyncItemProcessor())
-            .writer(femaleAsyncItemWriter()) // 비동기로 실행하기 위한 TaskExecutor 설정
+            .processor(matchedAsyncItemProcessor())
+            .writer(matchedAsyncItemWriter()) // 비동기로 실행하기 위한 TaskExecutor 설정
             .listener(femaleStepExecutionListener)
             .faultTolerant()
             .skip(Exception.class)
@@ -210,7 +217,7 @@ public class BatchConfig {
     }
 
     @Bean
-    public ItemWriter<User> maleWriter() {
+    public ItemWriter<User> matcherWriter() {
         return new ItemWriter<User>() {
             @Override
             public void write(Chunk<? extends User> chunk) throws Exception {
@@ -231,7 +238,7 @@ public class BatchConfig {
     }
 
     @Bean
-    public ItemWriter<User> femaleWriter() {
+    public ItemWriter<User> matchedWriter() {
         return new ItemWriter<User>() {
             @Override
             public void write(Chunk<? extends User> chunk) throws Exception {
