@@ -51,6 +51,7 @@ public enum ErrorCode {
     MATCHING_HISTORY_NOT_FOUND(NOT_FOUND, "매칭 내역이 존재하지 않습니다."),
     MATCHING_NOT_FOUND(NOT_FOUND, "매칭 상대가 존재하지 않습니다."),
     MATCHING_SCORE_NOT_FOUND(NOT_FOUND, "매칭 점수 내역이 존재하지 않습니다."),
+    GENDER_COUNT_NOT_FOUND(NOT_FOUND, "성별 집계를 찾을 수 없습니다."),
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다.");

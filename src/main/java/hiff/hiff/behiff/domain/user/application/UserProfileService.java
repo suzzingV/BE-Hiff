@@ -1,10 +1,12 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository;
+import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.exception.UserException;
+import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
@@ -31,6 +33,7 @@ public class UserProfileService {
     private final UserRepository userRepository;
     private final UserPosRepository userPosRepository;
     private final EvaluatedUserRepository evaluatedUserRepository;
+    private final GenderCountRepository genderCountRepository;
 
     public void updateNickname(User user, NicknameRequest request) {
         checkNicknameDuplication(request.getNickname());
@@ -44,7 +47,14 @@ public class UserProfileService {
     public void updateGender(User user, GenderRequest request) {
         Gender gender = request.getGender();
         user.changeGender(gender);
+        updateGenderCount(gender);
         changeEvaluatedUserGender(user, gender);
+    }
+
+    private void updateGenderCount(Gender gender) {
+        GenderCount genderCount = genderCountRepository.findById(gender)
+            .orElseThrow(() -> new UserException(ErrorCode.GENDER_COUNT_NOT_FOUND));
+        genderCount.addCount();
     }
 
     public void updateMbti(User user, MbtiRequest request) {
