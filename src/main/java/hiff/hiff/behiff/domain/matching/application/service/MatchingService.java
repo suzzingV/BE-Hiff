@@ -2,7 +2,7 @@ package hiff.hiff.behiff.domain.matching.application.service;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
-import static hiff.hiff.behiff.global.common.batch.BatchConfig.matchedQueue;
+import static hiff.hiff.behiff.global.common.batch.hiff_matching.HiffMatchingBatchConfig.matchedQueue;
 import static hiff.hiff.behiff.global.common.redis.RedisService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
 import static hiff.hiff.behiff.global.common.redis.RedisService.DAILY_MATCHING_PREFIX;

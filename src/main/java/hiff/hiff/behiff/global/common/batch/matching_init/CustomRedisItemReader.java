@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.global.common.batch;
+package hiff.hiff.behiff.global.common.batch.matching_init;
 
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;

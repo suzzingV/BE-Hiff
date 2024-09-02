@@ -1,7 +1,5 @@
 package hiff.hiff.behiff.global.common.scheduler;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -21,10 +19,10 @@ public class Scheduler {
 
     private final JobLauncher jobLauncher;
     private final Job dailyMatchingInitJob;
-    private final Job getUserByGenderJob;
+    private final Job hiffMatchingByMaleJob;
 
-    public Scheduler(@Qualifier("dailyMatchingInitJob") Job dailyMatchingInitJob, @Qualifier("getUserByGenderJob") Job getUserByGenderJob, JobLauncher jobLauncher) {
-        this.getUserByGenderJob = getUserByGenderJob;
+    public Scheduler(@Qualifier("dailyMatchingInitJob") Job dailyMatchingInitJob, @Qualifier("hiffMatchingByMaleJob") Job hiffMatchingByMaleJob, JobLauncher jobLauncher) {
+        this.hiffMatchingByMaleJob = hiffMatchingByMaleJob;
         this.jobLauncher = jobLauncher;
         this.dailyMatchingInitJob = dailyMatchingInitJob;
     }
@@ -38,10 +36,10 @@ public class Scheduler {
     }
 
     @Scheduled(cron = "0 43 2 * * ?")
-    public void hiffFreeMatch() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+    public void freeHiffMatching() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters jobParameters = new JobParametersBuilder()
             .addDate("currentTime", new Date())
             .toJobParameters();
-        jobLauncher.run(getUserByGenderJob, jobParameters);
+        jobLauncher.run(hiffMatchingByMaleJob, jobParameters);
     }
 }
