@@ -28,5 +28,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
         """)
     List<User> getDailyMatched(Long matcherId, Gender gender);
 
+    @Query("""
+        SELECT u FROM User u
+        WHERE u.id NOT IN (SELECT m.matchedId FROM Matching m
+                                WHERE m.matchedId = u.id AND m.matcherId = :matcherId)
+        AND u.id != :matcherId
+        AND u.gender != :gender
+        """)
+    List<User> getMatched(Long matcherId, Gender gender);
+
     Page<User> findByGender(Gender gender, Pageable pageable);
 }
