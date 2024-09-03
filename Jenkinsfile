@@ -44,15 +44,11 @@ pipeline {
                 archiveArtifacts artifacts: '**/build/libs/*.jar', allowEmptyArchive : true
             }
         }
-
-        post {
+    }
+    post {
             always {
                 echo 'CI, BUILD completed'
             }
-        }
     }
-
-
-
 
 }
