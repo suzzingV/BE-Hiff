@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'ab34bc2c-f8ab-425a-b091-57a1ac313b1a', url: 'https://github.com/Team-Hiff/BE-Hiff.git'
+                git branch: 'develop_CI', credentialsId: 'ab34bc2c-f8ab-425a-b091-57a1ac313b1a', url: 'https://github.com/Team-Hiff/BE-Hiff.git'
             }
         }
 
