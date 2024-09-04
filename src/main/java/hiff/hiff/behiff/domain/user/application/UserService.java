@@ -13,7 +13,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
@@ -170,7 +169,7 @@ public class UserService {
 
     public MyInfoResponse getMyInfo(Long userId) {
         User user = userCRUDService.findById(userId);
-        String mainPhoto = userPhotoService.getMainPhotoOfUser(userId);
+        String mainPhoto = user.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
         List<String> hobbies = userHobbyService.findHobbiesByUser(userId);
         List<String> lifeStyles = userLifeStyleService.findLifeStylesByUser(userId);

@@ -97,7 +97,7 @@ public class MatchingService {
         User matcher = userCRUDService.findById(matcherId);
         User matched = userCRUDService.findById(matchedId);
 
-        String mainPhoto = userPhotoService.getMainPhotoOfUser(matchedId);
+        String mainPhoto = matched.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
         List<NameWithCommonDto> hobbies = getHobbiesWithCommon(matcherId, matchedId);
         List<NameWithCommonDto> lifeStyles = getLifeStylesWithCommon(matcherId, matchedId);
@@ -192,7 +192,7 @@ public class MatchingService {
                 cachHiffMatchingScore(matched, user, userMatchingInfo, matchedMatchingInfo.getTotalScore());
                 recordMatchingHistory(matched.getId(), user.getId());
                 recordMatchingHistory(user.getId(), matched.getId());
-                // TODO: main photo
+                String mainPhoto = user.getMainPhoto();
                 return MatchingSimpleResponse.builder()
                         .userId(matched.getId())
                         .distance(distance)
@@ -200,7 +200,7 @@ public class MatchingService {
                         .age(matched.getAge())
                         .nickname(matched.getNickname())
                         .matcherTotalScore(userMatchingInfo.getTotalScore())
-//                        .mainPhoto()
+                        .mainPhoto(mainPhoto)
                         .build();
             }
         }
