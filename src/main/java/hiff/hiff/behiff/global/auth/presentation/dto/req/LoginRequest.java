@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.global.validation.annotation.ValidSocialType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,9 +25,9 @@ public class LoginRequest {
     @ValidSocialType
     private SocialType socialType;
 
-    @NotEmpty
+    @NotNull
     private Double posX;
 
-    @NotEmpty
+    @NotNull
     private Double posY;
 }

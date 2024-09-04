@@ -168,7 +168,7 @@ public class HiffMatchingBatchConfig {
             @Override
             public User process(User matcher) {
                 PriorityQueue<UserWithMatchCount> matchedArr = new PriorityQueue<>(matchedQueue);
-                matchingService.getNewHiffMatching(matcher, matchedArr);
+                matchingService.dailyHiffMatching(matcher, matchedArr);
                 return null;
             }
         };

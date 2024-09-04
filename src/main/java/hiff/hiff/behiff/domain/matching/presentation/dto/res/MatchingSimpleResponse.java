@@ -13,7 +13,7 @@ public class MatchingSimpleResponse {
 
     private Integer age;
 
-    private Integer totalScore;
+    private Integer matcherTotalScore;
 
     private Double distance;
 

@@ -13,7 +13,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
@@ -30,6 +29,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -69,11 +69,11 @@ public class UserService {
         userCRUDService.withdraw(user, accessToken, refreshToken);
     }
 
-//    public UserRegisterResponse registerPhoto(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos) {
-//        findUserById(userId);
-//        userPhotoService.registerPhoto(mainPhoto, photos);
-//        return UserRegisterResponse.from(userId);
-//    }
+    public UserUpdateResponse registerPhoto(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos) {
+        userCRUDService.findById(userId);
+        userPhotoService.registerPhoto(userId, mainPhoto, photos);
+        return UserUpdateResponse.from(userId);
+    }
 
     public UserUpdateResponse updateNickname(Long userId, NicknameRequest request) {
         User user = userCRUDService.findById(userId);
@@ -169,12 +169,13 @@ public class UserService {
 
     public MyInfoResponse getMyInfo(Long userId) {
         User user = userCRUDService.findById(userId);
+        String mainPhoto = user.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
         List<String> hobbies = userHobbyService.findHobbiesByUser(userId);
         List<String> lifeStyles = userLifeStyleService.findLifeStylesByUser(userId);
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
 
-        return MyInfoResponse.of(user, hobbies, photos, lifeStyles, weightValue);
+        return MyInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue);
     }
 
     @Transactional(readOnly = true)

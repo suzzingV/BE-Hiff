@@ -209,6 +209,10 @@ public class User implements UserDetails {
         this.evaluatedCount++;
     }
 
+    public void updateMainPhoto(String photoUrl) {
+        this.mainPhoto = photoUrl;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getKey()));

@@ -35,16 +35,17 @@ import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MatchingService {
 
     private final UserCRUDService userCRUDService;
@@ -96,6 +97,7 @@ public class MatchingService {
         User matcher = userCRUDService.findById(matcherId);
         User matched = userCRUDService.findById(matchedId);
 
+        String mainPhoto = matched.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
         List<NameWithCommonDto> hobbies = getHobbiesWithCommon(matcherId, matchedId);
         List<NameWithCommonDto> lifeStyles = getLifeStylesWithCommon(matcherId, matchedId);
@@ -103,11 +105,11 @@ public class MatchingService {
         Double distance = getDistance(matcherId, matchedId);
         MatchingInfoDto matchingInfoDto = getCachedMatchingInfo(matcherId, matchedId);
 
-        return MatchingDetailResponse.of(matcher, matched, distance, photos, matchingInfoDto,
+        return MatchingDetailResponse.of(matcher, matched, distance, mainPhoto, photos, matchingInfoDto,
             hobbies, lifeStyles);
     }
 
-    public void getNewHiffMatching(User matcher, PriorityQueue<UserWithMatchCount> matchedArr) {
+    public void dailyHiffMatching(User matcher, PriorityQueue<UserWithMatchCount> matchedArr) {
         UserPos matcherPos = userPosService.findPosByUserId(matcher.getId());
         WeightValue matcherWV = userWeightValueService.findByUserId(matcher.getId());
         List<UserHobby> matcherHobbies = userHobbyRepository.findByUserId(matcher.getId());
@@ -139,16 +141,14 @@ public class MatchingService {
             WeightValue matchedWV = userWeightValueService.findByUserId(matched.getId());
             List<UserHobby> matchedHobbies = userHobbyRepository.findByUserId(matched.getId());
             List<UserLifeStyle> matchedLifeStyle = userLifeStyleRepository.findByUserId(matched.getId());
-            MatchingInfoDto matcherMatchingInfo = getNewHiffMatchingInfo(matcher, matched, matcherWV, matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
-            MatchingInfoDto matchedMatchingInfo = getNewHiffMatchingInfo(matched, matcher, matchedWV, matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
+            MatchingInfoDto matcherMatchingInfo = getHiffMatchingInfo(matcher, matched, matcherWV, matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
+            MatchingInfoDto matchedMatchingInfo = getHiffMatchingInfo(matched, matcher, matchedWV, matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
 
             if (checkTotalScore(matcherMatchingInfo, matchedMatchingInfo)) {
                 matchedWithCount.increaseCount();
                 tmp.add(matchedWithCount);
 
-                String today = getTodayDate();
-                String prefix = today + HIFF_MATCHING_PREFIX;
-                cachMatchingScore(matched, matcher, matcherMatchingInfo, prefix);
+                cachDailyMatchingScore(matched, matcher, matcherMatchingInfo);
                 recordMatchingHistory(matched.getId(), matcher.getId());
                 recordMatchingHistory(matcher.getId(), matched.getId());
                 break;
@@ -157,6 +157,55 @@ public class MatchingService {
         }
         matchedArr.addAll(tmp);
         matchedQueue = matchedArr;
+    }
+
+    public MatchingSimpleResponse getHiffMatching(User user) {
+        List<User> matcheds = userRepository.getMatched(user.getId(), user.getGender());
+        Collections.shuffle(matcheds);
+        Queue<User> matchedQueue = new LinkedList<>(matcheds);
+
+        UserPos matcherPos = userPosService.findPosByUserId(user.getId());
+        WeightValue matcherWV = userWeightValueService.findByUserId(user.getId());
+        List<UserHobby> matcherHobbies = userHobbyRepository.findByUserId(user.getId());
+        List<UserLifeStyle> matcherLifeStyles = userLifeStyleRepository.findByUserId(user.getId());
+
+        while(!matchedQueue.isEmpty()) {
+            User matched = matchedQueue.remove();
+            if(checkAge(user, matched)) {
+                continue;
+            }
+
+            UserPos matchedPos = userPosService.findPosByUserId(matched.getId());
+            Double distance = computeDistance(matcherPos.getX(), matcherPos.getY(), matchedPos.getX(),
+                    matchedPos.getY());
+            if (checkDistance(user, matched, distance)) {
+                continue;
+            }
+
+            WeightValue matchedWV = userWeightValueService.findByUserId(matched.getId());
+            List<UserHobby> matchedHobbies = userHobbyRepository.findByUserId(matched.getId());
+            List<UserLifeStyle> matchedLifeStyle = userLifeStyleRepository.findByUserId(matched.getId());
+            MatchingInfoDto userMatchingInfo = getHiffMatchingInfo(user, matched, matcherWV, matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
+            MatchingInfoDto matchedMatchingInfo = getHiffMatchingInfo(matched, user, matchedWV, matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
+
+            if (checkTotalScore(userMatchingInfo, matchedMatchingInfo)) {
+                cachHiffMatchingScore(matched, user, userMatchingInfo, matchedMatchingInfo.getTotalScore());
+                recordMatchingHistory(matched.getId(), user.getId());
+                recordMatchingHistory(user.getId(), matched.getId());
+                String mainPhoto = user.getMainPhoto();
+                return MatchingSimpleResponse.builder()
+                        .userId(matched.getId())
+                        .distance(distance)
+                        .matcherTotalScore(userMatchingInfo.getTotalScore())
+                        .age(matched.getAge())
+                        .nickname(matched.getNickname())
+                        .matcherTotalScore(userMatchingInfo.getTotalScore())
+                        .mainPhoto(mainPhoto)
+                        .build();
+            }
+        }
+
+        throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
     }
 
     private String getTodayDate() {
@@ -209,7 +258,7 @@ public class MatchingService {
                     .age(matched.getAge())
                     .nickname(matched.getNickname())
                     .mainPhoto(matched.getMainPhoto())
-                    .totalScore(totalScore)
+                    .matcherTotalScore(totalScore)
                     .distance(getDistance(userId, matchedId))
                     .build();
             }).toList();
@@ -219,7 +268,7 @@ public class MatchingService {
         List<MatchingSimpleResponse> responses = userRepository.getDailyMatched(matcher.getId(),
                 matcher.getGender())
             .stream()
-            .map(matched -> getAndRecordMatchingInfo(matched, matcher, prefix)).toList();
+            .map(matched -> getAndRecordMatchingInfo(matched, matcher)).toList();
         if (responses.isEmpty()) {
             throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
         }
@@ -282,12 +331,11 @@ public class MatchingService {
             }).toList();
     }
 
-    private MatchingSimpleResponse getAndRecordMatchingInfo(User matched, User matcher,
-        String prefix) {
+    private MatchingSimpleResponse getAndRecordMatchingInfo(User matched, User matcher) {
         WeightValue matcherWV = userWeightValueService.findByUserId(matcher.getId());
         MatchingInfoDto matchingInfoDto = getNewMatchingInfo(matcher, matched, matcherWV);
 
-        cachMatchingScore(matcher, matched, matchingInfoDto, prefix);
+        cachDailyMatchingScore(matcher, matched, matchingInfoDto);
         recordMatchingHistory(matcher.getId(), matched.getId());
 
         return MatchingSimpleResponse.builder()
@@ -295,13 +343,13 @@ public class MatchingService {
             .age(matched.getAge())
             .nickname(matched.getNickname())
             .mainPhoto(matched.getMainPhoto())
-            .totalScore(matchingInfoDto.getTotalScore())
+            .matcherTotalScore(matchingInfoDto.getTotalScore())
             .distance(getDistance(matcher.getId(), matched.getId()))
             .build();
     }
 
-    private MatchingInfoDto getNewHiffMatchingInfo(User matcher, User matched,
-        WeightValue matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies, List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
+    private MatchingInfoDto getHiffMatchingInfo(User matcher, User matched,
+                                                WeightValue matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies, List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
         int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcherHobbies, matchedHobbies);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcherLifeStyles, matchedLifeStyles);
@@ -351,12 +399,23 @@ public class MatchingService {
         matchingRepository.save(matching);
     }
 
-    private void cachMatchingScore(User matcher, User matched, MatchingInfoDto matchingInfoDto,
-        String prefix) {
+    private void cachDailyMatchingScore(User matcher, User matched, MatchingInfoDto matchingInfoDto) {
+        String today = getTodayDate();
+        String prefix = today + DAILY_MATCHING_PREFIX;
         String key = prefix + matcher.getId() + "_" + matched.getId();
         String value = matchingInfoDto.getTotalScore() + "/" + matchingInfoDto.getMbtiSimilarity() + "/"
             + matchingInfoDto.getHobbySimilarity() + "/"
             + matchingInfoDto.getLifeStyleSimilarity();
+        redisService.setStrValue(key, value, MATCHING_DURATION);
+    }
+
+    private void cachHiffMatchingScore(User matcher, User matched, MatchingInfoDto matchingInfoDto, int matchedTotalScore) {
+        String today = getTodayDate();
+        String prefix = today + HIFF_MATCHING_PREFIX;
+        String key = prefix + matcher.getId() + "_" + matched.getId();
+        String value = matchingInfoDto.getTotalScore() + "/" + matchedTotalScore + "/" + matchingInfoDto.getMbtiSimilarity() + "/"
+                + matchingInfoDto.getHobbySimilarity() + "/"
+                + matchingInfoDto.getLifeStyleSimilarity();
         redisService.setStrValue(key, value, MATCHING_DURATION);
     }
 

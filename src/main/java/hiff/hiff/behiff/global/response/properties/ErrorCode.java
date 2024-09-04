@@ -52,9 +52,12 @@ public enum ErrorCode {
     MATCHING_NOT_FOUND(NOT_FOUND, "매칭 상대가 존재하지 않습니다."),
     MATCHING_SCORE_NOT_FOUND(NOT_FOUND, "매칭 점수 내역이 존재하지 않습니다."),
     GENDER_COUNT_NOT_FOUND(NOT_FOUND, "성별 집계를 찾을 수 없습니다."),
+    MAIN_PHOTO_NOT_FOUND(NOT_FOUND, "유저의 메인 사진을 찾을 수 없습니다."),
+    PHOTOS_NOT_FOUND(NOT_FOUND, "유저의 사진을 찾을 수 없습니다."),
 
     // 500
-    SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다.");
+    SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),
+    IMAGE_STORAGE_SAVE_ERROR(INTERNAL_SERVER_ERROR, "스토리지에 사진을 저장하는 도중 에러가 발생하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

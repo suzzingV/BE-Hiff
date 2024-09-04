@@ -21,6 +21,8 @@ public class MatchingDetailResponse {
 
     private Double distance;
 
+    private String mainPhoto;
+
     private List<String> photos;
 
     private Integer totalScore;
@@ -43,7 +45,7 @@ public class MatchingDetailResponse {
 
     private Integer lifeStyleSimilarity;
 
-    public static MatchingDetailResponse of(User matcher, User matched, Double distance,
+    public static MatchingDetailResponse of(User matcher, User matched, Double distance, String mainPhoto,
         List<String> photos, MatchingInfoDto matchingScores, List<NameWithCommonDto> hobbies,
         List<NameWithCommonDto> lifeStyles) {
         return MatchingDetailResponse.builder()
@@ -62,6 +64,7 @@ public class MatchingDetailResponse {
             .hobbySimilarity(matchingScores.getHobbySimilarity())
             .lifeStyles(lifeStyles)
             .lifeStyleSimilarity(matchingScores.getLifeStyleSimilarity())
+                .mainPhoto(mainPhoto)
             .build();
     }
 }

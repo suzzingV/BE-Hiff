@@ -29,6 +29,8 @@ public class MyInfoResponse {
 
     private Integer minDistance;
 
+    private String mainPhoto;
+
     private List<String> photos;
 
     private List<String> hobbies;
@@ -69,7 +71,7 @@ public class MyInfoResponse {
 
     private Double appearanceScore;
 
-    public static MyInfoResponse of(User user, List<String> hobbies, List<String> photos,
+    public static MyInfoResponse of(User user, List<String> hobbies, String mainPhoto, List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
         return MyInfoResponse.builder()
             .userId(user.getId())
@@ -79,6 +81,7 @@ public class MyInfoResponse {
             .age(user.getAge())
             .maxDistance(user.getMaxDistance())
             .minDistance(user.getMinDistance())
+                .mainPhoto(mainPhoto)
             .photos(photos)
             .hobbies(hobbies)
             .lifeStyles(lifeStyles)
