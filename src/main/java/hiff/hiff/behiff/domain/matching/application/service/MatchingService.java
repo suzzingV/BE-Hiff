@@ -97,6 +97,7 @@ public class MatchingService {
         User matcher = userCRUDService.findById(matcherId);
         User matched = userCRUDService.findById(matchedId);
 
+        String mainPhoto = userPhotoService.getMainPhotoOfUser(matchedId);
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
         List<NameWithCommonDto> hobbies = getHobbiesWithCommon(matcherId, matchedId);
         List<NameWithCommonDto> lifeStyles = getLifeStylesWithCommon(matcherId, matchedId);
@@ -104,7 +105,7 @@ public class MatchingService {
         Double distance = getDistance(matcherId, matchedId);
         MatchingInfoDto matchingInfoDto = getCachedMatchingInfo(matcherId, matchedId);
 
-        return MatchingDetailResponse.of(matcher, matched, distance, photos, matchingInfoDto,
+        return MatchingDetailResponse.of(matcher, matched, distance, mainPhoto, photos, matchingInfoDto,
             hobbies, lifeStyles);
     }
 

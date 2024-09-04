@@ -9,7 +9,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
@@ -28,16 +27,11 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v0/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -68,11 +62,11 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/photo")
-//    public ResponseEntity<UserRegisterResponse> registerPhoto(@AuthenticationPrincipal User user, @RequestPart(value = "main photo") MultipartFile mainPhoto, @RequestPart(value = "photos")List<MultipartFile> photos) {
-//        UserRegisterResponse response = userService.registerPhoto(user.getId(), photo, photos);
-//        return ResponseEntity.ok(response);
-//    }
+    @PostMapping("/photo")
+    public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user, @RequestPart(value = "main_photo") MultipartFile mainPhoto, @RequestPart(value = "photos")List<MultipartFile> photos) {
+        UserUpdateResponse response = userService.registerPhoto(user.getId(), mainPhoto, photos);
+        return ResponseEntity.ok(response);
+    }
 
     @PatchMapping("/nickname")
     public ResponseEntity<UserUpdateResponse> updateNickname(@AuthenticationPrincipal User user,

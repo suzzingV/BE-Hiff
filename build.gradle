@@ -55,12 +55,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     //H2
     runtimeOnly 'com.h2database:h2'
-    // s3
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.261'
-    implementation 'javax.xml.bind:jaxb-api:2.3.1'
-    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
-    implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
-    implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
+    // gcp
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter', version: '1.2.5.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-storage', version: '1.2.5.RELEASE'
+
     //SpringBoot Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
