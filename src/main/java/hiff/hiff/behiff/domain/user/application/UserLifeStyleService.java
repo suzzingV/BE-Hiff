@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.exception.UserException;
@@ -33,7 +34,7 @@ public class UserLifeStyleService {
         return UserUpdateResponse.from(userId);
     }
 
-    public List<String> findLifeStylesByUser(Long userId) {
+    public List<String> findNamesByUser(Long userId) {
         return userLifeStyleRepository.findByUserId(userId)
             .stream()
             .map(userLifeStyle -> {
@@ -43,8 +44,26 @@ public class UserLifeStyleService {
             .toList();
     }
 
+    public List<UserLifeStyle> findByUserId(Long userId) {
+        return userLifeStyleRepository.findByUserId(userId);
+    }
+
     public List<LifeStyle> getAllLifeStyles() {
         return lifeStyleRepository.findAll();
+    }
+
+    public List<NameWithCommonDto> getLifeStylesWithCommon(Long matcherId, Long matchedId) {
+        List<String> matcherLifeStyles = findNamesByUser(matcherId);
+        List<String> matchedLifeStyles = findNamesByUser(matchedId);
+
+        return matchedLifeStyles.stream()
+            .map(lifeStyle -> {
+                boolean isCommon = matcherLifeStyles.contains(lifeStyle);
+                return NameWithCommonDto.builder()
+                    .name(lifeStyle)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
     }
 
 //    private void registerNewLifeStyles(Long userId, List<String> newLifeStyles) {

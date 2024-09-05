@@ -164,8 +164,8 @@ public class UserService {
         User user = userCRUDService.findById(userId);
         String mainPhoto = user.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
-        List<String> hobbies = userHobbyService.findHobbiesByUser(userId);
-        List<String> lifeStyles = userLifeStyleService.findLifeStylesByUser(userId);
+        List<String> hobbies = userHobbyService.findNameByUser(userId);
+        List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
 
         return MyInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue);
