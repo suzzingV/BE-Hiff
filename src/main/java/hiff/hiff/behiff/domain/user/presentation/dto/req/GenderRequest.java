@@ -10,6 +10,6 @@ import lombok.Getter;
 public class GenderRequest {
 
     @ValidGender
-    @NotEmpty
+    @NotNull
     private Gender gender;
 }

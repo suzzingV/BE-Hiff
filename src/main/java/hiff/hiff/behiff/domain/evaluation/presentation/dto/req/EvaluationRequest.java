@@ -9,10 +9,10 @@ import lombok.Getter;
 @Getter
 public class EvaluationRequest {
 
-    @NotEmpty
+    @NotNull
     private Long evaluatedId;
 
-    @NotEmpty
+    @NotNull
     @Min(1)
     @Max(5)
     private Integer score;

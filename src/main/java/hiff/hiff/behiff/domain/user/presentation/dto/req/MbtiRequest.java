@@ -10,6 +10,6 @@ import lombok.Getter;
 public class MbtiRequest {
 
     @ValidMbti
-    @NotEmpty
+    @NotNull
     private Mbti mbti;
 }

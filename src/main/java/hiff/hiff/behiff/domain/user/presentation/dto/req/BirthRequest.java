@@ -9,17 +9,17 @@ import lombok.Getter;
 @Getter
 public class BirthRequest {
 
-    @NotEmpty
+    @NotNull
     @Min(1900)
     @Max(2024)
     private Integer birthYear;
 
-    @NotEmpty
+    @NotNull
     @Min(1)
     @Max(12)
     private Integer birthMonth;
 
-    @NotEmpty
+    @NotNull
     @Min(1)
     @Max(31)
     private Integer birthDay;

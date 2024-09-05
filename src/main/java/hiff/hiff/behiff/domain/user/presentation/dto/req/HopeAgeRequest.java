@@ -11,11 +11,11 @@ public class HopeAgeRequest {
 
     @Min(20)
     @Max(50)
-    @NotEmpty
+    @NotNull
     private Integer minAge;
 
     @Min(20)
     @Max(50)
-    @NotEmpty
+    @NotNull
     private Integer maxAge;
 }

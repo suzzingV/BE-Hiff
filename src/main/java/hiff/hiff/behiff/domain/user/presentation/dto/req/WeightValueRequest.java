@@ -14,22 +14,22 @@ public class WeightValueRequest {
 //    @Max(5)
 //    private Integer income;
 
-    @NotEmpty
+    @NotNull
     @Min(1)
     @Max(5)
     private Integer appearance;
 
-    @NotEmpty
+    @NotNull
     @Min(1)
     @Max(5)
     private Integer hobby;
 
-    @NotEmpty
+    @NotNull
     @Min(1)
     @Max(5)
     private Integer lifeStyle;
 
-    @NotEmpty
+    @NotNull
     @Min(1)
     @Max(5)
     private Integer mbti;

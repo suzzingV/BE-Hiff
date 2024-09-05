@@ -10,6 +10,6 @@ import lombok.Getter;
 public class EducationRequest {
 
     @ValidEducation
-    @NotEmpty
+    @NotNull
     private Education education;
 }

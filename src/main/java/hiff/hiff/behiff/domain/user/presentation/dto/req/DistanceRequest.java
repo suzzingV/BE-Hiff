@@ -11,11 +11,11 @@ public class DistanceRequest {
 
     @Min(0)
     @Max(700)
-    @NotEmpty
+    @NotNull
     private Integer maxDistance;
 
     @Min(0)
     @Max(700)
-    @NotEmpty
+    @NotNull
     private Integer minDistance;
 }
