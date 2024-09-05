@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class SmsService {
+public class SmsUtil {
 
     @Value("${coolsms.api.key}")
     private String apiKey;
