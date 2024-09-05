@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component;
 public class LoggingAspect {
 
     @Pointcut("execution(* com.yourpackage.YourService.getNewHiffMatching(..))")
-    public void matchingMethod() {}
+    public void matchingMethod() {
+    }
 
     @Before("matchingMethod()")
     public void logBefore(JoinPoint joinPoint) {

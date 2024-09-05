@@ -1,8 +1,6 @@
 package hiff.hiff.behiff.domain.user.application;
 
-import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
-import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.WeightValueRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;

@@ -8,23 +8,23 @@ import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.VerificationCodeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserEvaluatedScoreResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.VerificationCodeRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import java.util.Optional;
@@ -68,7 +68,8 @@ public class UserService {
         userCRUDService.withdraw(user, accessToken, refreshToken);
     }
 
-    public UserUpdateResponse registerPhoto(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos) {
+    public UserUpdateResponse registerPhoto(Long userId, MultipartFile mainPhoto,
+        List<MultipartFile> photos) {
         userCRUDService.findById(userId);
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
         return UserUpdateResponse.from(userId);

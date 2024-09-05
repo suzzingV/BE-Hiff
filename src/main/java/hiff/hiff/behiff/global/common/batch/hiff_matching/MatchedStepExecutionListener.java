@@ -29,7 +29,7 @@ public class MatchedStepExecutionListener implements StepExecutionListener {
             stepExecution.getStepName(),
             stepExecution.getStatus());
         Collections.shuffle(matchedList);
-        for(User matched : matchedList) {
+        for (User matched : matchedList) {
             matchedQueue.add(new UserWithMatchCount(matched, 0));
         }
         return stepExecution.getExitStatus();

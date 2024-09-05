@@ -4,7 +4,6 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
-import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import java.time.LocalDate;
 import java.util.List;
@@ -71,7 +70,8 @@ public class MyInfoResponse {
 
     private Double appearanceScore;
 
-    public static MyInfoResponse of(User user, List<String> hobbies, String mainPhoto, List<String> photos,
+    public static MyInfoResponse of(User user, List<String> hobbies, String mainPhoto,
+        List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
         return MyInfoResponse.builder()
             .userId(user.getId())
@@ -81,7 +81,7 @@ public class MyInfoResponse {
             .age(user.getAge())
             .maxDistance(user.getMaxDistance())
             .minDistance(user.getMinDistance())
-                .mainPhoto(mainPhoto)
+            .mainPhoto(mainPhoto)
             .photos(photos)
             .hobbies(hobbies)
             .lifeStyles(lifeStyles)

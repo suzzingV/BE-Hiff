@@ -1,5 +1,7 @@
 package hiff.hiff.behiff.global.auth.jwt.service;
 
+import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -8,16 +10,13 @@ import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.Duration;
+import java.util.Date;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.util.Date;
-import java.util.Optional;
-
-import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 
 @Service
 @RequiredArgsConstructor
@@ -51,18 +50,18 @@ public class JwtService {
     public String createAccessToken(String email) {
         Date now = new Date();
         return JWT.create()
-                .withSubject(ACCESS_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-                .withClaim(EMAIL_CLAIM, email)
-                .sign(Algorithm.HMAC512(secretKey));
+            .withSubject(ACCESS_TOKEN_SUBJECT)
+            .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
+            .withClaim(EMAIL_CLAIM, email)
+            .sign(Algorithm.HMAC512(secretKey));
     }
 
     public String createRefreshToken() {
         Date now = new Date();
         return JWT.create()
-                .withSubject(REFRESH_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
-                .sign(Algorithm.HMAC512(secretKey));
+            .withSubject(REFRESH_TOKEN_SUBJECT)
+            .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
+            .sign(Algorithm.HMAC512(secretKey));
     }
 
     public String reissueRefreshToken(String refreshToken, String email) {
@@ -74,23 +73,23 @@ public class JwtService {
 
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(refreshHeader))
-                .filter(header -> header.startsWith(BEARER))
-                .map(header -> header.replace(BEARER, ""));
+            .filter(header -> header.startsWith(BEARER))
+            .map(header -> header.replace(BEARER, ""));
     }
 
     public Optional<String> extractAccessToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(accessHeader))
-                .filter(accessToken -> accessToken.startsWith(BEARER))
-                .map(accessToken -> accessToken.replace(BEARER, ""));
+            .filter(accessToken -> accessToken.startsWith(BEARER))
+            .map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
     public Optional<String> extractEmail(String accessToken) {
         try {
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
-                    .build()
-                    .verify(accessToken) //검증
-                    .getClaim(EMAIL_CLAIM) //추출
-                    .asString());
+                .build()
+                .verify(accessToken) //검증
+                .getClaim(EMAIL_CLAIM) //추출
+                .asString());
         } catch (JWTVerificationException e) {
             throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
@@ -99,7 +98,7 @@ public class JwtService {
     //RefreshToken redis 저장
     public void updateRefreshToken(String refreshToken, String email) {
         redisService.setValue(refreshToken, email,
-                Duration.ofMillis(refreshTokenExpirationPeriod));
+            Duration.ofMillis(refreshTokenExpirationPeriod));
     }
 
     public boolean isTokenValid(String token) {
@@ -120,7 +119,7 @@ public class JwtService {
 
     public void invalidAccessToken(String accessToken) {
         redisService.setValue(accessToken, LOGOUT,
-                Duration.ofMillis(accessTokenExpirationPeriod));
+            Duration.ofMillis(accessTokenExpirationPeriod));
     }
 
     public String checkRefreshToken(String refreshToken) {

@@ -12,13 +12,14 @@ public class LoginResponse {
     private Long userId;
     private Boolean isNew;
 
-    public static LoginResponse of(String accessToken, String refreshToken, Boolean isNew, Long userId) {
+    public static LoginResponse of(String accessToken, String refreshToken, Boolean isNew,
+        Long userId) {
         return LoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .isNew(isNew)
-                .userId(userId)
-                .build();
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .isNew(isNew)
+            .userId(userId)
+            .build();
     }
 
     public void changeUserId(Long userId) {

@@ -12,7 +12,8 @@ public class BlockingRejectedExecutionHandler implements RejectedExecutionHandle
             executor.getQueue().put(r);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RejectedExecutionException("Task " + r.toString() + " rejected from " + e.toString());
+            throw new RejectedExecutionException(
+                "Task " + r.toString() + " rejected from " + e.toString());
         }
     }
 }

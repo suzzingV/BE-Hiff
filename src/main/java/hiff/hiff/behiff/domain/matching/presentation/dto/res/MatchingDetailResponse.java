@@ -3,7 +3,6 @@ package hiff.hiff.behiff.domain.matching.presentation.dto.res;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import java.util.List;
 import lombok.Builder;
@@ -45,7 +44,8 @@ public class MatchingDetailResponse {
 
     private Integer lifeStyleSimilarity;
 
-    public static MatchingDetailResponse of(User matcher, User matched, Double distance, String mainPhoto,
+    public static MatchingDetailResponse of(User matcher, User matched, Double distance,
+        String mainPhoto,
         List<String> photos, MatchingInfoDto matchingScores, List<NameWithCommonDto> hobbies,
         List<NameWithCommonDto> lifeStyles) {
         return MatchingDetailResponse.builder()
@@ -64,7 +64,7 @@ public class MatchingDetailResponse {
             .hobbySimilarity(matchingScores.getHobbySimilarity())
             .lifeStyles(lifeStyles)
             .lifeStyleSimilarity(matchingScores.getLifeStyleSimilarity())
-                .mainPhoto(mainPhoto)
+            .mainPhoto(mainPhoto)
             .build();
     }
 }

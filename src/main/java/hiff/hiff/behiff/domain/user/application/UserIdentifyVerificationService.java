@@ -22,7 +22,7 @@ public class UserIdentifyVerificationService {
     private static final Duration IDENTIFY_VERIFICATION_DURATION = Duration.ofMinutes(5);
 
     public void sendIdentificationSms(User user, String phoneNum) {
-        String realPhoneNum = phoneNum.replaceAll("-","");
+        String realPhoneNum = phoneNum.replaceAll("-", "");
         Random random = new Random();
         int number = random.nextInt(1000000);
         String verificationCode = String.format("%06d", number);
@@ -34,7 +34,7 @@ public class UserIdentifyVerificationService {
 
     public void checkCode(Long userId, String code) {
         Long savedUserId = redisService.getLongValue(code);
-        if(!userId.equals(savedUserId)) {
+        if (!userId.equals(savedUserId)) {
             throw new UserException(ErrorCode.VERIFICATION_CODE_INCORRECT);
         }
     }

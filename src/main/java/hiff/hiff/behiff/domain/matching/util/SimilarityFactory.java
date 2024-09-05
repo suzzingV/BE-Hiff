@@ -2,7 +2,6 @@ package hiff.hiff.behiff.domain.matching.util;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeIntAvg;
 import static hiff.hiff.behiff.global.common.redis.RedisService.HOBBY_PREFIX;
-import static hiff.hiff.behiff.global.common.redis.RedisService.INCOME_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.LIFESTYLE_PREFIX;
 import static hiff.hiff.behiff.global.common.redis.RedisService.MBTI_PREFIX;
 
@@ -12,11 +11,8 @@ import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
-import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -70,8 +66,9 @@ public class SimilarityFactory {
                 String key =
                     HOBBY_PREFIX + matcherHobby.getHobbyId() + "_" + matchedHobby.getHobbyId();
                 int similarity = redisService.getIntValue(key);
-                if(similarity == 0) {
-                    key = HOBBY_PREFIX + matchedHobby.getHobbyId() + "_" + matcherHobby.getHobbyId();
+                if (similarity == 0) {
+                    key =
+                        HOBBY_PREFIX + matchedHobby.getHobbyId() + "_" + matcherHobby.getHobbyId();
                     similarity = redisService.getIntValue(key);
                 }
                 hobbySimilaritySum += similarity;
@@ -87,7 +84,8 @@ public class SimilarityFactory {
 //            key);
 //    }
 
-    public int getLifeStyleSimilarity(List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
+    public int getLifeStyleSimilarity(List<UserLifeStyle> matcherLifeStyles,
+        List<UserLifeStyle> matchedLifeStyles) {
 
         int lifeStyleSimilaritySum = 0;
         for (UserLifeStyle matcherLifeStyle : matcherLifeStyles) {
@@ -96,7 +94,7 @@ public class SimilarityFactory {
                     LIFESTYLE_PREFIX + matcherLifeStyle.getLifeStyleId() + "_"
                         + matchedLifeStyle.getLifeStyleId();
                 int similarity = redisService.getIntValue(key);
-                if(similarity == 0) {
+                if (similarity == 0) {
                     key = LIFESTYLE_PREFIX + matchedLifeStyle.getLifeStyleId() + "_"
                         + matcherLifeStyle.getLifeStyleId();
                     similarity = redisService.getIntValue(key);
@@ -142,7 +140,7 @@ public class SimilarityFactory {
         String key = MBTI_PREFIX + matcher.getMbti() + "_" + matched.getMbti();
 
         int similarity = redisService.getIntValue(key);
-        if(similarity == 0) {
+        if (similarity == 0) {
             key = MBTI_PREFIX + matched.getMbti() + "_" + matcher.getMbti();
             similarity = redisService.getIntValue(key);
         }

@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
-        info = @Info(title = "Hiff API 명세서",
-                description = "Hiff API 명세서",
-                version = "0"))
+    info = @Info(title = "Hiff API 명세서",
+        description = "Hiff API 명세서",
+        version = "0"))
 @RequiredArgsConstructor
 @Configuration
 public class SwaggerConfig {
@@ -21,9 +21,9 @@ public class SwaggerConfig {
         String[] paths = {"/api/v0/**"};
 
         return GroupedOpenApi.builder()
-                .group("Hiff API v0")  // 그룹 이름을 설정한다.
-                .pathsToMatch(paths)     // 그룹에 속하는 경로 패턴을 지정한다.
-                .build();
+            .group("Hiff API v0")  // 그룹 이름을 설정한다.
+            .pathsToMatch(paths)     // 그룹에 속하는 경로 패턴을 지정한다.
+            .build();
     }
 
 //    @Bean

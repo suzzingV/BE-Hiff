@@ -12,7 +12,8 @@ public class Calculator {
         double evaluatedScore = convertEvaluatedScore(matchedEvaluatedScore);
         return (int) Math.round(
             (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity
-                + matcherWV.getLifeStyle() * lifeStyleSimilarity + matcherWV.getAppearance() * evaluatedScore) / matcherWV.getTotal());
+                + matcherWV.getLifeStyle() * lifeStyleSimilarity
+                + matcherWV.getAppearance() * evaluatedScore) / matcherWV.getTotal());
     }
 
     public static int computeIntAvg(int sum, int count) {
