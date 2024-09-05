@@ -23,13 +23,13 @@ public class MatchingInitBatchConfig {
 
     private final CustomSkipListener customSkipListener;
     private final JobRepository jobRepository;
-    private final RedisTemplate<String, String> strRedisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private final PlatformTransactionManager transactionManager;
     private final DefaultJobExecutionListener defaultJobExecutionListener;
     private final Converter<String, String> itemKeyMapper = new Converter<String, String>() {
         @Override
         public String convert(String key) {
-            return strRedisTemplate.opsForValue().get(key);
+            return redisTemplate.opsForValue().get(key);
         }
     };
 
@@ -60,13 +60,13 @@ public class MatchingInitBatchConfig {
     public CustomRedisItemReader<String, String> redisItemReader() {
         ScanOptions scanOptions = ScanOptions.scanOptions().match(DAILY_MATCHING_PREFIX + "*")
             .count(1000).build();
-        return new CustomRedisItemReader<>(strRedisTemplate, scanOptions);
+        return new CustomRedisItemReader<>(redisTemplate, scanOptions);
     }
 
     @Bean
     public CustomRedisItemWriter<String, String> redisItemWriter() {
         CustomRedisItemWriter<String, String> customRedisItemWriter = new CustomRedisItemWriter<>();
-        customRedisItemWriter.setRedisTemplate(strRedisTemplate);
+        customRedisItemWriter.setRedisTemplate(redisTemplate);
         customRedisItemWriter.setDelete(true);
         customRedisItemWriter.setItemKeyMapper(itemKeyMapper);
         return customRedisItemWriter;

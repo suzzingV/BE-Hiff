@@ -23,6 +23,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserEvaluatedScoreResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.VerificationCodeRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,7 @@ public class UserService {
     private final UserProfileService userProfileService;
     private final UserCRUDService userCRUDService;
     private final UserPosService userPosService;
+    private final UserIdentifyVerificationService userIdentifyVerificationService;
     private final EvaluationService evaluationService;
 
     public User registerUser(String email, String socialId, SocialType socialType,
@@ -56,12 +58,8 @@ public class UserService {
         return user;
     }
 
-    public User findByEmail(String email) {
-        return userCRUDService.findByEmail(email);
-    }
-
-    public void createPos(Long userId, Double x, Double y) {
-        userPosService.createPos(userId, x, y);
+    public User findById(Long userId) {
+        return userCRUDService.findById(userId);
     }
 
     public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {
@@ -114,12 +112,6 @@ public class UserService {
     public UserUpdateResponse updateEducation(Long userId, EducationRequest request) {
         User user = userCRUDService.findById(userId);
         userProfileService.updateEducation(user, request);
-        return UserUpdateResponse.from(userId);
-    }
-
-    public UserUpdateResponse updatePhoneNum(Long userId, PhoneNumRequest request) {
-        User user = userCRUDService.findById(userId);
-        userProfileService.updatePhoneNum(user, request);
         return UserUpdateResponse.from(userId);
     }
 
@@ -218,5 +210,15 @@ public class UserService {
             .evaluatedScore(score)
             .userId(userId)
             .build();
+    }
+
+    public void sendVerificationCode(Long userId, PhoneNumRequest request) {
+        User user = userCRUDService.findById(userId);
+        userIdentifyVerificationService.sendIdentificationSms(user, request.getPhoneNum());
+        userProfileService.updatePhoneNum(user, request.getPhoneNum());
+    }
+
+    public void identifyVerification(Long userId, VerificationCodeRequest request) {
+        userIdentifyVerificationService.checkCode(userId, request.getCode());
     }
 }

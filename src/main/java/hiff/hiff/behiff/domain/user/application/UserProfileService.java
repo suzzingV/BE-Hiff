@@ -73,8 +73,8 @@ public class UserProfileService {
         user.changeEducation(request.getEducation(), request.getSchool());
     }
 
-    public void updatePhoneNum(User user, PhoneNumRequest request) {
-        user.changePhoneNum(request.getPhoneNum());
+    public void updatePhoneNum(User user, String phoneNum) {
+        user.changePhoneNum(phoneNum);
     }
 
     public void updateHopeAge(User user, HopeAgeRequest request) {

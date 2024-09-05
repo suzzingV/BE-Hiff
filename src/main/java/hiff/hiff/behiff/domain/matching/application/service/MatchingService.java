@@ -406,7 +406,7 @@ public class MatchingService {
         String value = matchingInfoDto.getTotalScore() + "/" + matchingInfoDto.getMbtiSimilarity() + "/"
             + matchingInfoDto.getHobbySimilarity() + "/"
             + matchingInfoDto.getLifeStyleSimilarity();
-        redisService.setStrValue(key, value, MATCHING_DURATION);
+        redisService.setValue(key, value, MATCHING_DURATION);
     }
 
     private void cachHiffMatchingScore(User matcher, User matched, MatchingInfoDto matchingInfoDto, int matchedTotalScore) {
@@ -416,7 +416,7 @@ public class MatchingService {
         String value = matchingInfoDto.getTotalScore() + "/" + matchedTotalScore + "/" + matchingInfoDto.getMbtiSimilarity() + "/"
                 + matchingInfoDto.getHobbySimilarity() + "/"
                 + matchingInfoDto.getLifeStyleSimilarity();
-        redisService.setStrValue(key, value, MATCHING_DURATION);
+        redisService.setValue(key, value, MATCHING_DURATION);
     }
 
     private int getTotalScore(String key) {

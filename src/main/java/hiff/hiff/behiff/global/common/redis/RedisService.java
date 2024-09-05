@@ -19,7 +19,7 @@ import java.util.Objects;
 @Transactional
 public class RedisService {
 
-    private final RedisTemplate<String, String> strRedisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private final RedisTemplate<String, Integer> integerRedisTemplate;
     public static final String EVALUATION_PREFIX = "eval_";
     public static final String NOT_EXIST = "false";
@@ -35,9 +35,10 @@ public class RedisService {
 
     public static final Duration HIFF_MATCHING_DURATION = Duration.ofDays(2);
 
-    public void setStrValue(String key, String data, Duration duration) {
-        ValueOperations<String, String> values = strRedisTemplate.opsForValue();
-        values.set(key, data, duration);
+    public void setValue(String key, Object data, Duration duration) {
+        String value = String.valueOf(data);
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(key, value, duration);
     }
 
     public void updateIntValue(String key) {
@@ -55,8 +56,9 @@ public class RedisService {
     }
 
     @Transactional(readOnly = true)
-    public String getStrValue(String key) {
-        ValueOperations<String, String> values = strRedisTemplate.opsForValue();
+    public String getStrValue(Object key) {
+        String realKey = String.valueOf(key);
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
         if (values.get(key) == null) {
             return NOT_EXIST;
         }
@@ -73,10 +75,19 @@ public class RedisService {
     }
 
     @Transactional(readOnly = true)
+    public Long getLongValue(String key) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        if (values.get(key) == null) {
+            return 0L;
+        }
+        return Long.parseLong(values.get(key));
+    }
+
+    @Transactional(readOnly = true)
     public List<String> scanKeysWithPrefix(String prefix) {
         List<String> keys = new ArrayList<>();
 
-        Cursor<byte[]> cursor = Objects.requireNonNull(strRedisTemplate.getConnectionFactory())
+        Cursor<byte[]> cursor = Objects.requireNonNull(redisTemplate.getConnectionFactory())
                 .getConnection()
                 .keyCommands().scan(
                         ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
@@ -91,16 +102,7 @@ public class RedisService {
         return keys;
     }
 
-    public boolean isExistInt(String key) {
-        return Boolean.TRUE.equals(integerRedisTemplate.hasKey(key));
-    }
-
     public void delete(String key) {
-        strRedisTemplate.delete(key);
-    }
-
-    public void setIntValue(String key, Integer data, Duration duration) {
-        ValueOperations<String, Integer> values = integerRedisTemplate.opsForValue();
-        values.set(key, data, duration);
+        redisTemplate.delete(key);
     }
 }

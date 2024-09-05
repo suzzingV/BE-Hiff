@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.global.common.email;
+package hiff.hiff.behiff.global.common.sms;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;

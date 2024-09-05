@@ -45,6 +45,8 @@ dependencies {
     implementation 'com.auth0:java-jwt:4.2.1'
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+    // coolSMS
+    implementation 'net.nurigo:sdk:4.3.0'
 
     implementation 'junit:junit:4.13.1'
     //Lombok

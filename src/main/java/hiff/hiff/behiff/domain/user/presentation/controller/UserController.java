@@ -14,6 +14,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.VerificationCodeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
@@ -28,6 +29,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v0/user")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -230,22 +233,6 @@ public class UserController {
     }
 
     @Operation(
-            summary = "User 전화번호 업데이트",
-            description = "User의 전화번호를 업데이트합니다. 토큰 o"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "User 전화번호 업데이트에 성공하였습니다."
-    )
-    @PatchMapping("/phoneNum")
-    public ResponseEntity<UserUpdateResponse> updatePhoneNum(@AuthenticationPrincipal User user,
-        @Valid @RequestBody
-        PhoneNumRequest request) {
-        UserUpdateResponse response = userService.updatePhoneNum(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
             summary = "User 희망나이 업데이트",
             description = "User가 희망하는 매칭 상대의 나이를 업데이트합니다. 토큰 o"
     )
@@ -322,18 +309,33 @@ public class UserController {
     }
 
     @Operation(
-            summary = "User 외모점수 조회",
-            description = "User의 외모점수를 조회합니다. 토큰 o"
+            summary = "본인 인증 코드 전송",
+            description = "본인 인증 코드를 User에게 문자로 전송합니다. 토큰 o"
     )
     @ApiResponse(
             responseCode = "200",
-            description = "User 외모점수 조회에 성공하였습니다."
+            description = "인증 코드 전송에 성공하였습니다."
     )
-    @GetMapping("/evaluated-score")
-    public ResponseEntity<UserEvaluatedScoreResponse> getEvaluatedScore(
-        @AuthenticationPrincipal User user) {
-        UserEvaluatedScoreResponse response = userService.getEvaluatedScore(user.getId());
-        return ResponseEntity.ok(response);
+    @PostMapping("/verification-code")
+    public ResponseEntity<Void> sendVerificationCode(
+        @AuthenticationPrincipal User user, @RequestBody PhoneNumRequest request) {
+        userService.sendVerificationCode(user.getId(), request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+        summary = "본인 인증 코드 확인",
+        description = "인증을 완료합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "본인 인증에 성공하였습니다."
+    )
+    @PostMapping("/verification")
+    public ResponseEntity<Void> sendVerificationCode(
+        @AuthenticationPrincipal User user, @RequestBody VerificationCodeRequest request) {
+        userService.identifyVerification(user.getId(), request);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
