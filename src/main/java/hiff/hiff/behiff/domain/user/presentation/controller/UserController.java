@@ -2,7 +2,6 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
@@ -135,7 +134,7 @@ public class UserController {
     )
     @PatchMapping("/nickname")
     public ResponseEntity<UserUpdateResponse> updateNickname(@AuthenticationPrincipal User user,
-        @RequestBody
+        @Valid @RequestBody
         NicknameRequest request) {
         UserUpdateResponse response = userService.updateNickname(user.getId(),
             request);
@@ -196,21 +195,6 @@ public class UserController {
 //    }
 
     @Operation(
-        summary = "User 주소 업데이트",
-        description = "User의 주소를 업데이트합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "User 주소 업데이트에 성공하였습니다."
-    )
-    @PatchMapping("/address")
-    public ResponseEntity<UserUpdateResponse> updateAddress(@AuthenticationPrincipal User user,
-        @Valid @RequestBody AddressRequest request) {
-        UserUpdateResponse response = userService.updateAddress(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
         summary = "User 학력 업데이트",
         description = "User의 학력을 업데이트합니다. 토큰 o"
     )
@@ -252,7 +236,7 @@ public class UserController {
     )
     @PatchMapping("/career")
     public ResponseEntity<UserUpdateResponse> updateCareer(@AuthenticationPrincipal User user,
-        @RequestBody
+        @Valid @RequestBody
         CareerRequest request) {
         UserUpdateResponse response = userService.updateCareer(user.getId(), request);
         return ResponseEntity.ok(response);
@@ -344,7 +328,7 @@ public class UserController {
     )
     @PostMapping("/verification-code")
     public ResponseEntity<Void> sendVerificationCode(
-        @AuthenticationPrincipal User user, @RequestBody PhoneNumRequest request) {
+        @AuthenticationPrincipal User user, @Valid @RequestBody PhoneNumRequest request) {
         userService.sendVerificationCode(user.getId(), request);
         return ResponseEntity.ok().build();
     }
@@ -357,9 +341,9 @@ public class UserController {
         responseCode = "200",
         description = "본인 인증에 성공하였습니다."
     )
-    @PostMapping("/verification")
+    @PatchMapping("/verification")
     public ResponseEntity<Void> sendVerificationCode(
-        @AuthenticationPrincipal User user, @RequestBody VerificationCodeRequest request) {
+        @AuthenticationPrincipal User user, @Valid @RequestBody VerificationCodeRequest request) {
         userService.identifyVerification(user.getId(), request);
         return ResponseEntity.ok().build();
     }

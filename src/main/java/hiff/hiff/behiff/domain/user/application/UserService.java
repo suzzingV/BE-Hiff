@@ -6,7 +6,6 @@ import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
@@ -104,12 +103,6 @@ public class UserService {
 //        userProfileService.updateIncome(user, request);
 //        return UserUpdateResponse.from(userId);
 //    }
-
-    public UserUpdateResponse updateAddress(Long userId, AddressRequest request) {
-        User user = userCRUDService.findById(userId);
-        userProfileService.updateAddress(user, request);
-        return UserUpdateResponse.from(userId);
-    }
 
     public UserUpdateResponse updateEducation(Long userId, EducationRequest request) {
         User user = userCRUDService.findById(userId);
@@ -223,10 +216,10 @@ public class UserService {
     public void sendVerificationCode(Long userId, PhoneNumRequest request) {
         User user = userCRUDService.findById(userId);
         userIdentifyVerificationService.sendIdentificationSms(user, request.getPhoneNum());
-        userProfileService.updatePhoneNum(user, request.getPhoneNum());
     }
 
     public void identifyVerification(Long userId, VerificationCodeRequest request) {
         userIdentifyVerificationService.checkCode(userId, request.getCode());
+        userProfileService.updatePhoneNum(userId, request.getPhoneNum());
     }
 }

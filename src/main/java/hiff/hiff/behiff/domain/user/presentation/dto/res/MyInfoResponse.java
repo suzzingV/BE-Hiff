@@ -54,8 +54,6 @@ public class MyInfoResponse {
 
 //    private Income income;
 
-    private String addr;
-
     private Education education;
 
     private String school;
@@ -94,7 +92,6 @@ public class MyInfoResponse {
             .gender(user.getGender())
             .mbti(user.getMbti())
 //            .income(user.getIncome())
-            .addr(user.getAddr())
             .education(user.getEducation())
             .school(user.getSchool())
             .career(user.getCareer())

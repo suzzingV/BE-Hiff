@@ -74,8 +74,6 @@ public class User implements UserDetails {
 //    @Column(nullable = false)
 //    private Income income;
 
-    private String addr;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Education education;
@@ -168,10 +166,6 @@ public class User implements UserDetails {
 //    public void changeIncome(Income income) {
 //        this.income = income;
 //    }
-
-    public void changeAddress(String addr1, String addr2, String addr3) {
-        this.addr = addr1 + " " + addr2 + " " + addr3;
-    }
 
     public void changeEducation(Education education) {
         this.education = education;

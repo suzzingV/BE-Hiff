@@ -9,7 +9,6 @@ import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.AddressRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
@@ -33,6 +32,7 @@ public class UserProfileService {
     private final UserPosRepository userPosRepository;
     private final EvaluatedUserRepository evaluatedUserRepository;
     private final GenderCountRepository genderCountRepository;
+    private final UserCRUDService userCRUDService;
 
     public void updateNickname(User user, NicknameRequest request) {
         checkNicknameDuplication(request.getNickname());
@@ -64,10 +64,6 @@ public class UserProfileService {
 //        user.changeIncome(request.getIncome());
 //    }
 
-    public void updateAddress(User user, AddressRequest request) {
-        user.changeAddress(request.getAddr1(), request.getAddr2(), request.getAddr3());
-    }
-
     public void updateEducation(User user, EducationRequest request) {
         user.changeEducation(request.getEducation());
     }
@@ -76,7 +72,8 @@ public class UserProfileService {
         user.changeSchool(request.getSchool());
     }
 
-    public void updatePhoneNum(User user, String phoneNum) {
+    public void updatePhoneNum(Long userId, String phoneNum) {
+        User user = userCRUDService.findById(userId);
         user.changePhoneNum(phoneNum);
     }
 
