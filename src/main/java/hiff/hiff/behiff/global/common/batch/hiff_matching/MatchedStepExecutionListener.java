@@ -3,7 +3,7 @@ package hiff.hiff.behiff.global.common.batch.hiff_matching;
 import static hiff.hiff.behiff.global.common.batch.hiff_matching.HiffMatchingBatchConfig.matchedList;
 import static hiff.hiff.behiff.global.common.batch.hiff_matching.HiffMatchingBatchConfig.matchedQueue;
 
-import hiff.hiff.behiff.domain.matching.application.service.UserWithMatchCount;
+import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;

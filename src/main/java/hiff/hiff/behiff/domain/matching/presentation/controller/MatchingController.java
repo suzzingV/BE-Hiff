@@ -1,7 +1,7 @@
 package hiff.hiff.behiff.domain.matching.presentation.controller;
 
-import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
+import hiff.hiff.behiff.domain.matching.application.service.MatchingServiceFacade;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.DailyMatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import java.util.List;
@@ -18,26 +18,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MatchingController {
 
-    private final MatchingService matchingService;
+    private final MatchingServiceFacade matchingServiceFacade;
 
     @GetMapping("/daily")
     public ResponseEntity<List<MatchingSimpleResponse>> getDailyMatching(
         @AuthenticationPrincipal User user) {
-        List<MatchingSimpleResponse> responses = matchingService.getDailyMatching(user.getId());
+        List<MatchingSimpleResponse> responses = matchingServiceFacade.getDailyMatching(user.getId());
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/daily/paid")
     public ResponseEntity<List<MatchingSimpleResponse>> getPaidDailyMatching(
         @AuthenticationPrincipal User user) {
-        List<MatchingSimpleResponse> responses = matchingService.getPaidDailyMatching(user.getId());
+        List<MatchingSimpleResponse> responses = matchingServiceFacade.getPaidDailyMatching(user.getId());
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/daily/{matchedId}")
-    public ResponseEntity<MatchingDetailResponse> getDailyMatchingDetails(
+    public ResponseEntity<DailyMatchingDetailResponse> getDailyMatchingDetails(
         @AuthenticationPrincipal User user, @PathVariable Long matchedId) {
-        MatchingDetailResponse response = matchingService.getDailyMatchingDetails(user.getId(),
+        DailyMatchingDetailResponse response = matchingServiceFacade.getDailyMatchingDetails(user.getId(),
             matchedId);
         return ResponseEntity.ok(response);
     }

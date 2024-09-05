@@ -10,7 +10,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MatchingDetailResponse {
+public class HiffMatchingDetailResponse {
+
 
     private Long matchedId;
 
@@ -24,7 +25,9 @@ public class MatchingDetailResponse {
 
     private List<String> photos;
 
-    private Integer totalScore;
+    private Integer totalScoreByMe;
+
+    private Integer totalScoreByMatched;
 
     private Mbti myMbti;
 
@@ -44,26 +47,27 @@ public class MatchingDetailResponse {
 
     private Integer lifeStyleSimilarity;
 
-    public static MatchingDetailResponse of(User matcher, User matched, Double distance,
+    public static HiffMatchingDetailResponse of(User matcher, User matched, Double distance,
         String mainPhoto,
-        List<String> photos, MatchingInfoDto matchingScores, List<NameWithCommonDto> hobbies,
+        List<String> photos, MatchingInfoDto matchingInfo, List<NameWithCommonDto> hobbies,
         List<NameWithCommonDto> lifeStyles) {
-        return MatchingDetailResponse.builder()
+        return HiffMatchingDetailResponse.builder()
             .matchedId(matched.getId())
             .nickname(matched.getNickname())
             .age(matched.getAge())
             .distance(distance)
             .photos(photos)
-            .totalScore(matchingScores.getTotalScore())
+            .totalScoreByMe(matchingInfo.getTotalScoreByMatcher())
+            .totalScoreByMatched(matchingInfo.getTotalScoreByMatched())
             .myMbti(matcher.getMbti())
             .matchedMbti(matched.getMbti())
-            .mbtiSimilarity(matchingScores.getMbtiSimilarity())
+            .mbtiSimilarity(matchingInfo.getMbtiSimilarity())
 //            .matchedIncome(matched.getIncome())
 //            .incomeSimilarity(matchingScores.getIncomeSimilarity())
             .hobbies(hobbies)
-            .hobbySimilarity(matchingScores.getHobbySimilarity())
+            .hobbySimilarity(matchingInfo.getHobbySimilarity())
             .lifeStyles(lifeStyles)
-            .lifeStyleSimilarity(matchingScores.getLifeStyleSimilarity())
+            .lifeStyleSimilarity(matchingInfo.getLifeStyleSimilarity())
             .mainPhoto(mainPhoto)
             .build();
     }

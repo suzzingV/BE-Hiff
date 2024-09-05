@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.matching.application.service;
+package hiff.hiff.behiff.domain.matching.application.dto;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import lombok.AllArgsConstructor;

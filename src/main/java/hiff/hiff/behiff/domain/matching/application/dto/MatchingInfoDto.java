@@ -7,6 +7,10 @@ import lombok.Getter;
 @Builder
 public class MatchingInfoDto {
 
+    private Long matcherId;
+
+    private Long matchedId;
+
     private Integer mbtiSimilarity;
 
     private Integer hobbySimilarity;
@@ -15,5 +19,7 @@ public class MatchingInfoDto {
 
 //    private Integer incomeSimilarity;
 
-    private Integer totalScore;
+    private Integer totalScoreByMatcher;
+
+    private Integer totalScoreByMatched;
 }

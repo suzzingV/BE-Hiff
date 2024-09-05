@@ -1,14 +1,15 @@
 package hiff.hiff.behiff.domain.matching.presentation.dto.req;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
 public class MatchingRequest {
 
-    @NotEmpty
+    @NotNull
     private String posX;
 
-    @NotEmpty
+    @NotNull
     private String posY;
 }

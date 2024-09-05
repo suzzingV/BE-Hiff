@@ -5,7 +5,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
-import hiff.hiff.behiff.domain.user.util.AgeCalculator;
+import hiff.hiff.behiff.global.util.DateCalculator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -138,7 +138,7 @@ public class User implements UserDetails {
         this.education = Education.PRIVATE;
         this.birth = LocalDate.now();
         this.gender = Gender.MALE;
-        this.age = AgeCalculator.calculateAge(LocalDate.now());
+        this.age = DateCalculator.calculateAge(LocalDate.now());
     }
 
     public void delete() {
@@ -224,7 +224,7 @@ public class User implements UserDetails {
     }
 
     public void updateAge() {
-        this.age = AgeCalculator.calculateAge(this.birth);
+        this.age = DateCalculator.calculateAge(this.birth);
     }
 
     public void addHeart(Integer amount) {

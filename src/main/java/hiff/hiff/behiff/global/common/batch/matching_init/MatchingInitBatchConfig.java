@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.global.common.batch.matching_init;
 
-
-import static hiff.hiff.behiff.domain.matching.application.service.MatchingService.DAILY_MATCHING_PREFIX;
+import static hiff.hiff.behiff.domain.matching.application.service.DailyMatchingService.DAILY_MATCHING_PREFIX;
 
 import hiff.hiff.behiff.global.common.batch.CustomSkipListener;
 import lombok.RequiredArgsConstructor;
