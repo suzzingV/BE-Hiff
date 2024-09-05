@@ -21,6 +21,8 @@ public class UserLifeStyleService {
     private final LifeStyleRepository lifeStyleRepository;
     private final UserLifeStyleRepository userLifeStyleRepository;
 
+    public static final String LIFESTYLE_PREFIX = "lifestyle_";
+
     public UserUpdateResponse updateLifeStyle(Long userId, LifeStyleRequest request) {
         List<Long> originLifeStyles = request.getOriginLifeStyles();
 //        List<String> newLifeStyles = request.getNewLifeStyles();

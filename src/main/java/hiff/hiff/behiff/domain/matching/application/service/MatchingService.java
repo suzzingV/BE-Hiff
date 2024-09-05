@@ -3,11 +3,8 @@ package hiff.hiff.behiff.domain.matching.application.service;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
 import static hiff.hiff.behiff.global.common.batch.hiff_matching.HiffMatchingBatchConfig.matchedQueue;
-import static hiff.hiff.behiff.global.common.redis.RedisService.DAILY_MATCHING_PREFIX;
-import static hiff.hiff.behiff.global.common.redis.RedisService.HIFF_MATCHING_PREFIX;
-import static hiff.hiff.behiff.global.common.redis.RedisService.MATCHING_DURATION;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
-import static hiff.hiff.behiff.global.common.redis.RedisService.PAID_DAILY_MATCHING_PREFIX;
+
 
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
@@ -33,6 +30,7 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -68,6 +66,11 @@ public class MatchingService {
     private static final Integer DAILY_MATCHING_HEART = 1;
     private static final Integer HIFF_MATCHING_HEART = 3;
     private static final int TOTAL_SCORE_STANDARD = 80;
+    public static final Duration MATCHING_DURATION = Duration.ofDays(1);
+    public static final Duration DAILY_HIFF_MATCHING_DURATION = Duration.ofDays(2);
+    public static final String DAILY_MATCHING_PREFIX = "daily_";
+    public static final String PAID_DAILY_MATCHING_PREFIX = "paidDaily_";
+    public static final String HIFF_MATCHING_PREFIX = "hiff_";
 
     // TODO: 남은 시간
     // TODO: 외모 점수 없을 때
@@ -158,7 +161,8 @@ public class MatchingService {
                 matchedWithCount.increaseCount();
                 tmp.add(matchedWithCount);
 
-                cachDailyMatchingScore(matched, matcher, matcherMatchingInfo);
+                cachHiffMatchingScore(matched, matcher, matcherMatchingInfo,
+                    matchedMatchingInfo.getTotalScore(), DAILY_HIFF_MATCHING_DURATION);
                 recordMatchingHistory(matched.getId(), matcher.getId());
                 recordMatchingHistory(matcher.getId(), matched.getId());
                 break;
@@ -204,7 +208,7 @@ public class MatchingService {
 
             if (checkTotalScore(userMatchingInfo, matchedMatchingInfo)) {
                 cachHiffMatchingScore(matched, user, userMatchingInfo,
-                    matchedMatchingInfo.getTotalScore());
+                    matchedMatchingInfo.getTotalScore(), MATCHING_DURATION);
                 recordMatchingHistory(matched.getId(), user.getId());
                 recordMatchingHistory(user.getId(), matched.getId());
                 String mainPhoto = user.getMainPhoto();
@@ -430,7 +434,7 @@ public class MatchingService {
     }
 
     private void cachHiffMatchingScore(User matcher, User matched, MatchingInfoDto matchingInfoDto,
-        int matchedTotalScore) {
+        int matchedTotalScore, Duration duration) {
         String today = getTodayDate();
         String prefix = today + HIFF_MATCHING_PREFIX;
         String key = prefix + matcher.getId() + "_" + matched.getId();
@@ -438,7 +442,7 @@ public class MatchingService {
             + matchingInfoDto.getMbtiSimilarity() + "/"
             + matchingInfoDto.getHobbySimilarity() + "/"
             + matchingInfoDto.getLifeStyleSimilarity();
-        redisService.setValue(key, value, MATCHING_DURATION);
+        redisService.setValue(key, value, duration);
     }
 
     private int getTotalScore(String key) {

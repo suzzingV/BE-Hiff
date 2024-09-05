@@ -21,6 +21,8 @@ public class UserHobbyService {
     private final HobbyRepository hobbyRepository;
     private final UserHobbyRepository userHobbyRepository;
 
+    public static final String HOBBY_PREFIX = "hobby_";
+
     public UserUpdateResponse updateHobby(Long userId, HobbyRequest request) {
         List<Long> originHobbies = request.getOriginHobbies();
 //        List<String> newHobbies = request.getNewHobbies();

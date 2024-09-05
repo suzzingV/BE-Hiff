@@ -1,5 +1,7 @@
 package hiff.hiff.behiff.global.common.redis;
 
+import static hiff.hiff.behiff.domain.evaluation.application.EvaluationService.EVALUATION_DURATION;
+
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -20,19 +22,8 @@ public class RedisService {
 
     private final RedisTemplate<String, String> redisTemplate;
     private final RedisTemplate<String, Integer> integerRedisTemplate;
-    public static final String EVALUATION_PREFIX = "eval_";
     public static final String NOT_EXIST = "false";
-    public static final String HOBBY_PREFIX = "hobby_";
-    public static final String MBTI_PREFIX = "mbti_";
-    public static final String LIFESTYLE_PREFIX = "lifestyle_";
-    public static final String INCOME_PREFIX = "income_";
-    public static final String DAILY_MATCHING_PREFIX = "daily_";
-    public static final String PAID_DAILY_MATCHING_PREFIX = "paidDaily_";
-    public static final String HIFF_MATCHING_PREFIX = "hiff_";
-    private static final Duration EVALUATION_DURATION = Duration.ofDays(1);
-    public static final Duration MATCHING_DURATION = Duration.ofDays(1);
 
-    public static final Duration HIFF_MATCHING_DURATION = Duration.ofDays(2);
 
     public void setValue(String key, Object data, Duration duration) {
         String value = String.valueOf(data);
