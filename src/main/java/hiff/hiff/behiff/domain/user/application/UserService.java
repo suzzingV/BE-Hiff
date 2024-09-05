@@ -49,10 +49,10 @@ public class UserService {
     private final EvaluationService evaluationService;
 
     public User registerUser(String email, String socialId, SocialType socialType,
-        Role role, Double x, Double y) {
+        Role role, Double lat, Double lon) {
         User user = userCRUDService.registerUser(email, socialId, socialType, role);
         userWeightValueService.createWeightValue(user.getId());
-        userPosService.createPos(user.getId(), x, y);
+        userPosService.createPos(user.getId(), lat, lon);
         evaluationService.addEvaluatedUser(user.getId(), user.getGender());
         evaluationService.addEvaluatedUser(user.getId(), user.getGender());
         return user;
