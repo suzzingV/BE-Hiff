@@ -37,12 +37,12 @@ public class AuthService {
         return userRepository.findByEmail(email)
             .map(user -> {
                 user.updateAge();
-                userService.updatePos(user.getId(), request.getPosX(), request.getPosY());
+                userService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
                 return LoginResponse.of(accessToken, refreshToken, false, user.getId());
             })
             .orElseGet(() -> {
                 User newUser = userService.registerUser(email, socialId, socialType, Role.USER,
-                    request.getPosX(), request.getPosY());
+                    request.getLatitude(), request.getLongitude());
                 return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());
             });
     }

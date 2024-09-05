@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.user.presentation.dto.req;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 

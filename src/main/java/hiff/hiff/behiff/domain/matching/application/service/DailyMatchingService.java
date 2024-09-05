@@ -2,7 +2,6 @@ package hiff.hiff.behiff.domain.matching.application.service;
 
 import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 
-import hiff.hiff.behiff.domain.matching.application.dto.CachedMatching;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.matching.exception.MatchingException;
@@ -97,8 +96,10 @@ public class DailyMatchingService extends MatchingService {
 
         String mainPhoto = matched.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
-        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId, matchedId);
-        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId, matchedId);
+        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
+            matchedId);
+        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId,
+            matchedId);
         Double distance = getDistance(matcherId, matchedId);
         MatchingInfoDto matchingInfo = getCachedMatchingInfo(
             matcherId, matchedId);

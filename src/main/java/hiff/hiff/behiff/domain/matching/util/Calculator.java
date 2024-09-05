@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 public class Calculator {
 
     private static final double EARTH_RADIUS = 6371.0;
+
     public static Integer computeTotalScoreByMatcher(WeightValue matcherWV, int mbtiSimilarity,
         int hobbySimilarity, int lifeStyleSimilarity, double matchedEvaluatedScore) {
         double evaluatedScore = convertEvaluatedScore(matchedEvaluatedScore);

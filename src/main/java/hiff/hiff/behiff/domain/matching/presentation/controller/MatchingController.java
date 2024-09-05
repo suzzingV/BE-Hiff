@@ -23,21 +23,24 @@ public class MatchingController {
     @GetMapping("/daily")
     public ResponseEntity<List<MatchingSimpleResponse>> getDailyMatching(
         @AuthenticationPrincipal User user) {
-        List<MatchingSimpleResponse> responses = matchingServiceFacade.getDailyMatching(user.getId());
+        List<MatchingSimpleResponse> responses = matchingServiceFacade.getDailyMatching(
+            user.getId());
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/daily/paid")
     public ResponseEntity<List<MatchingSimpleResponse>> getPaidDailyMatching(
         @AuthenticationPrincipal User user) {
-        List<MatchingSimpleResponse> responses = matchingServiceFacade.getPaidDailyMatching(user.getId());
+        List<MatchingSimpleResponse> responses = matchingServiceFacade.getPaidDailyMatching(
+            user.getId());
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/daily/{matchedId}")
     public ResponseEntity<DailyMatchingDetailResponse> getDailyMatchingDetails(
         @AuthenticationPrincipal User user, @PathVariable Long matchedId) {
-        DailyMatchingDetailResponse response = matchingServiceFacade.getDailyMatchingDetails(user.getId(),
+        DailyMatchingDetailResponse response = matchingServiceFacade.getDailyMatchingDetails(
+            user.getId(),
             matchedId);
         return ResponseEntity.ok(response);
     }

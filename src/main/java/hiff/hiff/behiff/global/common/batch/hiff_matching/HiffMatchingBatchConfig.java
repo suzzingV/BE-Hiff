@@ -1,8 +1,7 @@
 package hiff.hiff.behiff.global.common.batch.hiff_matching;
 
-import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
-import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
+import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;

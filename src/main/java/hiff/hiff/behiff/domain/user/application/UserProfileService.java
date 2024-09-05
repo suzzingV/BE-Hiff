@@ -34,7 +34,7 @@ public class UserProfileService {
     private final GenderCountRepository genderCountRepository;
     private final UserCRUDService userCRUDService;
 
-//    public static final String INCOME_PREFIX = "income_";
+    //    public static final String INCOME_PREFIX = "income_";
     public static final String MBTI_PREFIX = "mbti_";
 
     public void updateNickname(User user, NicknameRequest request) {

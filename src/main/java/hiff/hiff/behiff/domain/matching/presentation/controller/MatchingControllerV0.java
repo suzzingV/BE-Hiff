@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.matching.presentation.controller;
 
-import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.matching.application.service.MatchingServiceFacade;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.HiffMatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
@@ -71,7 +70,8 @@ public class MatchingControllerV0 {
     @GetMapping("/hiff/{matchedId}")
     public ResponseEntity<HiffMatchingDetailResponse> getHiffMatchingDetails(
         @AuthenticationPrincipal User user, @PathVariable Long matchedId) {
-        HiffMatchingDetailResponse response = matchingServiceFacade.getHiffMatchingDetails(user.getId(),
+        HiffMatchingDetailResponse response = matchingServiceFacade.getHiffMatchingDetails(
+            user.getId(),
             matchedId);
         return ResponseEntity.ok(response);
     }

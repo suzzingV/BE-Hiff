@@ -4,7 +4,6 @@ import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 
-
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
 import hiff.hiff.behiff.domain.matching.exception.MatchingException;
@@ -45,7 +44,7 @@ public class MatchingService {
     protected String getCachedValue(Long matcherId, Long matchedId, String prefix) {
         String key = prefix + matcherId + "_" + matchedId;
         String value = redisService.getStrValue(key);
-        if(value.equals(NOT_EXIST)) {
+        if (value.equals(NOT_EXIST)) {
             throw new MatchingException(ErrorCode.MATCHING_SCORE_NOT_FOUND);
         }
         return value;
@@ -83,8 +82,8 @@ public class MatchingService {
         UserPos matcherPos = userPosService.findPosByUserId(matcherId);
         UserPos matchedPos = userPosService.findPosByUserId(matchedId);
 
-        return computeDistance(matcherPos.getX(), matcherPos.getY(), matchedPos.getX(),
-            matchedPos.getY());
+        return computeDistance(matcherPos.getLat(), matcherPos.getLon(), matchedPos.getLat(),
+            matchedPos.getLon());
     }
 
     protected void useHeart(User matcher, Integer amount) {

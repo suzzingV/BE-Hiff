@@ -8,7 +8,6 @@ import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.common.sms.SmsUtil;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,8 @@ public class UserIdentifyVerificationService {
         String verificationCode = getCode();
 
         smsUtil.sendVerificationCode(phoneNum, verificationCode);
-        redisService.setValue(IDENTIFY_VERIFICATION_PREFIX + verificationCode, user.getId(), IDENTIFY_VERIFICATION_DURATION);
+        redisService.setValue(IDENTIFY_VERIFICATION_PREFIX + verificationCode, user.getId(),
+            IDENTIFY_VERIFICATION_DURATION);
     }
 
     public void checkCode(Long userId, String code) {

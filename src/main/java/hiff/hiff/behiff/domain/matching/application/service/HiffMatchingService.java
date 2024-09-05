@@ -1,8 +1,8 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
-import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 import static hiff.hiff.behiff.global.common.batch.hiff_matching.HiffMatchingBatchConfig.matchedQueue;
+import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 import static hiff.hiff.behiff.global.util.DateCalculator.getTomorrowDate;
 
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
@@ -108,9 +108,9 @@ public class HiffMatchingService extends MatchingService {
             }
 
             UserPos matchedPos = userPosService.findPosByUserId(matched.getId());
-            Double distance = computeDistance(matcherPos.getX(), matcherPos.getY(),
-                matchedPos.getX(),
-                matchedPos.getY());
+            Double distance = computeDistance(matcherPos.getLat(), matcherPos.getLon(),
+                matchedPos.getLat(),
+                matchedPos.getLon());
             if (checkDistance(user, matched, distance)) {
                 continue;
             }
@@ -153,8 +153,10 @@ public class HiffMatchingService extends MatchingService {
 
         String mainPhoto = matched.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
-        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId, matchedId);
-        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId, matchedId);
+        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
+            matchedId);
+        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId,
+            matchedId);
 
         Double distance = getDistance(matcherId, matchedId);
         MatchingInfoDto matchingInfoDto = getCachedMatchingInfo(matcherId, matchedId);
@@ -186,9 +188,9 @@ public class HiffMatchingService extends MatchingService {
             }
 
             UserPos matchedPos = userPosService.findPosByUserId(matched.getId());
-            Double distance = computeDistance(matcherPos.getX(), matcherPos.getY(),
-                matchedPos.getX(),
-                matchedPos.getY());
+            Double distance = computeDistance(matcherPos.getLat(), matcherPos.getLon(),
+                matchedPos.getLat(),
+                matchedPos.getLon());
             if (checkDistance(matcher, matched, distance)) {
                 tmp.add(matchedWithCount);
                 continue;
@@ -209,7 +211,8 @@ public class HiffMatchingService extends MatchingService {
 
                 String tomorrow = getTomorrowDate();
                 cachMatchingScore(matcher.getId(), matched.getId(), matcherMatchingInfo,
-                    matchedMatchingInfo.getTotalScoreByMatcher(), tomorrow, DAILY_HIFF_MATCHING_DURATION);
+                    matchedMatchingInfo.getTotalScoreByMatcher(), tomorrow,
+                    DAILY_HIFF_MATCHING_DURATION);
                 recordMatchingHistory(matched.getId(), matcher.getId());
                 recordMatchingHistory(matcher.getId(), matched.getId());
                 break;
@@ -256,7 +259,7 @@ public class HiffMatchingService extends MatchingService {
 
         key = prefix + matchedId + "_" + matcherId;
         value = matchedTotalScore + "/" + matchingInfoDto.getTotalScoreByMatched() + "/" +
-            + matchingInfoDto.getMbtiSimilarity() + "/"
+            +matchingInfoDto.getMbtiSimilarity() + "/"
             + matchingInfoDto.getHobbySimilarity() + "/"
             + matchingInfoDto.getLifeStyleSimilarity();
         redisService.setValue(key, value, duration);

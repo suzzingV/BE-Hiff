@@ -27,8 +27,8 @@ public class LoginRequest {
     private SocialType socialType;
 
     @NotNull
-    private Double posX;
+    private Double latitude;
 
     @NotNull
-    private Double posY;
+    private Double longitude;
 }
