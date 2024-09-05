@@ -23,11 +23,12 @@ public class LoginRequest {
     private String socialId;
 
     @ValidSocialType
+    @NotEmpty
     private SocialType socialType;
 
-    @NotNull
+    @NotEmpty
     private Double posX;
 
-    @NotNull
+    @NotEmpty
     private Double posY;
 }

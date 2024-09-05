@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.user.presentation.dto.req;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -13,22 +14,22 @@ public class WeightValueRequest {
 //    @Max(5)
 //    private Integer income;
 
-    @NotNull
+    @NotEmpty
     @Min(1)
     @Max(5)
     private Integer appearance;
 
-    @NotNull
+    @NotEmpty
     @Min(1)
     @Max(5)
     private Integer hobby;
 
-    @NotNull
+    @NotEmpty
     @Min(1)
     @Max(5)
     private Integer lifeStyle;
 
-    @NotNull
+    @NotEmpty
     @Min(1)
     @Max(5)
     private Integer mbti;
