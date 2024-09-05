@@ -14,6 +14,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.VerificationCodeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
@@ -213,6 +214,22 @@ public class UserController {
         @Valid @RequestBody
         EducationRequest request) {
         UserUpdateResponse response = userService.updateEducation(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "User 학교 업데이트",
+        description = "User의 학교를 업데이트합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "User 학교 업데이트에 성공하였습니다."
+    )
+    @PatchMapping("/school")
+    public ResponseEntity<UserUpdateResponse> updateEducation(@AuthenticationPrincipal User user,
+        @Valid @RequestBody
+        SchoolRequest request) {
+        UserUpdateResponse response = userService.updateSchool(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

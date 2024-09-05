@@ -175,8 +175,11 @@ public class User implements UserDetails {
         this.addr = addr1 + " " + addr2 + " " + addr3;
     }
 
-    public void changeEducation(Education education, String school) {
+    public void changeEducation(Education education) {
         this.education = education;
+    }
+
+    public void changeSchool(String school) {
         this.school = school;
     }
 

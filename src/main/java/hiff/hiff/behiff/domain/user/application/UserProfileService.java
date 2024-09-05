@@ -19,6 +19,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.IncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
@@ -70,7 +71,11 @@ public class UserProfileService {
     }
 
     public void updateEducation(User user, EducationRequest request) {
-        user.changeEducation(request.getEducation(), request.getSchool());
+        user.changeEducation(request.getEducation());
+    }
+
+    public void updateSchool(User user, SchoolRequest request) {
+        user.changeSchool(request.getSchool());
     }
 
     public void updatePhoneNum(User user, String phoneNum) {

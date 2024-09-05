@@ -18,6 +18,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
@@ -112,6 +113,12 @@ public class UserService {
     public UserUpdateResponse updateEducation(Long userId, EducationRequest request) {
         User user = userCRUDService.findById(userId);
         userProfileService.updateEducation(user, request);
+        return UserUpdateResponse.from(userId);
+    }
+
+    public UserUpdateResponse updateSchool(Long userId, SchoolRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateSchool(user, request);
         return UserUpdateResponse.from(userId);
     }
 

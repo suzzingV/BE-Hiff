@@ -9,6 +9,4 @@ public class EducationRequest {
 
     @ValidEducation
     private Education education;
-
-    private String school;
 }
