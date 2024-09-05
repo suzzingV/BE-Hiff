@@ -40,9 +40,6 @@ public class UserPhotoService {
 
     public List<String> getPhotosOfUser(Long userId) {
         List<UserPhoto> userPhotos = userPhotoRepository.findByUserId(userId);
-        if (userPhotos.isEmpty()) {
-            throw new UserException(ErrorCode.PHOTOS_NOT_FOUND);
-        }
         return userPhotos
             .stream()
             .map(UserPhoto::getPhotoUrl)
