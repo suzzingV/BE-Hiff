@@ -258,7 +258,7 @@ public class HiffMatchingService extends MatchingService {
         redisService.setValue(key, value, duration);
 
         key = prefix + matchedId + "_" + matcherId;
-        value = matchedTotalScore + "/" + matchingInfoDto.getTotalScoreByMatched() + "/" +
+        value = matchedTotalScore + "/" + matchingInfoDto.getTotalScoreByMatcher() + "/" +
             +matchingInfoDto.getMbtiSimilarity() + "/"
             + matchingInfoDto.getHobbySimilarity() + "/"
             + matchingInfoDto.getLifeStyleSimilarity();
