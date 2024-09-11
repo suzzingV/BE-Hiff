@@ -3,6 +3,7 @@ package hiff.hiff.behiff.domain.chat.presentation;
 import hiff.hiff.behiff.domain.chat.application.ChatService;
 import hiff.hiff.behiff.domain.chat.presentation.dto.req.ChatProposalRequest;
 import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposalResponse;
+import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposedResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,15 @@ public class ChatController {
     }
 
     @GetMapping("/proposed")
-    public ResponseEntity<List<ChatProposalResponse>> getProposedList(@AuthenticationPrincipal User user) {
-        List<ChatProposalResponse> responses = chatService.getProposedList(user.getId());
+    public ResponseEntity<List<ChatProposedResponse>> getProposedList(@AuthenticationPrincipal User user) {
+        List<ChatProposedResponse> responses = chatService.getProposedList(user.getId());
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/proposal")
+    public ResponseEntity<List<ChatProposalResponse>> getProposalList(@AuthenticationPrincipal User user) {
+        List<ChatProposalResponse> responses = chatService.getProposalList(user.getId());
 
         return ResponseEntity.ok(responses);
     }

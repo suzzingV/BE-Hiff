@@ -3,11 +3,9 @@ package hiff.hiff.behiff.domain.chat.application;
 import hiff.hiff.behiff.domain.chat.domain.ChatHistory;
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
 import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposalResponse;
+import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposedResponse;
 import hiff.hiff.behiff.domain.user.application.UserCRUDService;
-import hiff.hiff.behiff.domain.user.application.UserProfileService;
-import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.global.auth.domain.FcmToken;
 import hiff.hiff.behiff.global.auth.infrastructure.FcmTokenRepository;
 import hiff.hiff.behiff.global.common.fcm.FcmUtils;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,17 +30,30 @@ public class ChatService {
         FcmUtils.sendChatProposal(matchedFcmToken.getToken(), user.getNickname());
     }
 
-    public List<ChatProposalResponse> getProposedList(Long userId) {
+    public List<ChatProposedResponse> getProposedList(Long userId) {
         return chatHistoryRepository.findByProposedId(userId)
                 .stream().map(chatHistory -> {
                     User proposer = userCRUDService.findById(chatHistory.getProposerId());
-                    return ChatProposalResponse.builder()
+                    return ChatProposedResponse.builder()
                             .proposerNickname(proposer.getNickname())
                             .isAccepted(chatHistory.getIsAccepted())
                             .build();
                 })
                 .toList();
     }
+
+    public List<ChatProposalResponse> getProposalList(Long userId) {
+        return chatHistoryRepository.findByProposerId(userId)
+                .stream().map(chatHistory -> {
+                    User proposed = userCRUDService.findById(chatHistory.getProposedId());
+                    return ChatProposalResponse.builder()
+                            .proposedNickname(proposed.getNickname())
+                            .isAccepted(chatHistory.getIsAccepted())
+                            .build();
+                })
+                .toList();
+    }
+
     private void recordChatHistory(User user, Long matchedId) {
         ChatHistory chatHistory = ChatHistory.builder()
                 .proposerId(user.getId())

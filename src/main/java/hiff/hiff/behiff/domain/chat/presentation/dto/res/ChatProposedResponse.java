@@ -3,9 +3,9 @@ package hiff.hiff.behiff.domain.chat.presentation.dto.res;
 import lombok.Builder;
 
 @Builder
-public class ChatProposalResponse {
+public class ChatProposedResponse {
 
-    private String proposedNickname;
+    private String proposerNickname;
 
     private Boolean isAccepted;
 }

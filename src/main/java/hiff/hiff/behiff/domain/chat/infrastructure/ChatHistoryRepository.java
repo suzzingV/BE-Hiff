@@ -8,4 +8,6 @@ import java.util.List;
 public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> {
 
     List<ChatHistory> findByProposedId(Long proposedId);
+
+    List<ChatHistory> findByProposerId(Long proposerId);
 }
