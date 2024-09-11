@@ -22,9 +22,12 @@ public class ChatHistory {
     @Column(nullable = false)
     private Long proposedId;
 
+    private Boolean isAccepted;
+
     @Builder
     private ChatHistory(Long proposerId, Long proposedId) {
         this.proposerId = proposerId;
         this.proposedId = proposedId;
+        this.isAccepted = false;
     }
 }

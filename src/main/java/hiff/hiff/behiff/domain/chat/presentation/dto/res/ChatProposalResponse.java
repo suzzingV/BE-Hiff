@@ -6,4 +6,6 @@ import lombok.Builder;
 public class ChatProposalResponse {
 
     private String proposerNickname;
+
+    private Boolean isAccepted;
 }

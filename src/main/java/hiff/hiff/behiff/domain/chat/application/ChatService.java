@@ -39,6 +39,7 @@ public class ChatService {
                     User proposer = userCRUDService.findById(chatHistory.getProposerId());
                     return ChatProposalResponse.builder()
                             .proposerNickname(proposer.getNickname())
+                            .isAccepted(chatHistory.getIsAccepted())
                             .build();
                 })
                 .toList();
