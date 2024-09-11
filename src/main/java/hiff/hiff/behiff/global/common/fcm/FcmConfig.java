@@ -15,7 +15,7 @@ import java.io.IOException;
 public class FcmConfig {
 
     // TODO: 키 추가
-    @PostConstruct
+//    @PostConstruct
     private void init() {
         String fileResourceURL = "security/Server-Security/fcm/tht-push-fcm-firebase-adminsdk-secretkey.json";
         ClassPathResource resource = new ClassPathResource(fileResourceURL);

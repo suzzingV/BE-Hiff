@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
+// TODO: Util 리팩토링
 public class SmsUtil {
 
     @Value("${coolsms.api.key}")
