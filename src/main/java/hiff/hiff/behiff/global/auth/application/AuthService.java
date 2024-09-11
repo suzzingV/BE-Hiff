@@ -5,7 +5,9 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.auth.domain.FcmToken;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
+import hiff.hiff.behiff.global.auth.infrastructure.FcmTokenRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
@@ -24,6 +26,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final FcmTokenRepository fcmTokenRepository;
 
     public LoginResponse login(LoginRequest request) {
         String email = request.getEmail();
@@ -38,11 +41,13 @@ public class AuthService {
             .map(user -> {
                 user.updateAge();
                 userService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+                updateFcmToken(request, user.getId());
                 return LoginResponse.of(accessToken, refreshToken, false, user.getId());
             })
             .orElseGet(() -> {
                 User newUser = userService.registerUser(email, socialId, socialType, Role.USER,
                     request.getLatitude(), request.getLongitude());
+                saveNewFcmToken(request, newUser);
                 return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());
             });
     }
@@ -74,5 +79,21 @@ public class AuthService {
     private String checkRefreshToken(String refreshToken) {
         jwtService.isTokenValid(refreshToken);
         return jwtService.checkRefreshToken(refreshToken);
+    }
+
+    private void saveNewFcmToken(LoginRequest request, User newUser) {
+//        User saved = userRepository.save(newUser);
+        FcmToken fcmToken = FcmToken.builder()
+                .token(request.getFcmToken())
+                .userId(newUser.getId())
+                .build();
+        fcmTokenRepository.save(fcmToken);
+    }
+
+    private void updateFcmToken(LoginRequest request, Long userId) {
+        FcmToken fcmToken = fcmTokenRepository.findByUserId(userId);
+        if(!fcmToken.getToken().equals(request.getFcmToken())) {
+            fcmToken.updateToken(request.getFcmToken());
+        }
     }
 }
