@@ -38,6 +38,13 @@ public class SmsUtil {
         return messageService.sendOne(new SingleMessageSendingRequest(coolsms));
     }
 
+    public SingleMessageSentResponse sendAcceptMessage(String to, String proposerNickname, String proposerPhoneNum) {
+        String text = generateAcceptanceText(proposerNickname, proposerPhoneNum);
+        Message coolsms = generateMessage(to, text);
+
+        return messageService.sendOne(new SingleMessageSendingRequest(coolsms));
+    }
+
     @NotNull
     private Message generateMessage(String to, String text) {
         Message coolsms = new Message();
@@ -50,5 +57,10 @@ public class SmsUtil {
     @NotNull
     private String generateVerificationText(String verificationCode) {
         return "[Hiff] 인증번호를 입력해주세요 [" + verificationCode + "]";
+    }
+
+    @NotNull
+    private String generateAcceptanceText(String nickname, String phoneNum) {
+        return "[Hiff] " + nickname + "님이 대화 신청을 수락하였습니다. " + nickname + "님의 연락처는 " + phoneNum + " 입니다.";
     }
 }

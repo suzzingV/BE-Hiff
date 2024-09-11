@@ -30,4 +30,8 @@ public class ChatHistory {
         this.proposedId = proposedId;
         this.isAccepted = false;
     }
+
+    public void accept() {
+        this.isAccepted = true;
+    }
 }

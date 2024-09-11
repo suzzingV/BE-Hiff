@@ -1,11 +1,12 @@
 package hiff.hiff.behiff.domain.chat.presentation.dto.res;
 
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
 public class ChatProposalResponse {
 
-    private String proposedNickname;
+    private Long proposerId;
 
-    private Boolean isAccepted;
+    private Long proposedId;
 }
