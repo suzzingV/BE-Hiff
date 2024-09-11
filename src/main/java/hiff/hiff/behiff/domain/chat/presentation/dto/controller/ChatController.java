@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.chat.presentation;
+package hiff.hiff.behiff.domain.chat.presentation.dto.controller;
 
 import hiff.hiff.behiff.domain.chat.application.ChatService;
 import hiff.hiff.behiff.domain.chat.presentation.dto.req.ChatAcceptanceRequest;

@@ -44,6 +44,7 @@ public class ChatService {
                 .stream().map(chatHistory -> {
                     User proposer = userCRUDService.findById(chatHistory.getProposerId());
                     return ChatProposerResponse.builder()
+                            .proposerId(proposer.getId())
                             .proposerNickname(proposer.getNickname())
                             .isAccepted(chatHistory.getIsAccepted())
                             .build();
@@ -56,6 +57,7 @@ public class ChatService {
                 .stream().map(chatHistory -> {
                     User proposed = userCRUDService.findById(chatHistory.getProposedId());
                     return ChatProposedResponse.builder()
+                            .proposedId(proposed.getId())
                             .proposedNickname(proposed.getNickname())
                             .isAccepted(chatHistory.getIsAccepted())
                             .build();
