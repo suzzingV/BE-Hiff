@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.chat.presentation.dto.controller;
+package hiff.hiff.behiff.domain.chat.presentation.controller;
 
 import hiff.hiff.behiff.domain.chat.application.ChatService;
 import hiff.hiff.behiff.domain.chat.presentation.dto.req.ChatAcceptanceRequest;
@@ -10,6 +10,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +35,7 @@ public class ChatController {
             description = "대화 신청에 성공하였습니다."
     )
     @PostMapping("/proposal")
-    public ResponseEntity<ChatProposalResponse> propose(@AuthenticationPrincipal User user, @RequestBody ChatProposalRequest request) {
+    public ResponseEntity<ChatProposalResponse> propose(@AuthenticationPrincipal User user, @RequestBody @Valid ChatProposalRequest request) {
         ChatProposalResponse response = chatService.proposeChat(user, request.getMatchedId());
 
         return ResponseEntity.ok(response);
@@ -79,7 +80,7 @@ public class ChatController {
             description = "대화 신청 수락에 성공하였습니다."
     )
     @PostMapping("/acceptance")
-    public ResponseEntity<ChatProposalResponse> accept(@AuthenticationPrincipal User user, @RequestBody ChatAcceptanceRequest request) {
+    public ResponseEntity<ChatProposalResponse> accept(@AuthenticationPrincipal User user, @RequestBody @Valid ChatAcceptanceRequest request) {
         ChatProposalResponse response = chatService.acceptProposal(user, request);
 
         return ResponseEntity.ok(response);
