@@ -34,6 +34,7 @@ public enum ErrorCode {
     INVALID_SIMILARITY_TYPE(BAD_REQUEST, "적절한 유사도 타입이 아닙니다."),
     INCOME_WEIGHT_VALUE_PRIVATE(BAD_REQUEST, "소득이 비공개일 경우 가중치는 0이어야 합니다."),
     VERIFICATION_CODE_INCORRECT(BAD_REQUEST, "인증 코드가 올바르지 않습니다."),
+    FCM_SEND_ERROR(BAD_REQUEST, "FCM에 메시지를 보내는 도중 에러가 발생하였습니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
@@ -61,7 +62,8 @@ public enum ErrorCode {
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),
-    IMAGE_STORAGE_SAVE_ERROR(INTERNAL_SERVER_ERROR, "스토리지에 사진을 저장하는 도중 에러가 발생하였습니다.");
+    IMAGE_STORAGE_SAVE_ERROR(INTERNAL_SERVER_ERROR, "스토리지에 사진을 저장하는 도중 에러가 발생하였습니다."),
+    FCM_INIT_ERROR(INTERNAL_SERVER_ERROR, "FCM Admin SDK를 초기화하는 도중 오류가 발생하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
