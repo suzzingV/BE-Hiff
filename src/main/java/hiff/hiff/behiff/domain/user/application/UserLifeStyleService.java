@@ -6,7 +6,6 @@ import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.LifeStyleRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -24,11 +23,10 @@ public class UserLifeStyleService {
 
     public static final String LIFESTYLE_PREFIX = "lifestyle_";
 
-    public UserUpdateResponse updateLifeStyle(Long userId, LifeStyleRequest request) {
-        List<Long> originLifeStyles = request.getOriginLifeStyles();
+    public UserUpdateResponse updateLifeStyle(Long userId, List<Long> lifeStyles) {
 //        List<String> newLifeStyles = request.getNewLifeStyles();
 
-        updateUserLifeStyles(userId, originLifeStyles);
+        updateUserLifeStyles(userId, lifeStyles);
 //        registerNewLifeStyles(userId, newLifeStyles);
 
         return UserUpdateResponse.from(userId);

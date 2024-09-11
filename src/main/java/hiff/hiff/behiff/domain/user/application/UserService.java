@@ -6,20 +6,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.VerificationCodeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserEvaluatedScoreResponse;
@@ -58,6 +45,26 @@ public class UserService {
         return user;
     }
 
+    public UserUpdateResponse registerInfo(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos, UserInfoRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateNickname(user, request.getNickname());
+        userPhotoService.registerPhoto(userId, mainPhoto, photos);
+        userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
+        userProfileService.updateGender(user, request.getGender());
+        userProfileService.updateMbti(user, request.getMbti());
+        userProfileService.updateEducation(user, request.getEducation());
+        userProfileService.updateSchool(user, request.getSchool());
+        userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
+        userCareerService.updateOriginCareer(user, request.getCareerId());
+        userHobbyService.updateHobby(userId, request.getOriginHobbies());
+        userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
+        userWeightValueService.updateWeightValue(userId, request.getAppearanceWV(), request.getHobbyWV(), request.getLifeStyleWV(), request.getMbtiWV());
+        userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
+        userPhotoService.registerPhoto(userId, mainPhoto, photos);
+
+        return UserUpdateResponse.from(userId);
+    }
+
     public User findById(Long userId) {
         return userCRUDService.findById(userId);
     }
@@ -76,25 +83,25 @@ public class UserService {
 
     public UserUpdateResponse updateNickname(Long userId, NicknameRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateNickname(user, request);
+        userProfileService.updateNickname(user, request.getNickname());
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateBirth(Long userId, BirthRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateBirth(user, request);
+        userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateGender(Long userId, GenderRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateGender(user, request);
+        userProfileService.updateGender(user, request.getGender());
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateMbti(Long userId, MbtiRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateMbti(user, request);
+        userProfileService.updateMbti(user, request.getMbti());
         return UserUpdateResponse.from(userId);
     }
 
@@ -106,53 +113,53 @@ public class UserService {
 
     public UserUpdateResponse updateEducation(Long userId, EducationRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateEducation(user, request);
+        userProfileService.updateEducation(user, request.getEducation());
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateSchool(Long userId, SchoolRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateSchool(user, request);
+        userProfileService.updateSchool(user, request.getSchool());
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateHopeAge(Long userId, HopeAgeRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateHopeAge(user, request);
+        userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateCareer(Long userId, CareerRequest request) {
         User user = userCRUDService.findById(userId);
-        if (request.getCareerId() != null && request.getNewCareerName() == null) {
+//        if (request.getCareerId() != null && request.getNewCareerName() == null) {
             userCareerService.updateOriginCareer(user, request.getCareerId());
-        } else if (request.getNewCareerName() != null && request.getCareerId() == null) {
-            userCareerService.updateNewCareer(user, request.getNewCareerName());
-        } else {
-            throw new UserException(ErrorCode.CAREER_UPDATE_REQUEST_ERROR);
-        }
+//        } else if (request.getNewCareerName() != null && request.getCareerId() == null) {
+//            userCareerService.updateNewCareer(user, request.getNewCareerName());
+//        } else {
+//            throw new UserException(ErrorCode.CAREER_UPDATE_REQUEST_ERROR);
+//        }
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateHobby(Long userId, HobbyRequest request) {
         userCRUDService.findById(userId);
-        return userHobbyService.updateHobby(userId, request);
+        return userHobbyService.updateHobby(userId, request.getOriginHobbies());
     }
 
     public UserUpdateResponse updateLifeStyle(Long userId, LifeStyleRequest request) {
         userCRUDService.findById(userId);
-        return userLifeStyleService.updateLifeStyle(userId, request);
+        return userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
     }
 
     public UserUpdateResponse updateDistance(Long userId, DistanceRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateDistance(user, request);
+        userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse updateWeightValue(Long userId, WeightValueRequest request) {
         userCRUDService.findById(userId);
-        userWeightValueService.updateWeightValue(userId, request);
+        userWeightValueService.updateWeightValue(userId, request.getAppearance(), request.getHobby(), request.getLifeStyle(), request.getMbti());
         return UserUpdateResponse.from(userId);
     }
 

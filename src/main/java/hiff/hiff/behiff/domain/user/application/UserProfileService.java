@@ -4,19 +4,13 @@ import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository
 import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
+import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
+import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
@@ -37,17 +31,16 @@ public class UserProfileService {
     //    public static final String INCOME_PREFIX = "income_";
     public static final String MBTI_PREFIX = "mbti_";
 
-    public void updateNickname(User user, NicknameRequest request) {
-        checkNicknameDuplication(request.getNickname());
-        user.changeNickname(request.getNickname());
+    public void updateNickname(User user, String nickname) {
+        checkNicknameDuplication(nickname);
+        user.changeNickname(nickname);
     }
 
-    public void updateBirth(User user, BirthRequest request) {
-        user.changeBirth(request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
+    public void updateBirth(User user, Integer birthYear, Integer birthMonth, Integer birthDay) {
+        user.changeBirth(birthYear, birthMonth, birthDay);
     }
 
-    public void updateGender(User user, GenderRequest request) {
-        Gender gender = request.getGender();
+    public void updateGender(User user, Gender gender) {
         user.changeGender(gender);
         updateGenderCount(gender);
         changeEvaluatedUserGender(user, gender);
@@ -59,20 +52,20 @@ public class UserProfileService {
         genderCount.addCount();
     }
 
-    public void updateMbti(User user, MbtiRequest request) {
-        user.changeMbti(request.getMbti());
+    public void updateMbti(User user, Mbti mbti) {
+        user.changeMbti(mbti);
     }
 
 //    public void updateIncome(User user, IncomeRequest request) {
 //        user.changeIncome(request.getIncome());
 //    }
 
-    public void updateEducation(User user, EducationRequest request) {
-        user.changeEducation(request.getEducation());
+    public void updateEducation(User user, Education education) {
+        user.changeEducation(education);
     }
 
-    public void updateSchool(User user, SchoolRequest request) {
-        user.changeSchool(request.getSchool());
+    public void updateSchool(User user, String school) {
+        user.changeSchool(school);
     }
 
     public void updatePhoneNum(Long userId, String phoneNum) {
@@ -80,14 +73,14 @@ public class UserProfileService {
         user.changePhoneNum(phoneNum);
     }
 
-    public void updateHopeAge(User user, HopeAgeRequest request) {
-        user.changeHopeAge(request.getMinAge(), request.getMaxAge());
+    public void updateHopeAge(User user, Integer maxAge, Integer minAge) {
+        user.changeHopeAge(maxAge, minAge);
     }
 
-    public void updateDistance(User user, DistanceRequest request) {
-        checkDistanceRange(request);
-        user.changeMaxDistance(request.getMaxDistance());
-        user.changeMinDistance(request.getMinDistance());
+    public void updateDistance(User user, Integer maxDistance, Integer minDistance) {
+        checkDistanceRange(maxDistance, minDistance);
+        user.changeMaxDistance(maxDistance);
+        user.changeMinDistance(minDistance);
     }
 
     public Optional<UserPos> findUserPosByUserId(Long userId) {
@@ -101,8 +94,8 @@ public class UserProfileService {
             });
     }
 
-    private static void checkDistanceRange(DistanceRequest request) {
-        if (request.getMinDistance() > request.getMaxDistance()) {
+    private static void checkDistanceRange(Integer maxDistance, Integer minDistance) {
+        if (minDistance > maxDistance) {
             throw new UserException(ErrorCode.DISTANCE_RANGE_REVERSE);
         }
     }

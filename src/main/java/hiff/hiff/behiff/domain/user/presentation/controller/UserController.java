@@ -2,20 +2,7 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.VerificationCodeRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
@@ -50,6 +37,23 @@ public class UserController {
 
     private final UserService userService;
     private final JwtService jwtService;
+
+    @Operation(
+            summary = "User 최초 정보 등록",
+            description = "User의 최초 정보를 등록합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "User 최초 정보 등록에 성공하였습니다."
+    )
+    @PostMapping("/info")
+    public ResponseEntity<UserUpdateResponse> registerInfo(@AuthenticationPrincipal User user,
+                                                           @Valid @RequestPart(value = "dto")
+                                                           UserInfoRequest request, @RequestPart(value = "main_photo") MultipartFile mainPhoto,
+                                                           @RequestPart(value = "photos") List<MultipartFile> photos) {
+        UserUpdateResponse response = userService.registerInfo(user.getId(), mainPhoto, photos, request);
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(
         summary = "직업 목록 조회",
