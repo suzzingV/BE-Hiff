@@ -38,4 +38,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> getMatched(Long matcherId, Gender gender);
 
     Page<User> findByGender(Gender gender, Pageable pageable);
+
+    @Query("""
+        SELECT u FROM User u
+        WHERE u.evaluatedScore = :score
+""")
+    List<User> findUsersWithoutAppearanceScore(Double score);
 }

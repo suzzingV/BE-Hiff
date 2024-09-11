@@ -204,6 +204,10 @@ public class User implements UserDetails {
         this.evaluatedCount++;
     }
 
+    public void updateEvaluatedScoreTmp(Double score) {
+        this.evaluatedScore = score;
+    }
+
     public void updateMainPhoto(String photoUrl) {
         this.mainPhoto = photoUrl;
     }
