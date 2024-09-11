@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.chat.application;
 
 import hiff.hiff.behiff.domain.chat.domain.ChatHistory;
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
+import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposalResponse;
 import hiff.hiff.behiff.domain.user.application.UserCRUDService;
 import hiff.hiff.behiff.domain.user.application.UserProfileService;
 import hiff.hiff.behiff.domain.user.application.UserService;
@@ -14,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class ChatService {
 
     private final FcmTokenRepository fcmTokenRepository;
     private final ChatHistoryRepository chatHistoryRepository;
+    private final UserCRUDService userCRUDService;
 
     public void proposeChat(User user, Long matchedId) {
         FcmToken matchedFcmToken = fcmTokenRepository.findByUserId(matchedId);
@@ -28,6 +33,16 @@ public class ChatService {
         FcmUtils.sendChatProposal(matchedFcmToken.getToken(), user.getNickname());
     }
 
+    public List<ChatProposalResponse> getProposedList(Long userId) {
+        return chatHistoryRepository.findByProposedId(userId)
+                .stream().map(chatHistory -> {
+                    User proposer = userCRUDService.findById(chatHistory.getProposerId());
+                    return ChatProposalResponse.builder()
+                            .proposerNickname(proposer.getNickname())
+                            .build();
+                })
+                .toList();
+    }
     private void recordChatHistory(User user, Long matchedId) {
         ChatHistory chatHistory = ChatHistory.builder()
                 .proposerId(user.getId())
