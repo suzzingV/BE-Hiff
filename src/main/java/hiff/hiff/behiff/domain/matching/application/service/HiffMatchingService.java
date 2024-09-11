@@ -80,9 +80,6 @@ public class HiffMatchingService extends MatchingService {
         this.userPhotoService = userPhotoService;
     }
 
-    // TODO: 남은 시간
-    // TODO: 외모 점수 없을 때
-
     public List<MatchingSimpleResponse> getMatchings(Long userId) {
         String today = getTodayDate();
         List<String> originalMatching = redisService.scanKeysWithPrefix(

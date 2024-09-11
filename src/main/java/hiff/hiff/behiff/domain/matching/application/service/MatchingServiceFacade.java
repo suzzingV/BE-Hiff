@@ -19,8 +19,6 @@ public class MatchingServiceFacade {
 
     private final HiffMatchingService hiffMatchingService;
 
-    // TODO: 남은 시간
-    // TODO: 외모 점수 없을 때
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
         return dailyMatchingService.getMatchings(userId);
     }

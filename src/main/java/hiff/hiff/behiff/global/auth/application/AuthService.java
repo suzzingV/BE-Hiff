@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.global.auth.application;
 
-import hiff.hiff.behiff.domain.user.application.UserService;
+import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
@@ -25,7 +25,7 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final UserService userService;
+    private final UserServiceFacade userServiceFacade;
     private final FcmTokenRepository fcmTokenRepository;
 
     public LoginResponse login(LoginRequest request) {
@@ -40,12 +40,12 @@ public class AuthService {
         return userRepository.findByEmail(email)
             .map(user -> {
                 user.updateAge();
-                userService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+                userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
                 updateFcmToken(request, user.getId());
                 return LoginResponse.of(accessToken, refreshToken, false, user.getId());
             })
             .orElseGet(() -> {
-                User newUser = userService.registerUser(email, socialId, socialType, Role.USER,
+                User newUser = userServiceFacade.registerUser(email, socialId, socialType, Role.USER,
                     request.getLatitude(), request.getLongitude());
                 saveNewFcmToken(request, newUser);
                 return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());

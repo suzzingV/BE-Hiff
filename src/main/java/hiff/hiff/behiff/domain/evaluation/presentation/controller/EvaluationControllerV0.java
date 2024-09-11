@@ -1,7 +1,7 @@
 package hiff.hiff.behiff.domain.evaluation.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserPhotoService;
-import hiff.hiff.behiff.domain.user.application.UserService;
+import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.List;
 public class EvaluationControllerV0 {
 
     private final UserRepository userRepository;
-    private final UserService userService;
+    private final UserServiceFacade userServiceFacade;
     private final UserPhotoService userPhotoService;
 
     @GetMapping("/users")
@@ -30,7 +30,7 @@ public class EvaluationControllerV0 {
     // 유저 상세 페이지
     @GetMapping("/detail/{id}")
     public String getUserDetail(@PathVariable Long id, Model model) {
-        User user = userService.findById(id);
+        User user = userServiceFacade.findById(id);
         List<String> photos = userPhotoService.getPhotosOfUser(id);
         model.addAttribute("user", user);
         model.addAttribute("main", user.getMainPhoto());
@@ -41,7 +41,7 @@ public class EvaluationControllerV0 {
     // 외모 점수 업데이트
     @PostMapping("/score")
     public String updateAppearanceScore(@RequestParam("userId") Long userId, @RequestParam("score") Double score) {
-        User user = userService.findById(userId);
+        User user = userServiceFacade.findById(userId);
         user.updateEvaluatedScoreTmp(score);
         userRepository.save(user);
         return "redirect:/evaluation/users";

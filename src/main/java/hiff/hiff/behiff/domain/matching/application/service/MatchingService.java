@@ -38,8 +38,6 @@ public class MatchingService {
 
     public static final Duration MATCHING_DURATION = Duration.ofDays(1);
 
-    // TODO: 남은 시간
-    // TODO: 외모 점수 없을 때
 
     protected String getCachedValue(Long matcherId, Long matchedId, String prefix) {
         String key = prefix + matcherId + "_" + matchedId;

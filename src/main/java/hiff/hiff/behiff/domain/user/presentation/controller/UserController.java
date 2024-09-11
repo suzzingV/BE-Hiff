@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.domain.user.presentation.controller;
 
-import hiff.hiff.behiff.domain.user.application.UserService;
+import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
@@ -15,7 +15,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceFacade userServiceFacade;
     private final JwtService jwtService;
 
     @Operation(
@@ -51,7 +50,7 @@ public class UserController {
                                                            @Valid @RequestPart(value = "dto")
                                                            UserInfoRequest request, @RequestPart(value = "main_photo") MultipartFile mainPhoto,
                                                            @RequestPart(value = "photos") List<MultipartFile> photos) {
-        UserUpdateResponse response = userService.registerInfo(user.getId(), mainPhoto, photos, request);
+        UserUpdateResponse response = userServiceFacade.registerInfo(user.getId(), mainPhoto, photos, request);
         return ResponseEntity.ok(response);
     }
 
@@ -65,7 +64,7 @@ public class UserController {
     )
     @GetMapping("/career/list")
     public ResponseEntity<List<TagResponse>> getCareers() {
-        List<TagResponse> responses = userService.getCareers();
+        List<TagResponse> responses = userServiceFacade.getCareers();
         return ResponseEntity.ok(responses);
     }
 
@@ -79,7 +78,7 @@ public class UserController {
     )
     @GetMapping("/hobby/list")
     public ResponseEntity<List<TagResponse>> getHobbies() {
-        List<TagResponse> responses = userService.getHobbies();
+        List<TagResponse> responses = userServiceFacade.getHobbies();
         return ResponseEntity.ok(responses);
     }
 
@@ -93,7 +92,7 @@ public class UserController {
     )
     @GetMapping("/life-style/list")
     public ResponseEntity<List<TagResponse>> getLifeStyles() {
-        List<TagResponse> responses = userService.getLifeStyles();
+        List<TagResponse> responses = userServiceFacade.getLifeStyles();
         return ResponseEntity.ok(responses);
     }
 
@@ -107,7 +106,7 @@ public class UserController {
     )
     @GetMapping("/me")
     public ResponseEntity<MyInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
-        MyInfoResponse response = userService.getMyInfo(user.getId());
+        MyInfoResponse response = userServiceFacade.getMyInfo(user.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -123,7 +122,7 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user,
         @RequestPart(value = "main_photo") MultipartFile mainPhoto,
         @RequestPart(value = "photos") List<MultipartFile> photos) {
-        UserUpdateResponse response = userService.registerPhoto(user.getId(), mainPhoto, photos);
+        UserUpdateResponse response = userServiceFacade.registerPhoto(user.getId(), mainPhoto, photos);
         return ResponseEntity.ok(response);
     }
 
@@ -139,7 +138,7 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updateNickname(@AuthenticationPrincipal User user,
         @Valid @RequestBody
         NicknameRequest request) {
-        UserUpdateResponse response = userService.updateNickname(user.getId(),
+        UserUpdateResponse response = userServiceFacade.updateNickname(user.getId(),
             request);
         return ResponseEntity.ok(response);
     }
@@ -156,7 +155,7 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updateBirth(@AuthenticationPrincipal User user,
         @Valid @RequestBody
         BirthRequest request) {
-        UserUpdateResponse response = userService.updateBirth(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateBirth(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -171,7 +170,7 @@ public class UserController {
     @PatchMapping("/gender")
     public ResponseEntity<UserUpdateResponse> updateGender(@AuthenticationPrincipal User user,
         @Valid @RequestBody GenderRequest request) {
-        UserUpdateResponse response = userService.updateGender(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateGender(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -186,7 +185,7 @@ public class UserController {
     @PatchMapping("/mbti")
     public ResponseEntity<UserUpdateResponse> updateMbti(@AuthenticationPrincipal User user,
         @Valid @RequestBody MbtiRequest request) {
-        UserUpdateResponse response = userService.updateMbti(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateMbti(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -209,7 +208,7 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updateEducation(@AuthenticationPrincipal User user,
         @Valid @RequestBody
         EducationRequest request) {
-        UserUpdateResponse response = userService.updateEducation(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateEducation(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -225,7 +224,7 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updateEducation(@AuthenticationPrincipal User user,
         @Valid @RequestBody
         SchoolRequest request) {
-        UserUpdateResponse response = userService.updateSchool(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateSchool(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -241,7 +240,7 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updateCareer(@AuthenticationPrincipal User user,
         @Valid @RequestBody
         CareerRequest request) {
-        UserUpdateResponse response = userService.updateCareer(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateCareer(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -257,7 +256,7 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updateHopeAge(@AuthenticationPrincipal User user,
         @Valid @RequestBody
         HopeAgeRequest request) {
-        UserUpdateResponse response = userService.updateHopeAge(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateHopeAge(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -272,7 +271,7 @@ public class UserController {
     @PatchMapping("/hobby")
     public ResponseEntity<UserUpdateResponse> updateHobby(@AuthenticationPrincipal User user,
         @Valid @RequestBody HobbyRequest request) {
-        UserUpdateResponse response = userService.updateHobby(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateHobby(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -287,7 +286,7 @@ public class UserController {
     @PatchMapping("/life-style")
     public ResponseEntity<UserUpdateResponse> updateLifeStyle(@AuthenticationPrincipal User user,
         @Valid @RequestBody LifeStyleRequest request) {
-        UserUpdateResponse response = userService.updateLifeStyle(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateLifeStyle(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -302,7 +301,7 @@ public class UserController {
     @PatchMapping("/distance")
     public ResponseEntity<UserUpdateResponse> updateDistance(@AuthenticationPrincipal User user,
         @Valid @RequestBody DistanceRequest request) {
-        UserUpdateResponse response = userService.updateDistance(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateDistance(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -317,7 +316,7 @@ public class UserController {
     @PutMapping("/weight-value")
     public ResponseEntity<UserUpdateResponse> updateWeight(@AuthenticationPrincipal User user,
         @Valid @RequestBody WeightValueRequest request) {
-        UserUpdateResponse response = userService.updateWeightValue(user.getId(), request);
+        UserUpdateResponse response = userServiceFacade.updateWeightValue(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -332,7 +331,7 @@ public class UserController {
     @PostMapping("/verification-code")
     public ResponseEntity<Void> sendVerificationCode(
         @AuthenticationPrincipal User user, @Valid @RequestBody PhoneNumRequest request) {
-        userService.sendVerificationCode(user.getId(), request);
+        userServiceFacade.sendVerificationCode(user.getId(), request);
         return ResponseEntity.ok().build();
     }
 
@@ -347,7 +346,7 @@ public class UserController {
     @PatchMapping("/verification")
     public ResponseEntity<Void> sendVerificationCode(
         @AuthenticationPrincipal User user, @Valid @RequestBody VerificationCodeRequest request) {
-        userService.identifyVerification(user.getId(), request);
+        userServiceFacade.identifyVerification(user.getId(), request);
         return ResponseEntity.ok().build();
     }
 
@@ -364,7 +363,7 @@ public class UserController {
         @AuthenticationPrincipal User user) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
-        userService.withdraw(user.getId(), accessToken, refreshToken);
+        userServiceFacade.withdraw(user.getId(), accessToken, refreshToken);
         return ResponseEntity.noContent().build();
     }
 }
