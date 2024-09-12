@@ -1,7 +1,7 @@
 package hiff.hiff.behiff.domain.user.exception;
 
-import hiff.hiff.behiff.global.exception.exceptionClass.CustomException;
-import hiff.hiff.behiff.global.exception.properties.ErrorCode;
+import hiff.hiff.behiff.global.response.exceptionClass.CustomException;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 
 public class UserException extends CustomException {
 

@@ -1,73 +1,99 @@
 package hiff.hiff.behiff.global.auth.application;
 
-import hiff.hiff.behiff.domain.user.application.UserService;
+import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.auth.domain.FcmToken;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
+import hiff.hiff.behiff.global.auth.infrastructure.FcmTokenRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
-import hiff.hiff.behiff.global.exception.properties.ErrorCode;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class AuthService {
 
-    public final JwtService jwtService;
-    public final UserRepository userRepository;
-    public final UserService userService;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final UserServiceFacade userServiceFacade;
+    private final FcmTokenRepository fcmTokenRepository;
 
     public LoginResponse login(LoginRequest request) {
         String email = request.getEmail();
         SocialType socialType = request.getSocialType();
-        String name = request.getName();
         String socialId = request.getSocialId();
-        String phoneNum = request.getPhoneNum();
 
         String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isEmpty()) {
-            User newUser = userService.registerUser(name, email, socialId,
-                    socialType, Role.USER, phoneNum);
-            return LoginResponse.of(newUser.getId(), accessToken, refreshToken, email, false);
-        }
+        jwtService.updateRefreshToken(refreshToken, email);
 
-        User user = userOptional.get();
-        return LoginResponse.of(user.getId(), accessToken, refreshToken, email, true);
+        return userRepository.findByEmail(email)
+            .map(user -> {
+                user.updateAge();
+                userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+                updateFcmToken(request, user.getId());
+                return LoginResponse.of(accessToken, refreshToken, false, user.getId());
+            })
+            .orElseGet(() -> {
+                User newUser = userServiceFacade.registerUser(email, socialId, socialType, Role.USER,
+                    request.getLatitude(), request.getLongitude());
+                saveNewFcmToken(request, newUser);
+                return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());
+            });
     }
 
-    public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = jwtService.extractRefreshToken(request)
-                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+    public TokenResponse reissueTokens(Optional<String> refresh) {
+        String refreshToken = refresh
+            .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+        String email = checkRefreshToken(refreshToken);
+        String reissuedAccessToken = jwtService.createAccessToken(email);
+        String reissuedRefreshToken = jwtService.reissueRefreshToken(refreshToken, email);
+
+        return TokenResponse.builder()
+            .accessToken(reissuedAccessToken)
+            .refreshToken(reissuedRefreshToken)
+            .build();
+    }
+
+    public void logout(Optional<String> access, Optional<String> refresh) {
+        String accessToken = access.orElseThrow(
+            () -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
+        String refreshToken = refresh.orElseThrow(
+            () -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
         jwtService.isTokenValid(refreshToken);
-
-        jwtService.reissueAndSendTokens(response, refreshToken);
+        jwtService.isTokenValid(accessToken);
+        jwtService.deleteRefreshToken(refreshToken);
+        jwtService.invalidAccessToken(accessToken);
     }
 
-    public void logout(Optional<String> accessToken, Optional<String> refreshToken) {
-        String access = accessToken
-                .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
-        String refresh = refreshToken
-                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
-        jwtService.extractEmail(access)
-                .orElseThrow(() -> new AuthException(ErrorCode.EMAIL_NOT_EXTRACTED));
+    private String checkRefreshToken(String refreshToken) {
+        jwtService.isTokenValid(refreshToken);
+        return jwtService.checkRefreshToken(refreshToken);
+    }
 
-        jwtService.isTokenValid(refresh);
-        jwtService.isTokenValid(access);
-        //refresh token 삭제
-        jwtService.deleteRefreshToken(refresh);
-        //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationProcessingFilter에서 인증처리 거부
-        jwtService.invalidAccessToken(access);
+    private void saveNewFcmToken(LoginRequest request, User newUser) {
+//        User saved = userRepository.save(newUser);
+        FcmToken fcmToken = FcmToken.builder()
+                .token(request.getFcmToken())
+                .userId(newUser.getId())
+                .build();
+        fcmTokenRepository.save(fcmToken);
+    }
+
+    private void updateFcmToken(LoginRequest request, Long userId) {
+        FcmToken fcmToken = fcmTokenRepository.findByUserId(userId);
+        if(!fcmToken.getToken().equals(request.getFcmToken())) {
+            fcmToken.updateToken(request.getFcmToken());
+        }
     }
 }
