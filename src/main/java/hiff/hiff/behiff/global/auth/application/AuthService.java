@@ -29,7 +29,6 @@ public class AuthService {
     private final FcmTokenRepository fcmTokenRepository;
 
     public LoginResponse login(LoginRequest request) {
-        String email = request.getEmail();
         SocialType socialType = request.getSocialType();
         String socialId = request.getSocialId();
         String socialInfo = socialType.getPrefix() + "_" + socialId;
@@ -38,7 +37,7 @@ public class AuthService {
         String refreshToken = jwtService.createRefreshToken();
         jwtService.updateRefreshToken(refreshToken, socialInfo);
 
-        return userRepository.findByEmail(email)
+        return userRepository.findBySocialTypeAndSocialId(socialType, socialId)
             .map(user -> {
                 user.updateAge();
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
@@ -46,7 +45,7 @@ public class AuthService {
                 return LoginResponse.of(accessToken, refreshToken, false, user.getId());
             })
             .orElseGet(() -> {
-                User newUser = userServiceFacade.registerUser(email, socialId, socialType, Role.USER,
+                User newUser = userServiceFacade.registerUser(socialId, socialType, Role.USER,
                     request.getLatitude(), request.getLongitude());
                 saveNewFcmToken(request, newUser);
                 return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());

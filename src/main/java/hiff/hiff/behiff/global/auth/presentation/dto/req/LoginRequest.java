@@ -15,10 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginRequest {
 
-    @Email
-    @NotEmpty
-    private String email;
-
     @NotEmpty
     private String socialId;
 

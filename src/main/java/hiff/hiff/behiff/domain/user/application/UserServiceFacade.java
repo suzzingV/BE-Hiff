@@ -34,9 +34,9 @@ public class UserServiceFacade {
     private final UserIdentifyVerificationService userIdentifyVerificationService;
     private final EvaluationService evaluationService;
 
-    public User registerUser(String email, String socialId, SocialType socialType,
+    public User registerUser(String socialId, SocialType socialType,
         Role role, Double lat, Double lon) {
-        User user = userCRUDService.registerUser(email, socialId, socialType, role);
+        User user = userCRUDService.registerUser(socialId, socialType, role);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), lat, lon);
         evaluationService.addEvaluatedUser(user.getId(), user.getGender());

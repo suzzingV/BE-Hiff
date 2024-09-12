@@ -16,7 +16,7 @@ public class MyInfoResponse {
 
     private Long userId;
 
-    private String email;
+//    private String email;
 
     private String nickname;
 
@@ -73,7 +73,7 @@ public class MyInfoResponse {
         List<String> lifeStyles, WeightValue weightValue) {
         return MyInfoResponse.builder()
             .userId(user.getId())
-            .email(user.getEmail())
+//            .email(user.getEmail())
             .nickname(user.getNickname())
             .birth(user.getBirth())
             .age(user.getAge())
