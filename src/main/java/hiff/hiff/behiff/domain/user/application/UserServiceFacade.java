@@ -34,9 +34,9 @@ public class UserServiceFacade {
     private final UserIdentifyVerificationService userIdentifyVerificationService;
     private final EvaluationService evaluationService;
 
-    public User registerUser(String email, String socialId, SocialType socialType,
+    public User registerUser(String socialId, SocialType socialType,
         Role role, Double lat, Double lon) {
-        User user = userCRUDService.registerUser(email, socialId, socialType, role);
+        User user = userCRUDService.registerUser(socialId, socialType, role);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), lat, lon);
         evaluationService.addEvaluatedUser(user.getId(), user.getGender());
@@ -51,14 +51,9 @@ public class UserServiceFacade {
         userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
         userProfileService.updateGender(user, request.getGender());
         userProfileService.updateMbti(user, request.getMbti());
-        userProfileService.updateEducation(user, request.getEducation());
-        userProfileService.updateSchool(user, request.getSchool());
-        userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
         userCareerService.updateOriginCareer(user, request.getCareerId());
         userHobbyService.updateHobby(userId, request.getOriginHobbies());
         userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
-        userWeightValueService.updateWeightValue(userId, request.getAppearanceWV(), request.getHobbyWV(), request.getLifeStyleWV(), request.getMbtiWV());
-        userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
 
         return UserUpdateResponse.from(userId);
@@ -221,6 +216,7 @@ public class UserServiceFacade {
 
     public void sendVerificationCode(Long userId, PhoneNumRequest request) {
         User user = userCRUDService.findById(userId);
+        userCRUDService.checkDuplication(request.getPhoneNum());
         userIdentifyVerificationService.sendIdentificationSms(user, request.getPhoneNum());
     }
 

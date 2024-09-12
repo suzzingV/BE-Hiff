@@ -26,23 +26,6 @@ public class MatchingControllerV0 {
     private final MatchingServiceFacade matchingServiceFacade;
 
     @Operation(
-        summary = "hiff 단일 매칭",
-        description = "hiff 매칭 1회를 수행합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "hiff 매칭에 성공하였습니다."
-    )
-    @PostMapping("/hiff")
-    public ResponseEntity<MatchingSimpleResponse> performHiffMatching(
-        @AuthenticationPrincipal User user) {
-        MatchingSimpleResponse response = matchingServiceFacade.performHiffMatching(
-            user.getId());
-
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
         summary = "hiff 매칭 목록 조회",
         description = "hiff 매칭 목록을 조회합니다. 토큰 o"
     )

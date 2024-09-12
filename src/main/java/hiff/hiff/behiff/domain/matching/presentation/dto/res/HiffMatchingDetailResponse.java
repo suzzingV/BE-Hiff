@@ -27,8 +27,6 @@ public class HiffMatchingDetailResponse {
 
     private Integer totalScoreByMe;
 
-    private Integer totalScoreByMatched;
-
     private Mbti myMbti;
 
     private Mbti matchedMbti;
@@ -47,10 +45,14 @@ public class HiffMatchingDetailResponse {
 
     private Integer lifeStyleSimilarity;
 
+    private Boolean isProposed;
+
+    private Boolean isPropose;
+
     public static HiffMatchingDetailResponse of(User matcher, User matched, Double distance,
         String mainPhoto,
         List<String> photos, MatchingInfoDto matchingInfo, List<NameWithCommonDto> hobbies,
-        List<NameWithCommonDto> lifeStyles) {
+        List<NameWithCommonDto> lifeStyles, Boolean isPropose, Boolean isProposed) {
         return HiffMatchingDetailResponse.builder()
             .matchedId(matched.getId())
             .nickname(matched.getNickname())
@@ -58,7 +60,6 @@ public class HiffMatchingDetailResponse {
             .distance(distance)
             .photos(photos)
             .totalScoreByMe(matchingInfo.getTotalScoreByMatcher())
-            .totalScoreByMatched(matchingInfo.getTotalScoreByMatched())
             .myMbti(matcher.getMbti())
             .matchedMbti(matched.getMbti())
             .mbtiSimilarity(matchingInfo.getMbtiSimilarity())
@@ -69,6 +70,8 @@ public class HiffMatchingDetailResponse {
             .lifeStyles(lifeStyles)
             .lifeStyleSimilarity(matchingInfo.getLifeStyleSimilarity())
             .mainPhoto(mainPhoto)
+                .isProposed(isProposed)
+                .isPropose(isPropose)
             .build();
     }
 }

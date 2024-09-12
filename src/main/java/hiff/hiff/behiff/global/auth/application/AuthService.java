@@ -29,15 +29,15 @@ public class AuthService {
     private final FcmTokenRepository fcmTokenRepository;
 
     public LoginResponse login(LoginRequest request) {
-        String email = request.getEmail();
         SocialType socialType = request.getSocialType();
         String socialId = request.getSocialId();
+        String socialInfo = socialType.getPrefix() + "_" + socialId;
 
-        String accessToken = jwtService.createAccessToken(email);
+        String accessToken = jwtService.createAccessToken(socialInfo);
         String refreshToken = jwtService.createRefreshToken();
-        jwtService.updateRefreshToken(refreshToken, email);
+        jwtService.updateRefreshToken(refreshToken, socialInfo);
 
-        return userRepository.findByEmail(email)
+        return userRepository.findBySocialTypeAndSocialId(socialType, socialId)
             .map(user -> {
                 user.updateAge();
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
@@ -45,7 +45,7 @@ public class AuthService {
                 return LoginResponse.of(accessToken, refreshToken, false, user.getId());
             })
             .orElseGet(() -> {
-                User newUser = userServiceFacade.registerUser(email, socialId, socialType, Role.USER,
+                User newUser = userServiceFacade.registerUser(socialId, socialType, Role.USER,
                     request.getLatitude(), request.getLongitude());
                 saveNewFcmToken(request, newUser);
                 return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());
@@ -55,9 +55,9 @@ public class AuthService {
     public TokenResponse reissueTokens(Optional<String> refresh) {
         String refreshToken = refresh
             .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
-        String email = checkRefreshToken(refreshToken);
-        String reissuedAccessToken = jwtService.createAccessToken(email);
-        String reissuedRefreshToken = jwtService.reissueRefreshToken(refreshToken, email);
+        String socialInfo = checkRefreshToken(refreshToken);
+        String reissuedAccessToken = jwtService.createAccessToken(socialInfo);
+        String reissuedRefreshToken = jwtService.reissueRefreshToken(refreshToken, socialInfo);
 
         return TokenResponse.builder()
             .accessToken(reissuedAccessToken)
@@ -82,7 +82,6 @@ public class AuthService {
     }
 
     private void saveNewFcmToken(LoginRequest request, User newUser) {
-//        User saved = userRepository.save(newUser);
         FcmToken fcmToken = FcmToken.builder()
                 .token(request.getFcmToken())
                 .userId(newUser.getId())

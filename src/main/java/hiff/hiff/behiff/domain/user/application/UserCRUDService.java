@@ -25,13 +25,12 @@ public class UserCRUDService {
     private final JwtService jwtService;
     private final EvaluatedUserRepository evaluatedUserRepository;
 
-    public User registerUser(String email, String socialId, SocialType socialType,
+    public User registerUser(String socialId, SocialType socialType,
         Role role) {
         User user = User.builder()
             .role(role)
             .socialType(socialType)
             .socialId(socialId)
-            .email(email)
             .build();
         return userRepository.save(user);
     }
@@ -61,5 +60,12 @@ public class UserCRUDService {
         jwtService.isTokenValid(accessToken);
         jwtService.deleteRefreshToken(refreshToken);
         jwtService.invalidAccessToken(accessToken);
+    }
+
+    public void checkDuplication(String phoneNum) {
+        userRepository.findByPhoneNum(phoneNum)
+                .ifPresent(user -> {
+                    throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
+                });
     }
 }

@@ -5,6 +5,7 @@ import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.common.redis.RedisService;
@@ -40,19 +41,19 @@ public class JwtService {
 
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String EMAIL_CLAIM = "email";
+    private static final String SOCIAL_ID_CLAIM = "socialId";
     private static final String LOGOUT = "logout";
     private static final String BEARER = "Bearer ";
 
     private final UserRepository userRepository;
     private final RedisService redisService;
 
-    public String createAccessToken(String email) {
+    public String createAccessToken(String socialInfo) {
         Date now = new Date();
         return JWT.create()
             .withSubject(ACCESS_TOKEN_SUBJECT)
             .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-            .withClaim(EMAIL_CLAIM, email)
+            .withClaim(SOCIAL_ID_CLAIM, socialInfo)
             .sign(Algorithm.HMAC512(secretKey));
     }
 
@@ -83,12 +84,12 @@ public class JwtService {
             .map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
-    public Optional<String> extractEmail(String accessToken) {
+    public Optional<String> extractSocialInfo(String accessToken) {
         try {
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
                 .build()
                 .verify(accessToken) //검증
-                .getClaim(EMAIL_CLAIM) //추출
+                .getClaim(SOCIAL_ID_CLAIM) //추출
                 .asString());
         } catch (JWTVerificationException e) {
             throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
@@ -96,8 +97,8 @@ public class JwtService {
     }
 
     //RefreshToken redis 저장
-    public void updateRefreshToken(String refreshToken, String email) {
-        redisService.setValue(refreshToken, email,
+    public void updateRefreshToken(String refreshToken, String socialInfo) {
+        redisService.setValue(refreshToken, socialInfo,
             Duration.ofMillis(refreshTokenExpirationPeriod));
     }
 

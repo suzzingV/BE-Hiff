@@ -31,35 +31,11 @@ public class UserInfoRequest {
 
     private Long careerId;
 
-    @Min(0)
-    @Max(700)
-    @NotNull
-    private Integer maxDistance;
-
-    @Min(0)
-    @Max(700)
-    @NotNull
-    private Integer minDistance;
-
-    @ValidEducation
-    @NotNull
-    private Education education;
-
     @ValidGender
     @NotNull
     private Gender gender;
 
     private List<Long> originHobbies;
-
-    @Min(20)
-    @Max(50)
-    @NotNull
-    private Integer minAge;
-
-    @Min(20)
-    @Max(50)
-    @NotNull
-    private Integer maxAge;
 
     private List<Long> originLifeStyles;
 
@@ -70,27 +46,4 @@ public class UserInfoRequest {
     @Size(min = 1, max = 8)
     @NotEmpty
     private String nickname;
-
-    @NotEmpty
-    private String school;
-
-    @NotNull
-    @Min(1)
-    @Max(5)
-    private Integer appearanceWV;
-
-    @NotNull
-    @Min(1)
-    @Max(5)
-    private Integer hobbyWV;
-
-    @NotNull
-    @Min(1)
-    @Max(5)
-    private Integer lifeStyleWV;
-
-    @NotNull
-    @Min(1)
-    @Max(5)
-    private Integer mbtiWV;
 }
