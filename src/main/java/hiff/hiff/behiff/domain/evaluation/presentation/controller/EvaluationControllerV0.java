@@ -1,9 +1,14 @@
 package hiff.hiff.behiff.domain.evaluation.presentation.controller;
 
+import hiff.hiff.behiff.domain.matching.application.service.MatchingServiceFacade;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.user.application.UserPhotoService;
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.auth.domain.FcmToken;
+import hiff.hiff.behiff.global.auth.infrastructure.FcmTokenRepository;
+import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +24,8 @@ public class EvaluationControllerV0 {
     private final UserRepository userRepository;
     private final UserServiceFacade userServiceFacade;
     private final UserPhotoService userPhotoService;
+    private final MatchingServiceFacade matchingServiceFacade;
+    private final FcmTokenRepository fcmTokenRepository;
 
     @GetMapping("/users")
     public String getUsersWithoutAppearanceScore(Model model) {
@@ -44,6 +51,12 @@ public class EvaluationControllerV0 {
         User user = userServiceFacade.findById(userId);
         user.updateEvaluatedScoreTmp(score);
         userRepository.save(user);
+        MatchingSimpleResponse response = matchingServiceFacade.performHiffMatching(userId);
+
+        FcmToken userToken = fcmTokenRepository.findByUserId(userId);
+        FcmToken matchedToken = fcmTokenRepository.findByUserId(response.getUserId());
+        FcmUtils.sendMatchingAlarm(userToken.getToken());
+        FcmUtils.sendMatchingAlarm(matchedToken.getToken());
         return "redirect:/evaluation/users";
     }
 }
