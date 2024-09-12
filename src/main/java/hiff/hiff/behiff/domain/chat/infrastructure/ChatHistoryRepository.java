@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.chat.domain.ChatHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> {
 
@@ -11,5 +12,5 @@ public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> 
 
     List<ChatHistory> findByProposerId(Long proposerId);
 
-    ChatHistory findByProposerIdAndProposedId(Long proposerId, Long proposedId);
+    Optional<ChatHistory> findByProposerIdAndProposedId(Long proposerId, Long proposedId);
 }

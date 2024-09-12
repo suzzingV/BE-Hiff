@@ -36,7 +36,7 @@ public class ChatController {
     )
     @PostMapping("/proposal")
     public ResponseEntity<ChatProposalResponse> propose(@AuthenticationPrincipal User user, @RequestBody @Valid ChatProposalRequest request) {
-        ChatProposalResponse response = chatService.proposeChat(user, request.getMatchedId());
+        ChatProposalResponse response = chatService.proposeChat(user.getId(), request.getMatchedId());
 
         return ResponseEntity.ok(response);
     }
@@ -81,7 +81,7 @@ public class ChatController {
     )
     @PostMapping("/acceptance")
     public ResponseEntity<ChatProposalResponse> accept(@AuthenticationPrincipal User user, @RequestBody @Valid ChatAcceptanceRequest request) {
-        ChatProposalResponse response = chatService.acceptProposal(user, request);
+        ChatProposalResponse response = chatService.acceptProposal(user.getId(), request);
 
         return ResponseEntity.ok(response);
     }

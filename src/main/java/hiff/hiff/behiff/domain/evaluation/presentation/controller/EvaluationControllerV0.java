@@ -51,12 +51,14 @@ public class EvaluationControllerV0 {
         User user = userServiceFacade.findById(userId);
         user.updateEvaluatedScoreTmp(score);
         userRepository.save(user);
-        MatchingSimpleResponse response = matchingServiceFacade.performHiffMatching(userId);
+        Long matchedId = matchingServiceFacade.performHiffMatching(userId);
+        if(matchedId != null) {
+            FcmToken userToken = fcmTokenRepository.findByUserId(userId);
+            FcmToken matchedToken = fcmTokenRepository.findByUserId(matchedId);
+            FcmUtils.sendMatchingAlarm(userToken.getToken());
+            FcmUtils.sendMatchingAlarm(matchedToken.getToken());
+        }
 
-        FcmToken userToken = fcmTokenRepository.findByUserId(userId);
-        FcmToken matchedToken = fcmTokenRepository.findByUserId(response.getUserId());
-        FcmUtils.sendMatchingAlarm(userToken.getToken());
-        FcmUtils.sendMatchingAlarm(matchedToken.getToken());
         return "redirect:/evaluation/users";
     }
 }

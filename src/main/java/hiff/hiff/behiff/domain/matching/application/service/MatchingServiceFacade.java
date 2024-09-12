@@ -35,7 +35,7 @@ public class MatchingServiceFacade {
         return hiffMatchingService.getMatchings(userId);
     }
 
-    public MatchingSimpleResponse performHiffMatching(Long userId) {
+    public Long performHiffMatching(Long userId) {
         return hiffMatchingService.performMatching(userId);
     }
 

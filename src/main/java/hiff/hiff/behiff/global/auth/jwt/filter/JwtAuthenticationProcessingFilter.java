@@ -24,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
-@Slf4j
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -62,7 +61,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             .flatMap(jwtService::extractSocialInfo)
             .flatMap(socialInfo -> {
                 StringTokenizer st = new StringTokenizer(socialInfo, "_");
-                return userRepository.findBySocialTypeAndSocialId(SocialType.getSocialTypeFromPrefix(st.nextToken()), st.nextToken());
+                String prefix = st.nextToken();
+                return userRepository.findBySocialTypeAndSocialId(SocialType.getSocialTypeFromPrefix(prefix), st.nextToken());
             }).ifPresent(this::saveAuthentication);
 
         try {

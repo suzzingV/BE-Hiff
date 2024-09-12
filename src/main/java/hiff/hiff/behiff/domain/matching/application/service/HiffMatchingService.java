@@ -5,6 +5,8 @@ import static hiff.hiff.behiff.global.common.batch.hiff_matching.HiffMatchingBat
 import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 import static hiff.hiff.behiff.global.util.DateCalculator.getTomorrowDate;
 
+import hiff.hiff.behiff.domain.chat.application.ChatService;
+import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
@@ -36,11 +38,15 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 public class HiffMatchingService extends MatchingService {
 
     private final UserCRUDService userCRUDService;
@@ -53,6 +59,7 @@ public class HiffMatchingService extends MatchingService {
     private final UserLifeStyleRepository userLifeStyleRepository;
     private final UserLifeStyleService userLifeStyleService;
     private final UserPhotoService userPhotoService;
+    private final ChatHistoryRepository chatHistoryRepository;
 
     private static final Integer HIFF_MATCHING_HEART = 3;
     private static final int TOTAL_SCORE_STANDARD = 80;
@@ -66,7 +73,7 @@ public class HiffMatchingService extends MatchingService {
         MatchingRepository matchingRepository1, SimilarityFactory similarityFactory1,
         UserHobbyService userHobbyService, UserHobbyRepository userHobbyRepository,
         UserLifeStyleRepository userLifeStyleRepository, UserLifeStyleService userLifeStyleService,
-        UserPhotoService userPhotoService) {
+        UserPhotoService userPhotoService, ChatHistoryRepository chatHistoryRepository) {
         super(userPosService, redisService, matchingRepository, similarityFactory);
         this.userCRUDService = userCRUDService;
         this.userWeightValueService = userWeightValueService;
@@ -78,6 +85,7 @@ public class HiffMatchingService extends MatchingService {
         this.userLifeStyleRepository = userLifeStyleRepository;
         this.userLifeStyleService = userLifeStyleService;
         this.userPhotoService = userPhotoService;
+        this.chatHistoryRepository = chatHistoryRepository;
     }
 
     public List<MatchingSimpleResponse> getMatchings(Long userId) {
@@ -87,7 +95,7 @@ public class HiffMatchingService extends MatchingService {
         return getCachedMatching(userId, originalMatching);
     }
 
-    public MatchingSimpleResponse performMatching(Long userId) {
+    public Long performMatching(Long userId) {
         User user = userCRUDService.findById(userId);
         List<User> matcheds = userRepository.getMatched(userId, user.getGender());
         Collections.shuffle(matcheds);
@@ -111,7 +119,7 @@ public class HiffMatchingService extends MatchingService {
             if (checkDistance(user, matched, distance)) {
                 continue;
             }
-
+            log.info("distance");
             WeightValue matchedWV = userWeightValueService.findByUserId(matched.getId());
             List<UserHobby> matchedHobbies = userHobbyRepository.findByUserId(matched.getId());
             List<UserLifeStyle> matchedLifeStyle = userLifeStyleRepository.findByUserId(
@@ -127,18 +135,11 @@ public class HiffMatchingService extends MatchingService {
                     matchedMatchingInfo.getTotalScoreByMatcher(), today, MATCHING_DURATION);
                 recordMatchingHistory(matched.getId(), userId);
                 recordMatchingHistory(userId, matched.getId());
-                return MatchingSimpleResponse.builder()
-                    .userId(matched.getId())
-                    .age(matched.getAge())
-                    .nickname(matched.getNickname())
-                    .mainPhoto(matched.getMainPhoto())
-                    .matcherTotalScore(userMatchingInfo.getTotalScoreByMatcher())
-                    .distance(getDistance(user.getId(), matched.getId()))
-                    .build();
+                return matched.getId();
             }
         }
 
-        throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
+        return null;
     }
 
     public HiffMatchingDetailResponse getMatchingDetails(Long matcherId, Long matchedId) {
@@ -158,8 +159,11 @@ public class HiffMatchingService extends MatchingService {
         Double distance = getDistance(matcherId, matchedId);
         MatchingInfoDto matchingInfoDto = getCachedMatchingInfo(matcherId, matchedId);
 
+        boolean isPropose = hasProposed(matcherId, matchedId);
+        boolean isProposed = !isPropose && hasProposed(matchedId, matcherId);
+
         return HiffMatchingDetailResponse.of(matcher, matched, distance, mainPhoto, photos,
-            matchingInfoDto, hobbies, lifeStyles);
+            matchingInfoDto, hobbies, lifeStyles, isPropose, isProposed);
     }
 
     public void dailyMatching(User matcher, PriorityQueue<UserWithMatchCount> matchedArr) {
@@ -299,5 +303,9 @@ public class HiffMatchingService extends MatchingService {
         return matched.getHopeMinAge() > matcherAge || matched.getHopeMaxAge() < matcherAge
             || matcher.getHopeMinAge() > matchedAge
             || matcher.getHopeMaxAge() < matchedAge;
+    }
+
+    private boolean hasProposed(Long proposerId, Long proposedId) {
+        return chatHistoryRepository.findByProposerIdAndProposedId(proposerId, proposedId).isPresent();
     }
 }

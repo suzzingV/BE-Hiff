@@ -1,6 +1,7 @@
 package hiff.hiff.behiff.domain.chat.application;
 
 import hiff.hiff.behiff.domain.chat.domain.ChatHistory;
+import hiff.hiff.behiff.domain.chat.exception.ChatException;
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
 import hiff.hiff.behiff.domain.chat.presentation.dto.req.ChatAcceptanceRequest;
 import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposalResponse;
@@ -12,6 +13,7 @@ import hiff.hiff.behiff.global.auth.domain.FcmToken;
 import hiff.hiff.behiff.global.auth.infrastructure.FcmTokenRepository;
 import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import hiff.hiff.behiff.global.common.sms.SmsUtil;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,8 @@ public class ChatService {
     private final UserCRUDService userCRUDService;
     private final SmsUtil smsUtil;
 
-    public ChatProposalResponse proposeChat(User user, Long matchedId) {
+    public ChatProposalResponse proposeChat(Long userId, Long matchedId) {
+        User user = userCRUDService.findById(userId);
         FcmToken matchedFcmToken = fcmTokenRepository.findByUserId(matchedId);
         recordChatHistory(user, matchedId);
         FcmUtils.sendChatProposal(matchedFcmToken.getToken(), user.getNickname());
@@ -65,7 +68,8 @@ public class ChatService {
                 .toList();
     }
 
-    public ChatProposalResponse acceptProposal(User user, ChatAcceptanceRequest request) {
+    public ChatProposalResponse acceptProposal(Long userId, ChatAcceptanceRequest request) {
+        User user = userCRUDService.findById(userId);
         Long proposerId = request.getProposerId();
         updateHistory(proposerId, user.getId());
 
@@ -78,7 +82,8 @@ public class ChatService {
     }
 
     private void updateHistory(Long proposerId, Long userId) {
-        ChatHistory chatHistory = chatHistoryRepository.findByProposerIdAndProposedId(proposerId, userId);
+        ChatHistory chatHistory = chatHistoryRepository.findByProposerIdAndProposedId(proposerId, userId)
+                .orElseThrow(() -> new ChatException(ErrorCode.CHAT_HISTORY_NOT_FOUND));
         chatHistory.accept();
     }
 
