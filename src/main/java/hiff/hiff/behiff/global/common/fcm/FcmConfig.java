@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
@@ -12,12 +13,12 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Configuration
+@Slf4j
 public class FcmConfig {
 
-    // TODO: 키 추가
-//    @PostConstruct
+    @PostConstruct
     private void init() {
-        String fileResourceURL = "security/Server-Security/fcm/tht-push-fcm-firebase-adminsdk-secretkey.json";
+        String fileResourceURL = "fcm-keyfile.json";
         ClassPathResource resource = new ClassPathResource(fileResourceURL);
 
         FirebaseOptions options = null;
@@ -26,7 +27,7 @@ public class FcmConfig {
                     .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
                     .build();
         } catch (IOException e) {
-            throw new AuthException(ErrorCode.FCM_INIT_ERROR);
+            throw new AuthException(ErrorCode.FCM_INIT_ERROR, e.getMessage());
         }
 
         FirebaseApp.initializeApp(options);
