@@ -111,7 +111,7 @@ public class UserController {
     }
 
     @Operation(
-        summary = "User 사진 업데이",
+        summary = "User 사진 업데이트",
         description = "User의 사진을 업데이트합니다. 토큰 o"
     )
     @ApiResponse(

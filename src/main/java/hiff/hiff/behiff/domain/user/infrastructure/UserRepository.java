@@ -48,4 +48,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findUsersWithoutAppearanceScore(Double score);
 
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
+
+    Optional<User> findByPhoneNum(String phoneNum);
 }

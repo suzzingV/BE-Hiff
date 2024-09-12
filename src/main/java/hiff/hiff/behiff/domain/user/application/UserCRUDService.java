@@ -62,4 +62,11 @@ public class UserCRUDService {
         jwtService.deleteRefreshToken(refreshToken);
         jwtService.invalidAccessToken(accessToken);
     }
+
+    public void checkDuplication(String phoneNum) {
+        userRepository.findByPhoneNum(phoneNum)
+                .ifPresent(user -> {
+                    throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
+                });
+    }
 }

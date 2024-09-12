@@ -221,6 +221,7 @@ public class UserServiceFacade {
 
     public void sendVerificationCode(Long userId, PhoneNumRequest request) {
         User user = userCRUDService.findById(userId);
+        userCRUDService.checkDuplication(request.getPhoneNum());
         userIdentifyVerificationService.sendIdentificationSms(user, request.getPhoneNum());
     }
 
