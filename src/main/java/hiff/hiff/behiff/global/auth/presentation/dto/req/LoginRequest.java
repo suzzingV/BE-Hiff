@@ -23,11 +23,15 @@ public class LoginRequest {
     private String socialId;
 
     @ValidSocialType
+    @NotNull
     private SocialType socialType;
 
     @NotNull
-    private Double posX;
+    private Double latitude;
 
     @NotNull
-    private Double posY;
+    private Double longitude;
+
+    @NotNull
+    private String fcmToken;
 }

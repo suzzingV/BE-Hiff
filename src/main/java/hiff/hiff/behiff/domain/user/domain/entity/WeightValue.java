@@ -66,7 +66,7 @@ public class WeightValue {
         this.hobby = 3;
         this.lifeStyle = 3;
         this.mbti = 3;
-        this.total = 3 * 3;
+        this.total = 3 * 4;
     }
 
     public void changeWeightValue(Integer appearance, Integer hobby,
@@ -76,6 +76,6 @@ public class WeightValue {
         this.hobby = hobby;
         this.lifeStyle = lifeStyle;
         this.mbti = mbti;
-        this.total = hobby + lifeStyle + mbti;
+        this.total = hobby + lifeStyle + mbti + appearance;
     }
 }

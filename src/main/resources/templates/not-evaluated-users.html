@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>외모 점수 없는 유저들</title>
+</head>
+<body>
+<h1>외모 점수 없는 유저들</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>이름</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td>
+            <!-- 유저의 상세 페이지로 이동 -->
+            <a th:href="@{/evaluation/detail/{id}(id=${user.id})}" th:text="${user.nickname}"></a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

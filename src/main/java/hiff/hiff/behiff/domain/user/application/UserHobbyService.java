@@ -1,11 +1,11 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.HobbyRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
@@ -21,17 +21,18 @@ public class UserHobbyService {
     private final HobbyRepository hobbyRepository;
     private final UserHobbyRepository userHobbyRepository;
 
-    public UserUpdateResponse updateHobby(Long userId, HobbyRequest request) {
-        List<Long> originHobbies = request.getOriginHobbies();
+    public static final String HOBBY_PREFIX = "hobby_";
+
+    public UserUpdateResponse updateHobby(Long userId, List<Long> hobbies) {
 //        List<String> newHobbies = request.getNewHobbies();
 
-        updateUserHobbies(userId, originHobbies);
+        updateUserHobbies(userId, hobbies);
 //        registerNewHobbies(userId, newHobbies); // TODO : 레디스 캐싱
 
         return UserUpdateResponse.from(userId);
     }
 
-    public List<String> findHobbiesByUser(Long userId) {
+    public List<String> findNameByUser(Long userId) {
         return userHobbyRepository.findByUserId(userId)
             .stream()
             .map(userHobby -> {
@@ -41,9 +42,27 @@ public class UserHobbyService {
             .toList();
     }
 
+    public List<UserHobby> findByUserId(Long userId) {
+        return userHobbyRepository.findByUserId(userId);
+    }
+
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<Hobby> getAllHobbies() {
         return hobbyRepository.findAll();
+    }
+
+    public List<NameWithCommonDto> getHobbiesWithCommon(Long matcherId, Long matchedId) {
+        List<String> matcherHobbies = findNameByUser(matcherId);
+        List<String> matchedHobbies = findNameByUser(matchedId);
+
+        return matchedHobbies.stream()
+            .map(hobby -> {
+                boolean isCommon = matcherHobbies.contains(hobby);
+                return NameWithCommonDto.builder()
+                    .name(hobby)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
     }
 
 //    private void registerNewHobbies(Long userId, List<String> newHobbies) {

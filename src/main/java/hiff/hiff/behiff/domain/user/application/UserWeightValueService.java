@@ -1,11 +1,8 @@
 package hiff.hiff.behiff.domain.user.application;
 
-import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
-import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.WeightValueRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +16,11 @@ public class UserWeightValueService {
     private final WeightValueRepository weightValueRepository;
     private final UserCRUDService userCRUDService;
 
-    public void updateWeightValue(Long userId, WeightValueRequest request) {
+    public void updateWeightValue(Long userId, Integer appearanceWV, Integer hobbyWV, Integer lifeStyleWV, Integer mbtiWV) {
         WeightValue weightValue = weightValueRepository.findByUserId(userId)
             .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
 //        checkIncomePrivate(userId, weightValue);
-        weightValue.changeWeightValue(request.getAppearance(),
-            request.getHobby(),
-            request.getLifeStyle(), request.getMbti());
+        weightValue.changeWeightValue(appearanceWV, hobbyWV, lifeStyleWV, mbtiWV);
     }
 
     public WeightValue createWeightValue(Long userId) {

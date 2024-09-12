@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.global.common.batch.matching_init;
 
-import static hiff.hiff.behiff.global.common.redis.RedisService.DAILY_MATCHING_PREFIX;
+import static hiff.hiff.behiff.domain.matching.application.service.DailyMatchingService.DAILY_MATCHING_PREFIX;
 
 import hiff.hiff.behiff.global.common.batch.CustomSkipListener;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +23,15 @@ public class MatchingInitBatchConfig {
 
     private final CustomSkipListener customSkipListener;
     private final JobRepository jobRepository;
-    private final RedisTemplate<String, String> strRedisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private final PlatformTransactionManager transactionManager;
     private final DefaultJobExecutionListener defaultJobExecutionListener;
+    private final Converter<String, String> itemKeyMapper = new Converter<String, String>() {
+        @Override
+        public String convert(String key) {
+            return redisTemplate.opsForValue().get(key);
+        }
+    };
 
     @Bean
     public Job dailyMatchingInitJob() {
@@ -54,25 +60,15 @@ public class MatchingInitBatchConfig {
     public CustomRedisItemReader<String, String> redisItemReader() {
         ScanOptions scanOptions = ScanOptions.scanOptions().match(DAILY_MATCHING_PREFIX + "*")
             .count(1000).build();
-        return new CustomRedisItemReader<>(strRedisTemplate, scanOptions);
+        return new CustomRedisItemReader<>(redisTemplate, scanOptions);
     }
 
     @Bean
     public CustomRedisItemWriter<String, String> redisItemWriter() {
         CustomRedisItemWriter<String, String> customRedisItemWriter = new CustomRedisItemWriter<>();
-        customRedisItemWriter.setRedisTemplate(strRedisTemplate);
+        customRedisItemWriter.setRedisTemplate(redisTemplate);
         customRedisItemWriter.setDelete(true);
-        customRedisItemWriter.setItemKeyMapper(itemKeyMapper());
+        customRedisItemWriter.setItemKeyMapper(itemKeyMapper);
         return customRedisItemWriter;
-    }
-
-    @Bean
-    public Converter<String, String> itemKeyMapper() {
-        return new Converter<String, String>() {
-            @Override
-            public String convert(String key) {
-                return strRedisTemplate.opsForValue().get(key);
-            }
-        };
     }
 }

@@ -7,9 +7,7 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.global.common.gcs.GcsService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +32,7 @@ public class UserPhotoService {
         saveMainPhotoUrl(userId, mainPhotoUrl);
 
         deleteOldPhotos(userId);
-        for(MultipartFile photo : photos) {
+        for (MultipartFile photo : photos) {
             String photoUrl = gcsService.saveImage(photo, PHOTOS_FOLDER_NAME);
             savePhotoUrl(userId, photoUrl);
         }
@@ -42,9 +40,6 @@ public class UserPhotoService {
 
     public List<String> getPhotosOfUser(Long userId) {
         List<UserPhoto> userPhotos = userPhotoRepository.findByUserId(userId);
-        if(userPhotos.isEmpty()) {
-            throw new UserException(ErrorCode.PHOTOS_NOT_FOUND);
-        }
         return userPhotos
             .stream()
             .map(UserPhoto::getPhotoUrl)
@@ -53,11 +48,11 @@ public class UserPhotoService {
 
     private void deleteOldPhotos(Long userId) {
         userPhotoRepository.findByUserId(userId)
-                .forEach(userPhoto -> {
-                    String photoUrl = userPhoto.getPhotoUrl();
-                    gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
-                    userPhotoRepository.delete(userPhoto);
-                });
+            .forEach(userPhoto -> {
+                String photoUrl = userPhoto.getPhotoUrl();
+                gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
+                userPhotoRepository.delete(userPhoto);
+            });
     }
 
     private void checkPhotoQuantity(List<MultipartFile> photos) {
@@ -68,9 +63,9 @@ public class UserPhotoService {
 
     private void savePhotoUrl(Long userId, String mainPhotoUrl) {
         UserPhoto userPhoto = UserPhoto.builder()
-                .userId(userId)
-                .photoUrl(mainPhotoUrl)
-                .build();
+            .userId(userId)
+            .photoUrl(mainPhotoUrl)
+            .build();
         userPhotoRepository.save(userPhoto);
     }
 

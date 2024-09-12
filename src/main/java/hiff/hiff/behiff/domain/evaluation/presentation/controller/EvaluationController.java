@@ -5,6 +5,7 @@ import hiff.hiff.behiff.domain.evaluation.presentation.dto.req.EvaluationRequest
 import hiff.hiff.behiff.domain.evaluation.presentation.dto.res.EvaluatedResponse;
 import hiff.hiff.behiff.domain.evaluation.presentation.dto.res.EvaluationResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,7 +30,7 @@ public class EvaluationController {
 
     @PostMapping
     public ResponseEntity<EvaluationResponse> evaluate(@AuthenticationPrincipal User user,
-        @RequestBody EvaluationRequest request) {
+        @Valid @RequestBody EvaluationRequest request) {
         EvaluationResponse response = evaluationService.evaluate(user.getId(), request);
         return ResponseEntity.ok(response);
     }

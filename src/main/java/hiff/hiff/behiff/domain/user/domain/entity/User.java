@@ -2,11 +2,10 @@ package hiff.hiff.behiff.domain.user.domain.entity;
 
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
-import hiff.hiff.behiff.domain.user.domain.enums.Income;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
-import hiff.hiff.behiff.domain.user.util.AgeCalculator;
+import hiff.hiff.behiff.global.util.DateCalculator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,7 +13,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -75,8 +73,6 @@ public class User implements UserDetails {
 //    @Enumerated(EnumType.STRING)
 //    @Column(nullable = false)
 //    private Income income;
-
-    private String addr;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -142,7 +138,7 @@ public class User implements UserDetails {
         this.education = Education.PRIVATE;
         this.birth = LocalDate.now();
         this.gender = Gender.MALE;
-        this.age = AgeCalculator.calculateAge(LocalDate.now());
+        this.age = DateCalculator.calculateAge(LocalDate.now());
     }
 
     public void delete() {
@@ -171,12 +167,11 @@ public class User implements UserDetails {
 //        this.income = income;
 //    }
 
-    public void changeAddress(String addr1, String addr2, String addr3) {
-        this.addr = addr1 + " " + addr2 + " " + addr3;
+    public void changeEducation(Education education) {
+        this.education = education;
     }
 
-    public void changeEducation(Education education, String school) {
-        this.education = education;
+    public void changeSchool(String school) {
         this.school = school;
     }
 
@@ -209,6 +204,10 @@ public class User implements UserDetails {
         this.evaluatedCount++;
     }
 
+    public void updateEvaluatedScoreTmp(Double score) {
+        this.evaluatedScore = score;
+    }
+
     public void updateMainPhoto(String photoUrl) {
         this.mainPhoto = photoUrl;
     }
@@ -229,7 +228,7 @@ public class User implements UserDetails {
     }
 
     public void updateAge() {
-        this.age = AgeCalculator.calculateAge(this.birth);
+        this.age = DateCalculator.calculateAge(this.birth);
     }
 
     public void addHeart(Integer amount) {

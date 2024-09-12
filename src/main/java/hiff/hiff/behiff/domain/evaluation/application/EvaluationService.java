@@ -1,7 +1,5 @@
 package hiff.hiff.behiff.domain.evaluation.application;
 
-import static hiff.hiff.behiff.global.common.redis.RedisService.EVALUATION_PREFIX;
-
 import hiff.hiff.behiff.domain.evaluation.domain.entity.EvaluatedUser;
 import hiff.hiff.behiff.domain.evaluation.domain.entity.Evaluation;
 import hiff.hiff.behiff.domain.evaluation.exception.EvaluationException;
@@ -15,6 +13,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import java.time.Duration;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,10 @@ public class EvaluationService {
     private final EvaluatedUserRepository evaluatedUserRepository;
     private final UserCRUDService userCRUDService;
     private final RedisService redisService;
+
+    public static final String EVALUATION_PREFIX = "eval_";
+
+    public static final Duration EVALUATION_DURATION = Duration.ofDays(1);
 
     public EvaluatedResponse getEvaluated(User evaluator) {
         checkEvaluationCount(evaluator.getId());

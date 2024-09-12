@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.global.common.batch;
 
-import hiff.hiff.behiff.global.common.email.EmailService;
+import hiff.hiff.behiff.global.common.sms.EmailService;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.stereotype.Component;
 

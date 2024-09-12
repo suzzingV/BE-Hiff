@@ -20,6 +20,7 @@ public class UserCareerService {
     public void updateOriginCareer(User user, Long careerId) {
         Career career = findById(careerId);
         user.changeCareer(career.getName());
+        career.addCount();
     }
 
     public void updateNewCareer(User user, String careerName) {

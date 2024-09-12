@@ -17,11 +17,11 @@ public class UserPosService {
 
     private final UserPosRepository userPosRepository;
 
-    public void createPos(Long userId, Double x, Double y) {
+    public void createPos(Long userId, Double lat, Double lon) {
         UserPos userPos = UserPos.builder()
             .userId(userId)
-            .x(x)
-            .y(y)
+            .lat(lat)
+            .lon(lon)
             .build();
 
         userPosRepository.save(userPos);

@@ -1,11 +1,11 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.LifeStyleRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -21,17 +21,18 @@ public class UserLifeStyleService {
     private final LifeStyleRepository lifeStyleRepository;
     private final UserLifeStyleRepository userLifeStyleRepository;
 
-    public UserUpdateResponse updateLifeStyle(Long userId, LifeStyleRequest request) {
-        List<Long> originLifeStyles = request.getOriginLifeStyles();
+    public static final String LIFESTYLE_PREFIX = "lifestyle_";
+
+    public UserUpdateResponse updateLifeStyle(Long userId, List<Long> lifeStyles) {
 //        List<String> newLifeStyles = request.getNewLifeStyles();
 
-        updateUserLifeStyles(userId, originLifeStyles);
+        updateUserLifeStyles(userId, lifeStyles);
 //        registerNewLifeStyles(userId, newLifeStyles);
 
         return UserUpdateResponse.from(userId);
     }
 
-    public List<String> findLifeStylesByUser(Long userId) {
+    public List<String> findNamesByUser(Long userId) {
         return userLifeStyleRepository.findByUserId(userId)
             .stream()
             .map(userLifeStyle -> {
@@ -41,8 +42,26 @@ public class UserLifeStyleService {
             .toList();
     }
 
+    public List<UserLifeStyle> findByUserId(Long userId) {
+        return userLifeStyleRepository.findByUserId(userId);
+    }
+
     public List<LifeStyle> getAllLifeStyles() {
         return lifeStyleRepository.findAll();
+    }
+
+    public List<NameWithCommonDto> getLifeStylesWithCommon(Long matcherId, Long matchedId) {
+        List<String> matcherLifeStyles = findNamesByUser(matcherId);
+        List<String> matchedLifeStyles = findNamesByUser(matchedId);
+
+        return matchedLifeStyles.stream()
+            .map(lifeStyle -> {
+                boolean isCommon = matcherLifeStyles.contains(lifeStyle);
+                return NameWithCommonDto.builder()
+                    .name(lifeStyle)
+                    .isCommon(isCommon)
+                    .build();
+            }).toList();
     }
 
 //    private void registerNewLifeStyles(Long userId, List<String> newLifeStyles) {

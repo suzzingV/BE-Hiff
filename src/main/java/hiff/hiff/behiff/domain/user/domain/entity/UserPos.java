@@ -28,10 +28,10 @@ public class UserPos {
     private Long id;
 
     @Column(nullable = false)
-    private Double x;
+    private Double lat;
 
     @Column(nullable = false)
-    private Double y;
+    private Double lon;
 
     private Long userId;
 
@@ -40,15 +40,15 @@ public class UserPos {
     private LocalDateTime updatedAt;
 
     @Builder
-    private UserPos(Double x, Double y, Long userId) {
-        this.x = x;
-        this.y = y;
+    private UserPos(Double lat, Double lon, Long userId) {
+        this.lat = lat;
+        this.lon = lon;
         this.userId = userId;
     }
 
-    public void changePos(Double x, Double y) {
-        this.x = x;
-        this.y = y;
+    public void changePos(Double lat, Double lon) {
+        this.lat = lat;
+        this.lon = lon;
         this.updatedAt = LocalDateTime.now();
     }
 }
