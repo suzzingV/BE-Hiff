@@ -27,8 +27,6 @@ public class HiffMatchingDetailResponse {
 
     private Integer totalScoreByMe;
 
-    private Integer totalScoreByMatched;
-
     private Mbti myMbti;
 
     private Mbti matchedMbti;
@@ -58,7 +56,6 @@ public class HiffMatchingDetailResponse {
             .distance(distance)
             .photos(photos)
             .totalScoreByMe(matchingInfo.getTotalScoreByMatcher())
-            .totalScoreByMatched(matchingInfo.getTotalScoreByMatched())
             .myMbti(matcher.getMbti())
             .matchedMbti(matched.getMbti())
             .mbtiSimilarity(matchingInfo.getMbtiSimilarity())
