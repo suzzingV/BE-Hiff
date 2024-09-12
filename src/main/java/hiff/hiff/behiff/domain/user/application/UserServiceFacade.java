@@ -51,14 +51,9 @@ public class UserServiceFacade {
         userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
         userProfileService.updateGender(user, request.getGender());
         userProfileService.updateMbti(user, request.getMbti());
-        userProfileService.updateEducation(user, request.getEducation());
-        userProfileService.updateSchool(user, request.getSchool());
-        userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
         userCareerService.updateOriginCareer(user, request.getCareerId());
         userHobbyService.updateHobby(userId, request.getOriginHobbies());
         userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
-        userWeightValueService.updateWeightValue(userId, request.getAppearanceWV(), request.getHobbyWV(), request.getLifeStyleWV(), request.getMbtiWV());
-        userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
 
         return UserUpdateResponse.from(userId);
