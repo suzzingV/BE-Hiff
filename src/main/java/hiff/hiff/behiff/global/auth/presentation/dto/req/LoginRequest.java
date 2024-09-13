@@ -30,4 +30,6 @@ public class LoginRequest {
 
     @NotNull
     private String fcmToken;
+
+    private String authorizationCode;
 }
