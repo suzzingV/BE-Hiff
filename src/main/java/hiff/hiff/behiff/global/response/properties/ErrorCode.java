@@ -65,7 +65,8 @@ public enum ErrorCode {
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),
     IMAGE_STORAGE_SAVE_ERROR(INTERNAL_SERVER_ERROR, "스토리지에 사진을 저장하는 도중 에러가 발생하였습니다."),
-    FCM_INIT_ERROR(INTERNAL_SERVER_ERROR, "FCM Admin SDK를 초기화하는 도중 오류가 발생하였습니다.");
+    FCM_INIT_ERROR(INTERNAL_SERVER_ERROR, "FCM Admin SDK를 초기화하는 도중 오류가 발생하였습니다."),
+    FAILED_TO_SEND_EMAIL(INTERNAL_SERVER_ERROR, "이메일 전송에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
