@@ -7,6 +7,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
+import hiff.hiff.behiff.global.common.sms.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,6 +37,7 @@ public class UserController {
 
     private final UserServiceFacade userServiceFacade;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     @Operation(
             summary = "User 최초 정보 등록",
@@ -51,6 +53,7 @@ public class UserController {
                                                            UserInfoRequest request, @RequestPart(value = "main_photo") MultipartFile mainPhoto,
                                                            @RequestPart(value = "photos") List<MultipartFile> photos) {
         UserUpdateResponse response = userServiceFacade.registerInfo(user.getId(), mainPhoto, photos, request);
+        emailService.sendSignUpEmail();
         return ResponseEntity.ok(response);
     }
 
