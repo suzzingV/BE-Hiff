@@ -56,8 +56,8 @@ dependencies {
     //Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    //MySQL
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    // MARIADB
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     //REDIS
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     //H2
