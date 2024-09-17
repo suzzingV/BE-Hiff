@@ -1,13 +1,14 @@
 package hiff.hiff.behiff.domain.evaluation.presentation.controller;
 
 import hiff.hiff.behiff.domain.matching.application.service.MatchingServiceFacade;
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.user.application.UserPhotoService;
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.domain.FcmToken;
-import hiff.hiff.behiff.global.auth.infrastructure.FcmTokenRepository;
+import hiff.hiff.behiff.global.auth.domain.Token;
+import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,7 +26,7 @@ public class EvaluationControllerV0 {
     private final UserServiceFacade userServiceFacade;
     private final UserPhotoService userPhotoService;
     private final MatchingServiceFacade matchingServiceFacade;
-    private final FcmTokenRepository fcmTokenRepository;
+    private final AuthService authService;
 
     @GetMapping("/users")
     public String getUsersWithoutAppearanceScore(Model model) {
@@ -53,10 +54,10 @@ public class EvaluationControllerV0 {
         userRepository.save(user);
         Long matchedId = matchingServiceFacade.performHiffMatching(userId);
         if(matchedId != null) {
-            FcmToken userToken = fcmTokenRepository.findByUserId(userId);
-            FcmToken matchedToken = fcmTokenRepository.findByUserId(matchedId);
-            FcmUtils.sendMatchingAlarm(userToken.getToken());
-            FcmUtils.sendMatchingAlarm(matchedToken.getToken());
+            Token userToken = authService.findTokenByUserId(userId);
+            Token matchedToken = authService.findTokenByUserId(matchedId);
+            FcmUtils.sendMatchingAlarm(userToken.getFcmToken());
+            FcmUtils.sendMatchingAlarm(matchedToken.getFcmToken());
         }
 
         return "redirect:/evaluation/users";
