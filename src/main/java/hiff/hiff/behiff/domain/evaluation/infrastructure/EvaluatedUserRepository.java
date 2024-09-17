@@ -21,4 +21,6 @@ public interface EvaluatedUserRepository extends JpaRepository<EvaluatedUser, Lo
         ORDER BY RAND() LIMIT 1
         """)
     Optional<EvaluatedUser> findByRandom(Long evaluatorId, Gender gender);
+
+    void deleteByUserId(Long userId);
 }

@@ -1,6 +1,10 @@
 package hiff.hiff.behiff.global.auth.jwt.service;
 
+import static hiff.hiff.behiff.global.auth.application.AuthService.appleIdentifier;
+import static hiff.hiff.behiff.global.auth.application.AuthService.appleKeyId;
+import static hiff.hiff.behiff.global.auth.application.AuthService.appleTeamId;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
+import static hiff.hiff.behiff.global.common.webClient.WebClientUtils.APPLE_URL;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -10,9 +14,16 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.PrivateKey;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -128,5 +139,24 @@ public class JwtService {
             throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
         }
         return redisService.getStrValue(refreshToken);
+    }
+
+    public String createClientSecret(PrivateKey privateKey) {
+        Map<String, Object> headerParamsMap = new HashMap<>();
+        headerParamsMap.put("kid", appleKeyId);
+        headerParamsMap.put("alg", "ES256");
+
+        Date expirationDate = Date.from(
+            LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
+        return Jwts
+            .builder()
+            .setHeaderParams(headerParamsMap)
+            .setIssuer(appleTeamId)
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(expirationDate)
+            .setAudience(APPLE_URL)
+            .setSubject(appleIdentifier)
+            .signWith(SignatureAlgorithm.ES256, privateKey)
+            .compact();
     }
 }

@@ -5,14 +5,14 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class AppleLoginDto {
+public class LoginDto {
 
     private String socialId;
 
     private String refreshToken;
 
-    public static AppleLoginDto of(String socialId, String refreshToken) {
-        return AppleLoginDto.builder()
+    public static LoginDto of(String socialId, String refreshToken) {
+        return LoginDto.builder()
             .refreshToken(refreshToken)
             .socialId(socialId)
             .build();

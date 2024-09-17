@@ -14,10 +14,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT u FROM User u WHERE u.email = :email AND u.deletedAt IS NULL")
+    @Query("SELECT u FROM User u WHERE u.email = :email")
     Optional<User> findByEmail(@Param("email") String email);
 
-    @Query("SELECT u FROM User u WHERE u.nickname = :nickname AND u.deletedAt IS NULL")
+    @Query("SELECT u FROM User u WHERE u.nickname = :nickname")
     Optional<User> findByNickname(String nickname);
 
     @Query("""
@@ -47,7 +47,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 """)
     List<User> findUsersWithoutAppearanceScore(Double score);
 
+    @Query("""
+        SELECT u FROM User u
+        WHERE u.socialType = :socialType
+        AND u.socialId = :socialId
+""")
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
+    @Query("""
+        SELECT u FROM User u
+        WHERE u.phoneNum = :phoneNum
+""")
     Optional<User> findByPhoneNum(String phoneNum);
 }
