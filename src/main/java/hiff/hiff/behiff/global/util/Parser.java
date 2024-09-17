@@ -1,13 +1,13 @@
 package hiff.hiff.behiff.global.util;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
-import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
-import hiff.hiff.behiff.global.auth.application.dto.LoginDto;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import hiff.hiff.behiff.global.util.exception.UtilsException;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class Parser {
         }
     }
 
-    public static String getSocialIdByIdToken(List<Map<String, Object>> keys, String idToken) {
+    public static String getAppleIdByIdToken(List<Map<String, Object>> keys, String idToken) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(idToken);
             for (Map<String, Object> key : keys) {
@@ -59,5 +59,10 @@ public class Parser {
         }
 
         return null;
+    }
+
+    public static String getSocialIdByIdToken(String idToken) {
+        DecodedJWT jwt = JWT.decode(idToken);
+        return jwt.getSubject();
     }
 }

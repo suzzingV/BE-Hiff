@@ -1,11 +1,5 @@
 package hiff.hiff.behiff.global.auth.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jwt.SignedJWT;
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
@@ -23,20 +17,15 @@ import hiff.hiff.behiff.global.common.webClient.WebClientUtils;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import hiff.hiff.behiff.global.util.Parser;
 import hiff.hiff.behiff.global.util.FileReader;
-import java.io.IOException;
 import java.security.PrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @Transactional
@@ -62,7 +51,7 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         SocialType socialType = request.getSocialType();
-        LoginDto loginDto = getSocialInfoByType(request.getSocialId(), socialType,
+        LoginDto loginDto = getSocialInfoByType(request.getIdToken(), socialType,
             request.getAuthorizationCode());
         String socialId = loginDto.getSocialId();
         String socialInfo = socialType.getPrefix() + "_" + socialId;
@@ -111,15 +100,11 @@ public class AuthService {
         jwtService.invalidAccessToken(accessToken);
     }
 
-    public void deleteToken(Long userId) {
-        Token token = findTokenByUserId(userId);
-        tokenRepository.delete(token);
-    }
-
-    private LoginDto getSocialInfoByType(String socialId, SocialType socialType, String authorizationCode) {
+    private LoginDto getSocialInfoByType(String idToken, SocialType socialType, String authorizationCode) {
         if(socialType == SocialType.APPLE) {
             return authorizeAppleUser(authorizationCode);
         }
+        String socialId = Parser.getSocialIdByIdToken(idToken);
         return LoginDto.of(socialId, null);
     }
 
@@ -138,7 +123,7 @@ public class AuthService {
             Map keyResponse = WebClientUtils.getAppleKeys();
             List<Map<String, Object>> keys = (List<Map<String, Object>>) keyResponse.get("keys");
 
-            String socialId = Parser.getSocialIdByIdToken(keys, idToken);
+            String socialId = Parser.getAppleIdByIdToken(keys, idToken);
             return LoginDto.of(socialId, refreshToken);
     }
 
