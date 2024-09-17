@@ -46,6 +46,7 @@ public class UserServiceFacade {
 
     public UserUpdateResponse registerInfo(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos, UserInfoRequest request) {
         User user = userCRUDService.findById(userId);
+        WeightValue wv = userWeightValueService.findByUserId(userId);
         userProfileService.updateNickname(user, request.getNickname());
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
         userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
@@ -55,6 +56,9 @@ public class UserServiceFacade {
         userHobbyService.updateHobby(userId, request.getOriginHobbies());
         userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
+        wv.changeWeightValue(request.getAppearanceWV(), request.getHobbyWV(), request.getLifeStyleWV(), request.getMbtiWV());
+        userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
+        userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
 
         return UserUpdateResponse.from(userId);
     }

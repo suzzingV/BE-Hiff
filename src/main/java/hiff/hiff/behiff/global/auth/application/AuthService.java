@@ -66,13 +66,17 @@ public class AuthService {
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
                 Token token = findTokenByUserId(user.getId());
                 token.updateFcmToken(request.getFcmToken());
-                return LoginResponse.of(accessToken, refreshToken, false, user.getId());
+                boolean isFilled = false;
+                if(user.getNickname() != null) {
+                    isFilled = true;
+                }
+                return LoginResponse.of(accessToken, refreshToken, false, isFilled, user.getId());
             })
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, socialId, socialType,
                     request.getLatitude(), request.getLongitude());
                 saveTokens(request, newUser, loginDto.getRefreshToken());
-                return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());
+                return LoginResponse.of(accessToken, refreshToken, true, false, newUser.getId());
             });
     }
 
