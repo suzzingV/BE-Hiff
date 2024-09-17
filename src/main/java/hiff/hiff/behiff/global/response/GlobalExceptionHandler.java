@@ -7,6 +7,8 @@ import hiff.hiff.behiff.global.response.exceptionClass.CustomException;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +29,10 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleCustomException(
         CustomException e, HttpServletRequest request
     ) {
-        return ErrorResponse.toResponseEntity(e.getErrorCode(), e.getRuntimeValue());
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        e.printStackTrace(printWriter);
+        return ErrorResponse.toResponseEntity(e.getErrorCode(), stringWriter.toString());
     }
 
     @ExceptionHandler(value = {
