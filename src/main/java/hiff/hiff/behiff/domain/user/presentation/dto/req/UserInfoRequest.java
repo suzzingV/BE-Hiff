@@ -46,4 +46,44 @@ public class UserInfoRequest {
     @Size(min = 1, max = 8)
     @NotEmpty
     private String nickname;
+
+    @NotNull
+    @Min(1)
+    @Max(5)
+    private Integer appearanceWV;
+
+    @NotNull
+    @Min(1)
+    @Max(5)
+    private Integer hobbyWV;
+
+    @NotNull
+    @Min(1)
+    @Max(5)
+    private Integer lifeStyleWV;
+
+    @NotNull
+    @Min(1)
+    @Max(5)
+    private Integer mbtiWV;
+
+    @Min(20)
+    @Max(50)
+    @NotNull
+    private Integer minAge;
+
+    @Min(20)
+    @Max(50)
+    @NotNull
+    private Integer maxAge;
+
+    @Min(0)
+    @Max(700)
+    @NotNull
+    private Integer maxDistance;
+
+    @Min(0)
+    @Max(700)
+    @NotNull
+    private Integer minDistance;
 }
