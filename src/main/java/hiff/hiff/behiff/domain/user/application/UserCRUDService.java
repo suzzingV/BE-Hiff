@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -52,7 +53,7 @@ public class UserCRUDService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final EvaluatedUserRepository evaluatedUserRepository;
-    private final RedisService redisService;
+    private final TokenRepository tokenRepository;
 
     @Value("${apple.redirect-url}")
     private String appleRedirectUrl;
@@ -113,6 +114,8 @@ public class UserCRUDService {
                 PrivateKey privateKey = jcaPEMKeyConverter.getPrivateKey(privateKeyInfo);
 
                 Map<String, Object> headerParamsMap = new HashMap<>();
+                headerParamsMap.put("kid", appleKeyId);
+                headerParamsMap.put("alg", "ES256");
 
                 Date expirationDate = Date.from(
                     LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
@@ -126,6 +129,7 @@ public class UserCRUDService {
                     .setSubject(appleIdentifier)
                     .signWith(SignatureAlgorithm.ES256, privateKey)
                     .compact();
+
                 WebClient webClient =
                     WebClient
                         .builder()
@@ -133,6 +137,8 @@ public class UserCRUDService {
                         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .build();
 
+                Token token = tokenRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new UserException(ErrorCode.TOKEN_NOT_FOUND));
                 Map tokenResponse =
                     webClient
                         .post()
@@ -141,11 +147,9 @@ public class UserCRUDService {
                             .queryParam("token_type_hint", "refresh_token")
                             .queryParam("client_id", appleIdentifier)
                             .queryParam("client_secret", clientSecretKey)
-                            .queryParam("token", redisService.getStrValue("ref_" + user.getSocialId()))
+                            .queryParam("token", token.getAppleRefreshToken())
                             .build())
                         .retrieve()
-                        .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                            clientResponse -> handleErrorResponse(clientResponse))
                         .bodyToMono(Map.class)
                         .block();
             } catch (Exception e) {
@@ -165,14 +169,5 @@ public class UserCRUDService {
         jwtService.isTokenValid(accessToken);
         jwtService.deleteRefreshToken(refreshToken);
         jwtService.invalidAccessToken(accessToken);
-    }
-
-    private Mono<Throwable> handleErrorResponse(ClientResponse clientResponse) {
-        return clientResponse.bodyToMono(String.class)
-            .flatMap(errorBody -> {
-                // 에러 로그 찍기
-                System.out.println("Error response body: " + errorBody);
-                return Mono.error(new RuntimeException("Error occurred: " + errorBody));
-            });
     }
 }

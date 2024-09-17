@@ -102,7 +102,7 @@ public class AuthService {
                 return LoginResponse.of(accessToken, refreshToken, false, user.getId());
             })
             .orElseGet(() -> {
-                User newUser = userServiceFacade.registerUser(Role.USER, request.getSocialId(), request.getSocialType(),
+                User newUser = userServiceFacade.registerUser(Role.USER, socialId, socialType,
                     request.getLatitude(), request.getLongitude());
                 saveTokens(request, newUser, appleRefreshToken);
                 return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());
@@ -181,7 +181,6 @@ public class AuthService {
                 .signWith(SignatureAlgorithm.ES256, privateKey)
                 .compact();
 
-            log.info("jwt: " + clientSecretKey);
             WebClient webClient =
                 WebClient
                     .builder()
@@ -200,8 +199,6 @@ public class AuthService {
                         .queryParam("code", authorizationCode)
                         .build())
                     .retrieve()
-                    .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                        clientResponse -> handleErrorResponse(clientResponse))
                     .bodyToMono(Map.class)
                     .block();
             String idToken = (String) tokenResponse.get("id_token");
