@@ -10,4 +10,6 @@ public interface WeightValueRepository extends JpaRepository<WeightValue, Long> 
 
     @Query("SELECT w FROM WeightValue w WHERE w.userId = :userId")
     Optional<WeightValue> findByUserId(@Param("userId") Long userId);
+
+    void deleteByUserId(Long userId);
 }

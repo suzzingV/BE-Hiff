@@ -10,4 +10,6 @@ public interface UserHobbyRepository extends JpaRepository<UserHobby, Long> {
     Optional<UserHobby> findByUserIdAndHobbyId(Long userId, Long hobbyId);
 
     List<UserHobby> findByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }

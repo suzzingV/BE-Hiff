@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserLifeStyleRepository extends JpaRepository<UserLifeStyle, Long> {
 
     List<UserLifeStyle> findByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }
