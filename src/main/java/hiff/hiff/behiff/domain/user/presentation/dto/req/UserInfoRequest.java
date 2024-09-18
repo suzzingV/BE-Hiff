@@ -29,7 +29,7 @@ public class UserInfoRequest {
     @Max(31)
     private Integer birthDay;
 
-    private Long careerId;
+//    private Long careerId;
 
     @ValidGender
     @NotNull
