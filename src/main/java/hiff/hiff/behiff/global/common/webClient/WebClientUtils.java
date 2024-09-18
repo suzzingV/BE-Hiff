@@ -1,7 +1,5 @@
 package hiff.hiff.behiff.global.common.webClient;
 
-import static hiff.hiff.behiff.global.auth.application.AuthService.appleIdentifier;
-
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +17,7 @@ public class WebClientUtils {
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
 
-    public static Map getAppleToken(String clientSecret, String authorizationCode) {
+    public static Map getAppleToken(String clientSecret, String authorizationCode, String appleIdentifier) {
         return APPLE_WEB_CLIENT
             .post()
             .uri(uriBuilder -> uriBuilder
@@ -45,7 +43,7 @@ public class WebClientUtils {
             .block();
     }
 
-    public static Map revokeApple(String clientSecret, String refreshToken) {
+    public static Map revokeApple(String clientSecret, String refreshToken, String appleIdentifier) {
         return APPLE_WEB_CLIENT
             .post()
             .uri(uriBuilder -> uriBuilder

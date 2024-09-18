@@ -1,10 +1,8 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import static hiff.hiff.behiff.domain.user.application.UserPhotoService.PHOTOS_FOLDER_NAME;
-import static hiff.hiff.behiff.global.auth.application.AuthService.appleKeyFile;
 
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
-import hiff.hiff.behiff.domain.evaluation.domain.entity.EvaluatedUser;
 import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository;
 import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluationRepository;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
@@ -20,47 +18,21 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.WeightValueRepository;
-import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.common.gcs.GcsService;
-import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.common.webClient.WebClientUtils;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import hiff.hiff.behiff.global.util.FileReader;
 import hiff.hiff.behiff.global.util.Parser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.transaction.Transactional;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
 import java.security.PrivateKey;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @Service
 @Transactional
@@ -81,6 +53,17 @@ public class UserCRUDService {
     private final GcsService gcsService;
     private final UserPosRepository userPosRepository;
     private final WeightValueRepository weightValueRepository;
+
+    @Value("${apple.redirect-url}")
+    private String appleRedirectUrl;
+    @Value("${apple.credentials.key-id}")
+    private String appleKeyId;
+    @Value("${apple.credentials.location}")
+    private String appleKeyFile;
+    @Value("${apple.credentials.identifier}")
+    private String appleIdentifier;
+    @Value("${apple.credentials.team-id}")
+    private String appleTeamId;
 
     public User registerUser(Role role, String socialId, SocialType socialType) {
         User user = User.builder()
@@ -151,11 +134,11 @@ public class UserCRUDService {
         String clientSecret = createClientSecret();
         Token token = tokenRepository.findByUserId(user.getId())
             .orElseThrow(() -> new UserException(ErrorCode.TOKEN_NOT_FOUND));
-        WebClientUtils.revokeApple(clientSecret, token.getAppleRefreshToken());
+        WebClientUtils.revokeApple(clientSecret, token.getAppleRefreshToken(), appleIdentifier);
     }
 
     private String createClientSecret() {
-        String keyFile = FileReader.read(appleKeyFile);
+        String keyFile = FileReader.readAppleKeyFile(appleKeyFile);
         PrivateKey privateKey = Parser.getPrivateKeyFromPem(keyFile);
         return jwtService.createClientSecret(privateKey);
     }
