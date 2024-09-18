@@ -52,7 +52,6 @@ public class UserServiceFacade {
         userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
         userProfileService.updateGender(user, request.getGender());
         userProfileService.updateMbti(user, request.getMbti());
-        userCareerService.updateOriginCareer(user, request.getCareerId());
         userHobbyService.updateHobby(userId, request.getOriginHobbies());
         userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
