@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class AuthService {
 
     private final JwtService jwtService;
@@ -39,15 +38,15 @@ public class AuthService {
     private final TokenRepository tokenRepository;
 
     @Value("${apple.redirect-url}")
-    public static String appleRedirectUrl;
+    private String appleRedirectUrl;
     @Value("${apple.credentials.key-id}")
-    public static String appleKeyId;
+    private String appleKeyId;
     @Value("${apple.credentials.location}")
-    public static String appleKeyFile;
+    private String appleKeyFile;
     @Value("${apple.credentials.identifier}")
-    public static String appleIdentifier;
+    private String appleIdentifier;
     @Value("${apple.credentials.team-id}")
-    public static String appleTeamId;
+    private String appleTeamId;
 
     public LoginResponse login(LoginRequest request) {
         SocialType socialType = request.getSocialType();
@@ -119,20 +118,17 @@ public class AuthService {
 
     private LoginDto authorizeAppleUser(String authorizationCode) {
             String clientSecret = createClientSecret();
-
-            Map tokenResponse = WebClientUtils.getAppleToken(clientSecret, authorizationCode);
+            Map tokenResponse = WebClientUtils.getAppleToken(clientSecret, authorizationCode, appleIdentifier);
             String idToken = tokenResponse.get("id_token").toString();
             String refreshToken = tokenResponse.get("refreshToken").toString();
-
             Map keyResponse = WebClientUtils.getAppleKeys();
             List<Map<String, Object>> keys = (List<Map<String, Object>>) keyResponse.get("keys");
-
             String socialId = Parser.getAppleIdByIdToken(keys, idToken);
             return LoginDto.of(socialId, refreshToken);
     }
 
     private String createClientSecret() {
-        String keyFile = FileReader.read(appleKeyFile);
+        String keyFile = FileReader.readAppleKeyFile(appleKeyFile);
         PrivateKey privateKey = Parser.getPrivateKeyFromPem(keyFile);
         return jwtService.createClientSecret(privateKey);
     }

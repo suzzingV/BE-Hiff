@@ -1,8 +1,5 @@
 package hiff.hiff.behiff.global.auth.jwt.service;
 
-import static hiff.hiff.behiff.global.auth.application.AuthService.appleIdentifier;
-import static hiff.hiff.behiff.global.auth.application.AuthService.appleKeyId;
-import static hiff.hiff.behiff.global.auth.application.AuthService.appleTeamId;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 import static hiff.hiff.behiff.global.common.webClient.WebClientUtils.APPLE_URL;
 
@@ -49,6 +46,17 @@ public class JwtService {
 
     @Value("${jwt.refresh.header}")
     private String refreshHeader;
+
+    @Value("${apple.redirect-url}")
+    public String appleRedirectUrl;
+    @Value("${apple.credentials.key-id}")
+    public String appleKeyId;
+    @Value("${apple.credentials.location}")
+    private String appleKeyFile;
+    @Value("${apple.credentials.identifier}")
+    public String appleIdentifier;
+    @Value("${apple.credentials.team-id}")
+    public String appleTeamId;
 
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
