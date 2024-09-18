@@ -120,7 +120,7 @@ public class AuthService {
             String clientSecret = createClientSecret();
             Map tokenResponse = WebClientUtils.getAppleToken(clientSecret, authorizationCode, appleIdentifier);
             String idToken = tokenResponse.get("id_token").toString();
-            String refreshToken = tokenResponse.get("refreshToken").toString();
+            String refreshToken = tokenResponse.get("refresh_token").toString();
             Map keyResponse = WebClientUtils.getAppleKeys();
             List<Map<String, Object>> keys = (List<Map<String, Object>>) keyResponse.get("keys");
             String socialId = Parser.getAppleIdByIdToken(keys, idToken);
