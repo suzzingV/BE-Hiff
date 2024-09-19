@@ -88,10 +88,8 @@ public class UserCRUDService {
     public void checkDuplication(Long userId, String phoneNum) {
         userRepository.findByPhoneNum(phoneNum)
                 .ifPresent(user -> {
-                    if(user.getNickname() ==  null) {
                         userRepository.deleteById(userId);
                         throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
-                    }
                 });
     }
 
