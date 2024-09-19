@@ -10,15 +10,15 @@ public class LoginResponse {
     private String accessToken;
     private String refreshToken;
     private Long userId;
-    private Boolean isNew;
+    private Boolean isAuthorized;
     private Boolean isFilled;
 
-    public static LoginResponse of(String accessToken, String refreshToken, Boolean isNew, Boolean isFilled,
+    public static LoginResponse of(String accessToken, String refreshToken, Boolean isAuthorized, Boolean isFilled,
         Long userId) {
         return LoginResponse.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
-            .isNew(isNew)
+            .isAuthorized(isAuthorized)
             .userId(userId)
             .isFilled(isFilled)
             .build();

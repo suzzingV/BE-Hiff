@@ -66,16 +66,20 @@ public class AuthService {
                 Token token = findTokenByUserId(user.getId());
                 token.updateFcmToken(request.getFcmToken());
                 boolean isFilled = false;
+                boolean isAuthorized = false;
+                if(user.getPhoneNum() != null) {
+                    isAuthorized = true;
+                }
                 if(user.getNickname() != null) {
                     isFilled = true;
                 }
-                return LoginResponse.of(accessToken, refreshToken, false, isFilled, user.getId());
+                return LoginResponse.of(accessToken, refreshToken, isAuthorized, isFilled, user.getId());
             })
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, socialId, socialType,
                     request.getLatitude(), request.getLongitude());
                 saveTokens(request, newUser, loginDto.getRefreshToken());
-                return LoginResponse.of(accessToken, refreshToken, true, false, newUser.getId());
+                return LoginResponse.of(accessToken, refreshToken, false, false, newUser.getId());
             });
     }
 

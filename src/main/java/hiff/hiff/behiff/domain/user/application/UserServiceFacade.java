@@ -54,7 +54,6 @@ public class UserServiceFacade {
         userProfileService.updateMbti(user, request.getMbti());
         userHobbyService.updateHobby(userId, request.getOriginHobbies());
         userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
-        userPhotoService.registerPhoto(userId, mainPhoto, photos);
         wv.changeWeightValue(request.getAppearanceWV(), request.getHobbyWV(), request.getLifeStyleWV(), request.getMbtiWV());
         userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
         userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
@@ -71,10 +70,11 @@ public class UserServiceFacade {
         userCRUDService.withdraw(user, accessToken, refreshToken);
     }
 
-    public UserUpdateResponse registerPhoto(Long userId, MultipartFile mainPhoto,
-        List<MultipartFile> photos) {
+    public UserUpdateResponse updatePhotos(Long userId, MultipartFile mainPhoto,
+        List<MultipartFile> photos, UserPhotoRequest request) {
         userCRUDService.findById(userId);
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
+        userPhotoService.deletePhotos(request.getTrashPhotos());
         return UserUpdateResponse.from(userId);
     }
 
