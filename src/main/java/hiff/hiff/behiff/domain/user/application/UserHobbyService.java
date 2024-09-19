@@ -2,11 +2,14 @@ package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
+import hiff.hiff.behiff.domain.user.domain.entity.HobbySimilarity;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.HobbyRepository;
+import hiff.hiff.behiff.domain.user.infrastructure.HobbySimilarityRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ public class UserHobbyService {
 
     private final HobbyRepository hobbyRepository;
     private final UserHobbyRepository userHobbyRepository;
+    private final RedisService redisService;
+    private final HobbySimilarityRepository hobbySimilarityRepository;
 
     public static final String HOBBY_PREFIX = "hobby_";
 
@@ -63,6 +68,19 @@ public class UserHobbyService {
                     .isCommon(isCommon)
                     .build();
             }).toList();
+    }
+
+    public void cacheHobbySimilarity() {
+        for(long i = 1345L; i <= 1610; i++) {
+            hobbySimilarityRepository.findByFromId(i)
+                .forEach(hobbySimilarity -> {
+                    Long fromHobbyId = hobbySimilarity.getId().getFromHobbyId();
+                    Long toHobbyId = hobbySimilarity.getId().getToHobbyId();
+                    int similarity = (int)Math.round(hobbySimilarity.getSimilarity() * 100);
+                    redisService.setValue(HOBBY_PREFIX + fromHobbyId + "_" + toHobbyId, String.valueOf(
+                        similarity));
+                });
+        }
     }
 
 //    private void registerNewHobbies(Long userId, List<String> newHobbies) {
