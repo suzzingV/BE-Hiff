@@ -9,8 +9,10 @@ import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
+import hiff.hiff.behiff.domain.user.infrastructure.MbtiScoreRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
@@ -27,6 +29,8 @@ public class UserProfileService {
     private final EvaluatedUserRepository evaluatedUserRepository;
     private final GenderCountRepository genderCountRepository;
     private final UserCRUDService userCRUDService;
+    private final MbtiScoreRepository mbtiScoreRepository;
+    private final RedisService redisService;
 
     //    public static final String INCOME_PREFIX = "income_";
     public static final String MBTI_PREFIX = "mbti_";
@@ -85,6 +89,16 @@ public class UserProfileService {
 
     public Optional<UserPos> findUserPosByUserId(Long userId) {
         return userPosRepository.findByUserId(userId);
+    }
+
+    public void cacheMbtiSimilarity() {
+        mbtiScoreRepository.findAll()
+                .forEach(mbtiScore -> {
+                    String mbti1 = mbtiScore.getId().getMbti1();
+                    String mbti2 = mbtiScore.getId().getMbti2();
+                    int similarity = mbtiScore.getScore();
+                    redisService.setValue(MBTI_PREFIX + mbti1 + "_" + mbti2, String.valueOf(similarity));
+                });
     }
 
     private void checkNicknameDuplication(String nickname) {

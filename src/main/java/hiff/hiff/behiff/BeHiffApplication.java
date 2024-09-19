@@ -2,6 +2,7 @@ package hiff.hiff.behiff;
 
 import hiff.hiff.behiff.domain.user.application.UserHobbyService;
 import hiff.hiff.behiff.domain.user.application.UserLifeStyleService;
+import hiff.hiff.behiff.domain.user.application.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -12,12 +13,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class BeHiffApplication {
 
     //캐싱
-//    private final UserHobbyService userHobbyService;
-//    private final UserLifeStyleService userLifeStyleService;
+    private final UserHobbyService userHobbyService;
+    private final UserLifeStyleService userLifeStyleService;
+    private final UserProfileService userProfileService;
 
     public static void main(String[] args) {
         SpringApplication.run(BeHiffApplication.class, args);
@@ -25,8 +27,9 @@ public class BeHiffApplication {
 
 //    @Bean
 //    public CommandLineRunner commandLineRunner() {
-////        userHobbyService.cacheHobbySimilarity();
+//        userHobbyService.cacheHobbySimilarity();
 //        userLifeStyleService.cacheLifeStyleSimilarity();
+//        userProfileService.cacheMbtiSimilarity();
 //        return args -> {
 //        };
 //    }
