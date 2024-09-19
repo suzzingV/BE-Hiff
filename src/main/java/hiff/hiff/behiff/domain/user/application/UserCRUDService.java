@@ -85,13 +85,14 @@ public class UserCRUDService {
             .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public void checkDuplication(String phoneNum) {
+    public void checkDuplication(Long userId, String phoneNum) {
         userRepository.findByPhoneNum(phoneNum)
                 .ifPresent(user -> {
-                    if(user.getNickname() == null) {
-                        throw new UserException(ErrorCode.USER_UNFILLED);
-                    } else {
+                    if(user.getNickname() !=  null) {
+                        userRepository.findById(userId);
                         throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
+                    } else {
+                        throw new UserException(ErrorCode.USER_UNFILLED);
                     }
                 });
     }
