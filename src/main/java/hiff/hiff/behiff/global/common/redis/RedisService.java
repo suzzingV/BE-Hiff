@@ -31,6 +31,12 @@ public class RedisService {
         values.set(key, value, duration);
     }
 
+    public void setValue(String key, Object data) {
+        String value = String.valueOf(data);
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(key, value);
+    }
+
     public void updateIntValue(String key) {
         ValueOperations<String, Integer> values = integerRedisTemplate.opsForValue();
         int count = getIntValue(key);

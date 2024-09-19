@@ -31,7 +31,6 @@ public class UserPhotoService {
         String mainPhotoUrl = gcsService.saveImage(mainPhoto, MAIN_PHOTO_FOLDER_NAME);
         saveMainPhotoUrl(userId, mainPhotoUrl);
 
-        deletePhotos(userId);
         for (MultipartFile photo : photos) {
             String photoUrl = gcsService.saveImage(photo, PHOTOS_FOLDER_NAME);
             savePhotoUrl(userId, photoUrl);
@@ -46,13 +45,14 @@ public class UserPhotoService {
             .toList();
     }
 
-    private void deletePhotos(Long userId) {
-        userPhotoRepository.findByUserId(userId)
-            .forEach(userPhoto -> {
-                String photoUrl = userPhoto.getPhotoUrl();
-                gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
-                userPhotoRepository.delete(userPhoto);
-            });
+    public void deletePhotos(List<String> trashPhotos) {
+        if (trashPhotos != null) {
+            trashPhotos
+                .forEach(photoUrl -> {
+                    userPhotoRepository.deleteByPhotoUrl(photoUrl);
+                    gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
+                });
+        }
     }
 
     private void checkPhotoQuantity(List<MultipartFile> photos) {
@@ -71,6 +71,7 @@ public class UserPhotoService {
 
     private void saveMainPhotoUrl(Long userId, String mainPhotoUrl) {
         User user = userCRUDService.findById(userId);
+        gcsService.deleteImage(user.getMainPhoto(), MAIN_PHOTO_FOLDER_NAME);
         user.updateMainPhoto(mainPhotoUrl);
     }
 }
