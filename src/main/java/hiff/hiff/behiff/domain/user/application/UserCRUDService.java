@@ -88,11 +88,9 @@ public class UserCRUDService {
     public void checkDuplication(Long userId, String phoneNum) {
         userRepository.findByPhoneNum(phoneNum)
                 .ifPresent(user -> {
-                    if(user.getNickname() !=  null) {
+                    if(user.getNickname() ==  null) {
                         userRepository.findById(userId);
                         throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
-                    } else {
-                        throw new UserException(ErrorCode.USER_UNFILLED);
                     }
                 });
     }
