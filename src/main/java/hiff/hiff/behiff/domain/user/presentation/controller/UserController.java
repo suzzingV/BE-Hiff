@@ -2,10 +2,12 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserWeightValueResponse;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.common.sms.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -321,6 +323,20 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updateWeight(@AuthenticationPrincipal User user,
         @Valid @RequestBody WeightValueRequest request) {
         UserUpdateResponse response = userServiceFacade.updateWeightValue(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "User 가중치 조회",
+            description = "User의 매칭 가중치를 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "User 가중치 업데이트에 성공하였습니다."
+    )
+    @GetMapping("/weight-value")
+    public ResponseEntity<UserWeightValueResponse> getWeightValue(@AuthenticationPrincipal User user) {
+        UserWeightValueResponse response = userServiceFacade.getWeightValue(user.getId());
         return ResponseEntity.ok(response);
     }
 
