@@ -88,8 +88,8 @@ public class UserCRUDService {
     public void checkDuplication(Long userId, String phoneNum) {
         userRepository.findByPhoneNum(phoneNum)
                 .ifPresent(user -> {
-                        userRepository.deleteById(userId);
-                        throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
+                    deleteById(userId);
+                    throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
                 });
     }
 
@@ -151,5 +151,9 @@ public class UserCRUDService {
                 gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
                 userPhotoRepository.delete(userPhoto);
             });
+    }
+
+    private void deleteById(Long userId) {
+        userRepository.deleteById(userId);
     }
 }
