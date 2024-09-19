@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserPhotoRepository extends JpaRepository<UserPhoto, Long> {
 
     List<UserPhoto> findByUserId(Long userId);
+
+    void deleteByPhotoUrl(String photoUrl);
 }

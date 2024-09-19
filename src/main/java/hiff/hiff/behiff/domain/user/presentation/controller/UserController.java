@@ -124,8 +124,9 @@ public class UserController {
     @PostMapping("/photo")
     public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user,
         @RequestPart(value = "main_photo") MultipartFile mainPhoto,
-        @RequestPart(value = "photos") List<MultipartFile> photos) {
-        UserUpdateResponse response = userServiceFacade.registerPhoto(user.getId(), mainPhoto, photos);
+        @RequestPart(value = "photos") List<MultipartFile> photos,
+        @RequestPart(value = "dto") UserPhotoRequest request) {
+        UserUpdateResponse response = userServiceFacade.updatePhotos(user.getId(), mainPhoto, photos, request);
         return ResponseEntity.ok(response);
     }
 
