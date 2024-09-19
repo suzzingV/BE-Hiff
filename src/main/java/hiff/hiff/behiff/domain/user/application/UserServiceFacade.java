@@ -34,9 +34,9 @@ public class UserServiceFacade {
     private final UserIdentifyVerificationService userIdentifyVerificationService;
     private final EvaluationService evaluationService;
 
-    public User registerUser(String socialId, SocialType socialType,
-        Role role, Double lat, Double lon) {
-        User user = userCRUDService.registerUser(socialId, socialType, role);
+    public User registerUser(
+        Role role, String socialId, SocialType socialType, Double lat, Double lon) {
+        User user = userCRUDService.registerUser(role, socialId, socialType);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), lat, lon);
         evaluationService.addEvaluatedUser(user.getId(), user.getGender());
@@ -46,15 +46,17 @@ public class UserServiceFacade {
 
     public UserUpdateResponse registerInfo(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos, UserInfoRequest request) {
         User user = userCRUDService.findById(userId);
+        WeightValue wv = userWeightValueService.findByUserId(userId);
         userProfileService.updateNickname(user, request.getNickname());
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
         userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
         userProfileService.updateGender(user, request.getGender());
         userProfileService.updateMbti(user, request.getMbti());
-        userCareerService.updateOriginCareer(user, request.getCareerId());
         userHobbyService.updateHobby(userId, request.getOriginHobbies());
         userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
-        userPhotoService.registerPhoto(userId, mainPhoto, photos);
+        wv.changeWeightValue(request.getAppearanceWV(), request.getHobbyWV(), request.getLifeStyleWV(), request.getMbtiWV());
+        userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
+        userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
 
         return UserUpdateResponse.from(userId);
     }
@@ -68,10 +70,11 @@ public class UserServiceFacade {
         userCRUDService.withdraw(user, accessToken, refreshToken);
     }
 
-    public UserUpdateResponse registerPhoto(Long userId, MultipartFile mainPhoto,
-        List<MultipartFile> photos) {
+    public UserUpdateResponse updatePhotos(Long userId, MultipartFile mainPhoto,
+        List<MultipartFile> photos, UserPhotoRequest request) {
         userCRUDService.findById(userId);
         userPhotoService.registerPhoto(userId, mainPhoto, photos);
+        userPhotoService.deletePhotos(request.getTrashPhotos());
         return UserUpdateResponse.from(userId);
     }
 
@@ -216,7 +219,7 @@ public class UserServiceFacade {
 
     public void sendVerificationCode(Long userId, PhoneNumRequest request) {
         User user = userCRUDService.findById(userId);
-        userCRUDService.checkDuplication(request.getPhoneNum());
+        userCRUDService.checkDuplication(userId, request.getPhoneNum());
         userIdentifyVerificationService.sendIdentificationSms(user, request.getPhoneNum());
     }
 

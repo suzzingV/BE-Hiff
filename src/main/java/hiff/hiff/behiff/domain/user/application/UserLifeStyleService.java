@@ -5,8 +5,10 @@ import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.LifeStyleRepository;
+import hiff.hiff.behiff.domain.user.infrastructure.LifeStyleSimilarityRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -20,6 +22,8 @@ public class UserLifeStyleService {
 
     private final LifeStyleRepository lifeStyleRepository;
     private final UserLifeStyleRepository userLifeStyleRepository;
+    private final RedisService redisService;
+    private final LifeStyleSimilarityRepository lifeStyleSimilarityRepository;
 
     public static final String LIFESTYLE_PREFIX = "lifestyle_";
 
@@ -62,6 +66,16 @@ public class UserLifeStyleService {
                     .isCommon(isCommon)
                     .build();
             }).toList();
+    }
+
+    public void cacheLifeStyleSimilarity() {
+        lifeStyleSimilarityRepository.findAll()
+            .forEach(lifeStyleSimilarity -> {
+                Long fromlifeStyleId = lifeStyleSimilarity.getId().getFromLifestyleId();
+                Long tolifeStyleId = lifeStyleSimilarity.getId().getToLifestyleId();
+                int similarity = (int)Math.round(lifeStyleSimilarity.getSimilarity() * 100);
+                redisService.setValue(LIFESTYLE_PREFIX + fromlifeStyleId + "_" + tolifeStyleId, String.valueOf(similarity));
+            });
     }
 
 //    private void registerNewLifeStyles(Long userId, List<String> newLifeStyles) {

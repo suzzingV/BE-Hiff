@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EvaluationRepository extends JpaRepository<Evaluation, Long> {
 
     Optional<Evaluation> findByEvaluatedIdAndEvaluatorId(Long evaluatedId, Long evaluatorId);
+
+    void deleteByEvaluatedIdOrEvaluatorId(Long evaluatedId, Long evaluatorId);
 }

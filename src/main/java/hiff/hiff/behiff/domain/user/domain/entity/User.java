@@ -140,10 +140,6 @@ public class User implements UserDetails {
         this.age = DateCalculator.calculateAge(LocalDate.now());
     }
 
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
-    }
-
     public void changeNickname(String nickname) {
         this.nickname = nickname;
     }

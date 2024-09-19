@@ -35,7 +35,8 @@ public enum ErrorCode {
     INCOME_WEIGHT_VALUE_PRIVATE(BAD_REQUEST, "소득이 비공개일 경우 가중치는 0이어야 합니다."),
     VERIFICATION_CODE_INCORRECT(BAD_REQUEST, "인증 코드가 올바르지 않습니다."),
     FCM_SEND_ERROR(BAD_REQUEST, "FCM에 메시지를 보내는 도중 에러가 발생하였습니다."),
-    USER_ALREADY_EXISTS(BAD_REQUEST, "이미 가입된 유저입니다."),
+    USER_ALREADY_EXISTS(BAD_REQUEST, "다른 소셜 계정으로 가입된 유저입니다."),
+    USER_UNFILLED(BAD_REQUEST, "유저 정보를 등록하지 않은 유저입니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
@@ -61,11 +62,16 @@ public enum ErrorCode {
     GENDER_COUNT_NOT_FOUND(NOT_FOUND, "성별 집계를 찾을 수 없습니다."),
     MAIN_PHOTO_NOT_FOUND(NOT_FOUND, "유저의 메인 사진을 찾을 수 없습니다."),
     CHAT_HISTORY_NOT_FOUND(NOT_FOUND, "대화 신청 내역을 찾을 수 없습니다."),
+    TOKEN_NOT_FOUND(NOT_FOUND, "auth를 찾을 수 없습니다."),
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),
     IMAGE_STORAGE_SAVE_ERROR(INTERNAL_SERVER_ERROR, "스토리지에 사진을 저장하는 도중 에러가 발생하였습니다."),
-    FCM_INIT_ERROR(INTERNAL_SERVER_ERROR, "FCM Admin SDK를 초기화하는 도중 오류가 발생하였습니다.");
+    FCM_INIT_ERROR(INTERNAL_SERVER_ERROR, "FCM Admin SDK를 초기화하는 도중 오류가 발생하였습니다."),
+    FAILED_TO_SEND_EMAIL(INTERNAL_SERVER_ERROR, "이메일 전송에 실패했습니다."),
+    KEY_FILE_IOEXCEPTION(INTERNAL_SERVER_ERROR, "키 파일을 읽는 도중 오류가 발생했습니다."),
+    PEM_PARSER_ERROR(INTERNAL_SERVER_ERROR, "pem 키를 분석하는 도중 오류가 발생했습니다."),
+    ID_TOKEN_PARSER_ERROR(INTERNAL_SERVER_ERROR, "id token을 분석하는 도중 오류가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

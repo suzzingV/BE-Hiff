@@ -16,4 +16,6 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
                 OR (m.matchedId = :user2 AND m.matcherId = :user1)
         """)
     List<Long> findByUsers(Long user1, Long user2);
+
+    void deleteByMatchedIdOrMatcherId(Long matchedId, Long matcherId);
 }

@@ -18,7 +18,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-// TODO: 푸시 알림
 public class MatchingInitBatchConfig {
 
     private final CustomSkipListener customSkipListener;

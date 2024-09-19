@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserPosRepository extends JpaRepository<UserPos, Long> {
 
     Optional<UserPos> findByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }

@@ -5,16 +5,25 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
-import hiff.hiff.behiff.global.auth.domain.FcmToken;
+import hiff.hiff.behiff.global.auth.application.dto.LoginDto;
+import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
-import hiff.hiff.behiff.global.auth.infrastructure.FcmTokenRepository;
+import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
+import hiff.hiff.behiff.global.common.webClient.WebClientUtils;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import hiff.hiff.behiff.global.util.Parser;
+import hiff.hiff.behiff.global.util.FileReader;
+import java.security.PrivateKey;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +35,24 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final UserServiceFacade userServiceFacade;
-    private final FcmTokenRepository fcmTokenRepository;
+    private final TokenRepository tokenRepository;
+
+    @Value("${apple.redirect-url}")
+    private String appleRedirectUrl;
+    @Value("${apple.credentials.key-id}")
+    private String appleKeyId;
+    @Value("${apple.credentials.location}")
+    private String appleKeyFile;
+    @Value("${apple.credentials.identifier}")
+    private String appleIdentifier;
+    @Value("${apple.credentials.team-id}")
+    private String appleTeamId;
 
     public LoginResponse login(LoginRequest request) {
         SocialType socialType = request.getSocialType();
-        String socialId = request.getSocialId();
+        LoginDto loginDto = getSocialInfoByType(request.getIdToken(), socialType,
+            request.getAuthorizationCode());
+        String socialId = loginDto.getSocialId();
         String socialInfo = socialType.getPrefix() + "_" + socialId;
 
         String accessToken = jwtService.createAccessToken(socialInfo);
@@ -41,14 +63,23 @@ public class AuthService {
             .map(user -> {
                 user.updateAge();
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                updateFcmToken(request, user.getId());
-                return LoginResponse.of(accessToken, refreshToken, false, user.getId());
+                Token token = findTokenByUserId(user.getId());
+                token.updateFcmToken(request.getFcmToken());
+                boolean isFilled = false;
+                boolean isAuthorized = false;
+                if(user.getPhoneNum() != null) {
+                    isAuthorized = true;
+                }
+                if(user.getNickname() != null) {
+                    isFilled = true;
+                }
+                return LoginResponse.of(accessToken, refreshToken, isAuthorized, isFilled, user.getId());
             })
             .orElseGet(() -> {
-                User newUser = userServiceFacade.registerUser(socialId, socialType, Role.USER,
+                User newUser = userServiceFacade.registerUser(Role.USER, socialId, socialType,
                     request.getLatitude(), request.getLongitude());
-                saveNewFcmToken(request, newUser);
-                return LoginResponse.of(accessToken, refreshToken, true, newUser.getId());
+                saveTokens(request, newUser, loginDto.getRefreshToken());
+                return LoginResponse.of(accessToken, refreshToken, false, false, newUser.getId());
             });
     }
 
@@ -76,23 +107,47 @@ public class AuthService {
         jwtService.invalidAccessToken(accessToken);
     }
 
+    private LoginDto getSocialInfoByType(String idToken, SocialType socialType, String authorizationCode) {
+        if(socialType == SocialType.APPLE) {
+            return authorizeAppleUser(authorizationCode);
+        }
+        String socialId = Parser.getSocialIdByIdToken(idToken);
+        return LoginDto.of(socialId, null);
+    }
+
     private String checkRefreshToken(String refreshToken) {
         jwtService.isTokenValid(refreshToken);
         return jwtService.checkRefreshToken(refreshToken);
     }
 
-    private void saveNewFcmToken(LoginRequest request, User newUser) {
-        FcmToken fcmToken = FcmToken.builder()
-                .token(request.getFcmToken())
-                .userId(newUser.getId())
-                .build();
-        fcmTokenRepository.save(fcmToken);
+    private LoginDto authorizeAppleUser(String authorizationCode) {
+            String clientSecret = createClientSecret();
+            Map tokenResponse = WebClientUtils.getAppleToken(clientSecret, authorizationCode, appleIdentifier);
+            String idToken = tokenResponse.get("id_token").toString();
+            String refreshToken = tokenResponse.get("refresh_token").toString();
+            Map keyResponse = WebClientUtils.getAppleKeys();
+            List<Map<String, Object>> keys = (List<Map<String, Object>>) keyResponse.get("keys");
+            String socialId = Parser.getAppleIdByIdToken(keys, idToken);
+            return LoginDto.of(socialId, refreshToken);
     }
 
-    private void updateFcmToken(LoginRequest request, Long userId) {
-        FcmToken fcmToken = fcmTokenRepository.findByUserId(userId);
-        if(!fcmToken.getToken().equals(request.getFcmToken())) {
-            fcmToken.updateToken(request.getFcmToken());
-        }
+    private String createClientSecret() {
+        String keyFile = FileReader.readAppleKeyFile(appleKeyFile);
+        PrivateKey privateKey = Parser.getPrivateKeyFromPem(keyFile);
+        return jwtService.createClientSecret(privateKey);
+    }
+
+    private void saveTokens(LoginRequest request, User newUser, String appleRefreshToken) {
+        Token newToken = Token.builder()
+            .fcmToken(request.getFcmToken())
+            .userId(newUser.getId())
+            .appleRefreshToken(appleRefreshToken)
+            .build();
+        tokenRepository.save(newToken);
+    }
+
+    public Token findTokenByUserId(Long userId) {
+        return tokenRepository.findByUserId(userId)
+            .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
     }
 }

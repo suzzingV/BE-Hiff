@@ -2,6 +2,7 @@ package hiff.hiff.behiff.global.auth.presentation.controller;
 
 import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.matching.application.service.MatchingServiceFacade;
+import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
@@ -15,6 +16,8 @@ import jakarta.validation.Valid;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +32,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtService jwtService;
-    private final MatchingServiceFacade matchingServiceFacade;
 
     @Operation(
             summary = "로그인",

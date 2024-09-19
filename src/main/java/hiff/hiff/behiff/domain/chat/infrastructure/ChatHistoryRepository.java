@@ -13,4 +13,6 @@ public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> 
     List<ChatHistory> findByProposerId(Long proposerId);
 
     Optional<ChatHistory> findByProposerIdAndProposedId(Long proposerId, Long proposedId);
+
+    void deleteByProposedIdOrProposedId(Long proposedId, Long proposeId);
 }

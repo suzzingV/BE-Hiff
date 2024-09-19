@@ -9,8 +9,10 @@ import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposedResponse;
 import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposerResponse;
 import hiff.hiff.behiff.domain.user.application.UserCRUDService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.domain.FcmToken;
-import hiff.hiff.behiff.global.auth.infrastructure.FcmTokenRepository;
+import hiff.hiff.behiff.global.auth.domain.Token;
+import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import hiff.hiff.behiff.global.common.sms.SmsUtil;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
@@ -25,16 +27,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final FcmTokenRepository fcmTokenRepository;
+    private final AuthService authService;
     private final ChatHistoryRepository chatHistoryRepository;
     private final UserCRUDService userCRUDService;
     private final SmsUtil smsUtil;
 
     public ChatProposalResponse proposeChat(Long userId, Long matchedId) {
         User user = userCRUDService.findById(userId);
-        FcmToken matchedFcmToken = fcmTokenRepository.findByUserId(matchedId);
+        Token token = authService.findTokenByUserId(matchedId);
         recordChatHistory(user, matchedId);
-        FcmUtils.sendChatProposal(matchedFcmToken.getToken(), user.getNickname());
+        FcmUtils.sendChatProposal(token.getFcmToken(), user.getNickname());
 
         return ChatProposalResponse.builder()
                 .proposedId(matchedId)
