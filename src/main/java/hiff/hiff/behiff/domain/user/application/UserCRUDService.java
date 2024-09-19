@@ -89,7 +89,7 @@ public class UserCRUDService {
         userRepository.findByPhoneNum(phoneNum)
                 .ifPresent(user -> {
                     if(user.getNickname() ==  null) {
-                        userRepository.findById(userId);
+                        userRepository.deleteById(userId);
                         throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
                     }
                 });
