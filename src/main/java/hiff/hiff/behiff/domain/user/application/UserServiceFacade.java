@@ -6,10 +6,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserEvaluatedScoreResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -215,6 +212,11 @@ public class UserServiceFacade {
             .evaluatedScore(score)
             .userId(userId)
             .build();
+    }
+
+    public UserWeightValueResponse getWeightValue(Long userId) {
+        WeightValue wv = userWeightValueService.findByUserId(userId);
+        return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti());
     }
 
     public void sendVerificationCode(Long userId, PhoneNumRequest request) {
