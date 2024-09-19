@@ -71,7 +71,9 @@ public class UserPhotoService {
 
     private void saveMainPhotoUrl(Long userId, String mainPhotoUrl) {
         User user = userCRUDService.findById(userId);
-        gcsService.deleteImage(user.getMainPhoto(), MAIN_PHOTO_FOLDER_NAME);
+        if(mainPhotoUrl != null) {
+            gcsService.deleteImage(user.getMainPhoto(), MAIN_PHOTO_FOLDER_NAME);
+        }
         user.updateMainPhoto(mainPhotoUrl);
     }
 }
