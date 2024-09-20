@@ -29,6 +29,7 @@ public class EvaluationControllerV0 {
     private final UserPhotoService userPhotoService;
     private final MatchingServiceFacade matchingServiceFacade;
     private final AuthService authService;
+    private final FcmUtils fcmUtils;
 
     @GetMapping("/users")
     public String getUsersWithoutAppearanceScore(Model model) {
@@ -59,8 +60,8 @@ public class EvaluationControllerV0 {
             log.info("매칭 완료");
             Token userToken = authService.findTokenByUserId(userId);
             Token matchedToken = authService.findTokenByUserId(matchedId);
-            FcmUtils.sendMatchingAlarm(matchedToken.getFcmToken());
-            FcmUtils.sendMatchingAlarm(userToken.getFcmToken());
+            fcmUtils.sendMatchingAlarm(matchedToken.getFcmToken());
+            fcmUtils.sendMatchingAlarm(userToken.getFcmToken());
         }
 
         return "redirect:/evaluation/users";
