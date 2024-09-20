@@ -50,7 +50,7 @@ dependencies {
     // coolSMS
     implementation 'net.nurigo:sdk:4.3.0'
     // FCM
-    implementation 'com.google.firebase:firebase-admin:9.2.0'
+    implementation 'com.google.firebase:firebase-admin:9.3.0'
 
     implementation 'junit:junit:4.13.1'
     //Lombok

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -44,15 +45,16 @@ public class FcmUtils {
     public void sendMatchingAlarm(String token) {
         Notification notification = Notification.builder()
                 .setTitle(PUSH_TITLE)
-                .setBody(MATCHING_ALARM_BODY)
+                .setBody(MATCHING_ALARM_BODY + LocalDateTime.now())
                 .build();
+
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(notification)
                 .build();
 
         try {
-            String response = firebaseMessaging.send(message);
+            String response = FirebaseMessaging.getInstance().send(message);
             log.info("성공: " + response);
             log.info("성공: " + token);
         } catch (FirebaseMessagingException e) {
