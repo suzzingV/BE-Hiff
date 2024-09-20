@@ -3,6 +3,7 @@ package hiff.hiff.behiff.domain.matching.util;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Calculator {
@@ -12,6 +13,7 @@ public class Calculator {
     public static Integer computeTotalScoreByMatcher(WeightValue matcherWV, int mbtiSimilarity,
         int hobbySimilarity, int lifeStyleSimilarity, double matchedEvaluatedScore) {
         double evaluatedScore = convertEvaluatedScore(matchedEvaluatedScore);
+
         return (int) Math.round(
             (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity
                 + matcherWV.getLifeStyle() * lifeStyleSimilarity

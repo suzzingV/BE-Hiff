@@ -59,12 +59,8 @@ public class EvaluationControllerV0 {
             log.info("매칭 완료");
             Token userToken = authService.findTokenByUserId(userId);
             Token matchedToken = authService.findTokenByUserId(matchedId);
-            log.info("토큰: " + userToken.getFcmToken());
-            log.info("토큰: " + matchedToken.getFcmToken());
             FcmUtils.sendMatchingAlarm(matchedToken.getFcmToken());
-            log.info("상대 토큰 보내기 성공");
             FcmUtils.sendMatchingAlarm(userToken.getFcmToken());
-            log.info("나 토큰 보내기 성공");
         }
 
         return "redirect:/evaluation/users";

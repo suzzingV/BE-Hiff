@@ -46,7 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-@Slf4j
 public class HiffMatchingService extends MatchingService {
 
     private final UserCRUDService userCRUDService;
@@ -70,7 +69,6 @@ public class HiffMatchingService extends MatchingService {
         MatchingRepository matchingRepository, SimilarityFactory similarityFactory,
         UserCRUDService userCRUDService, UserWeightValueService userWeightValueService,
         UserRepository userRepository, UserPosService userPosService1, RedisService redisService1,
-        MatchingRepository matchingRepository1, SimilarityFactory similarityFactory1,
         UserHobbyService userHobbyService, UserHobbyRepository userHobbyRepository,
         UserLifeStyleRepository userLifeStyleRepository, UserLifeStyleService userLifeStyleService,
         UserPhotoService userPhotoService, ChatHistoryRepository chatHistoryRepository) {
@@ -89,9 +87,9 @@ public class HiffMatchingService extends MatchingService {
     }
 
     public List<MatchingSimpleResponse> getMatchings(Long userId) {
-        String today = getTodayDate();
+//        String today = getTodayDate();
         List<String> originalMatching = redisService.scanKeysWithPrefix(
-            today + HIFF_MATCHING_PREFIX + userId + "_");
+            HIFF_MATCHING_PREFIX + userId + "_");
         return getCachedMatching(userId, originalMatching);
     }
 
@@ -108,9 +106,7 @@ public class HiffMatchingService extends MatchingService {
 
         while (!matchedQueue.isEmpty()) {
             User matched = matchedQueue.remove();
-            log.info("상대: " + matched.getId());
             if (checkAge(user, matched)) {
-                log.info("나이 x");
                 continue;
             }
 
@@ -119,7 +115,6 @@ public class HiffMatchingService extends MatchingService {
                 matchedPos.getLat(),
                 matchedPos.getLon());
             if (checkDistance(user, matched, distance)) {
-                log.info("거리 x");
                 continue;
             }
 
@@ -132,7 +127,6 @@ public class HiffMatchingService extends MatchingService {
             MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
                 matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
 
-            log.info("총점수: " + userMatchingInfo.getTotalScoreByMatcher());
             if (checkTotalScore(userMatchingInfo, matchedMatchingInfo)) {
                 String today = getTodayDate();
                 cachMatchingScore(userId, matched.getId(), userMatchingInfo,
@@ -254,15 +248,15 @@ public class HiffMatchingService extends MatchingService {
 
     private void cachMatchingScore(Long matcherId, Long matchedId, MatchingInfoDto matchingInfoDto,
         int matchedTotalScore, String date, Duration duration) {
-        String prefix = date + HIFF_MATCHING_PREFIX;
-        String key = prefix + matcherId + "_" + matchedId;
+//        String prefix = date + HIFF_MATCHING_PREFIX;
+        String key = HIFF_MATCHING_PREFIX + matcherId + "_" + matchedId;
         String value = matchingInfoDto.getTotalScoreByMatcher() + "/" + matchedTotalScore + "/"
             + matchingInfoDto.getMbtiSimilarity() + "/"
             + matchingInfoDto.getHobbySimilarity() + "/"
             + matchingInfoDto.getLifeStyleSimilarity();
         redisService.setValue(key, value, duration);
 
-        key = prefix + matchedId + "_" + matcherId;
+        key = HIFF_MATCHING_PREFIX + matchedId + "_" + matcherId;
         value = matchedTotalScore + "/" + matchingInfoDto.getTotalScoreByMatcher() + "/" +
             +matchingInfoDto.getMbtiSimilarity() + "/"
             + matchingInfoDto.getHobbySimilarity() + "/"
