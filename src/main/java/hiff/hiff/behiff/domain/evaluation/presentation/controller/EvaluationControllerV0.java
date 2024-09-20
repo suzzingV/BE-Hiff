@@ -11,6 +11,7 @@ import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/evaluation")
+@Slf4j
 public class EvaluationControllerV0 {
 
     private final UserRepository userRepository;
@@ -54,10 +56,15 @@ public class EvaluationControllerV0 {
         userRepository.save(user);
         Long matchedId = matchingServiceFacade.performHiffMatching(userId);
         if(matchedId != null) {
+            log.info("매칭 완료");
             Token userToken = authService.findTokenByUserId(userId);
             Token matchedToken = authService.findTokenByUserId(matchedId);
-            FcmUtils.sendMatchingAlarm(userToken.getFcmToken());
+            log.info("토큰: " + userToken.getFcmToken());
+            log.info("토큰: " + matchedToken.getFcmToken());
             FcmUtils.sendMatchingAlarm(matchedToken.getFcmToken());
+            log.info("상대 토큰 보내기 성공");
+            FcmUtils.sendMatchingAlarm(userToken.getFcmToken());
+            log.info("나 토큰 보내기 성공");
         }
 
         return "redirect:/evaluation/users";

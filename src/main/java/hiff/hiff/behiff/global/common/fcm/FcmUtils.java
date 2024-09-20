@@ -6,11 +6,13 @@ import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Slf4j
 public class FcmUtils {
 
     private static final String PUSH_TITLE = "Hiff";
@@ -30,6 +32,7 @@ public class FcmUtils {
         try {
             FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
             throw new AuthException(ErrorCode.FCM_SEND_ERROR);
         }
     }
@@ -45,8 +48,11 @@ public class FcmUtils {
                 .build();
 
         try {
-            FirebaseMessaging.getInstance().send(message);
+            String response = FirebaseMessaging.getInstance().send(message);
+            log.info("성공: " + token);
         } catch (FirebaseMessagingException e) {
+            log.info("실패: " + token);
+            log.info(e.getMessage());
             throw new AuthException(ErrorCode.FCM_SEND_ERROR);
         }
     }

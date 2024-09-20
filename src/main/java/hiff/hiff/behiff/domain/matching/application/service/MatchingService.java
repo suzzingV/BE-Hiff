@@ -52,13 +52,16 @@ public class MatchingService {
         WeightValue matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
         List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
         int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
+        log.info("mbti 유사도:" + mbtiSimilarity);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcherHobbies, matchedHobbies);
+        log.info("취미 유사도: " + hobbySimilarity);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcherLifeStyles,
             matchedLifeStyles);
+        log.info("라이프스타일 유사도: " + lifeStyleSimilarity);
 //        int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
         Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
             lifeStyleSimilarity, matched.getEvaluatedScore());
-
+        log.info("총 점수: " + totalScore);
         return MatchingInfoDto.builder()
             .mbtiSimilarity(mbtiSimilarity)
             .hobbySimilarity(hobbySimilarity)

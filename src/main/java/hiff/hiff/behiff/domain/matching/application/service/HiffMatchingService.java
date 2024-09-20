@@ -108,7 +108,9 @@ public class HiffMatchingService extends MatchingService {
 
         while (!matchedQueue.isEmpty()) {
             User matched = matchedQueue.remove();
+            log.info("상대: " + matched.getId());
             if (checkAge(user, matched)) {
+                log.info("나이 x");
                 continue;
             }
 
@@ -117,9 +119,10 @@ public class HiffMatchingService extends MatchingService {
                 matchedPos.getLat(),
                 matchedPos.getLon());
             if (checkDistance(user, matched, distance)) {
+                log.info("거리 x");
                 continue;
             }
-            log.info("distance");
+
             WeightValue matchedWV = userWeightValueService.findByUserId(matched.getId());
             List<UserHobby> matchedHobbies = userHobbyRepository.findByUserId(matched.getId());
             List<UserLifeStyle> matchedLifeStyle = userLifeStyleRepository.findByUserId(
@@ -129,6 +132,7 @@ public class HiffMatchingService extends MatchingService {
             MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
                 matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
 
+            log.info("총점수: " + userMatchingInfo.getTotalScoreByMatcher());
             if (checkTotalScore(userMatchingInfo, matchedMatchingInfo)) {
                 String today = getTodayDate();
                 cachMatchingScore(userId, matched.getId(), userMatchingInfo,
