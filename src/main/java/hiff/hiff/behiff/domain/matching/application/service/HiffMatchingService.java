@@ -137,8 +137,8 @@ public class HiffMatchingService extends MatchingService {
                 String today = getTodayDate();
                 cachMatchingScore(userId, matched.getId(), userMatchingInfo,
                     matchedMatchingInfo.getTotalScoreByMatcher(), today, MATCHING_DURATION);
-                recordMatchingHistory(matched.getId(), userId);
-                recordMatchingHistory(userId, matched.getId());
+//                recordMatchingHistory(matched.getId(), userId);
+//                recordMatchingHistory(userId, matched.getId());
                 return matched.getId();
             }
         }
