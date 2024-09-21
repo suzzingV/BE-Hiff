@@ -41,3 +41,8 @@ application*.yml
 
 ### docker compose ###
 docker-compose.yml
+
+### key ###
+apple-keyfile.p8
+fcm-keyfile.json
+gcp-keyfile.json
