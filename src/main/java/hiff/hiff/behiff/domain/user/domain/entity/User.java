@@ -178,7 +178,7 @@ public class User implements UserDetails {
         this.phoneNum = phoneNum;
     }
 
-    public void changeHopeAge(Integer minAge, Integer maxAge) {
+    public void changeHopeAge(Integer maxAge, Integer minAge) {
         this.hopeMinAge = minAge;
         this.hopeMaxAge = maxAge;
     }

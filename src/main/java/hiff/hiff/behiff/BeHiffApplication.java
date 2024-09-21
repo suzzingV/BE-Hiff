@@ -13,13 +13,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class BeHiffApplication {
 
     //캐싱
-//    private final UserHobbyService userHobbyService;
-//    private final UserLifeStyleService userLifeStyleService;
-//    private final UserProfileService userProfileService;
+    private final UserHobbyService userHobbyService;
+    private final UserLifeStyleService userLifeStyleService;
+    private final UserProfileService userProfileService;
 
     public static void main(String[] args) {
         SpringApplication.run(BeHiffApplication.class, args);

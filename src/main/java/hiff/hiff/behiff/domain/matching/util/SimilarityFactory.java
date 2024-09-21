@@ -62,19 +62,16 @@ public class SimilarityFactory {
 
         int hobbySimilaritySum = 0;
         for (UserHobby matcherHobby : matcherHobbies) {
+            int max = 0;
             for (UserHobby matchedHobby : matchedHobbies) {
                 String key =
                     HOBBY_PREFIX + matcherHobby.getHobbyId() + "_" + matchedHobby.getHobbyId();
                 int similarity = redisService.getIntValue(key);
-                if (similarity == 0) {
-                    key =
-                        HOBBY_PREFIX + matchedHobby.getHobbyId() + "_" + matcherHobby.getHobbyId();
-                    similarity = redisService.getIntValue(key);
-                }
-                hobbySimilaritySum += similarity;
+                max = Math.max(max, similarity);
             }
+            hobbySimilaritySum += max;
         }
-        return computeIntAvg(hobbySimilaritySum, matcherHobbies.size() * matchedHobbies.size());
+        return computeIntAvg(hobbySimilaritySum, matcherHobbies.size());
     }
 
 //    public int getIncomeSimilarity(User matcher, User matched) {
@@ -89,18 +86,15 @@ public class SimilarityFactory {
 
         int lifeStyleSimilaritySum = 0;
         for (UserLifeStyle matcherLifeStyle : matcherLifeStyles) {
+            int max = 0;
             for (UserLifeStyle matchedLifeStyle : matchedLifeStyles) {
                 String key =
                     LIFESTYLE_PREFIX + matcherLifeStyle.getLifeStyleId() + "_"
                         + matchedLifeStyle.getLifeStyleId();
                 int similarity = redisService.getIntValue(key);
-                if (similarity == 0) {
-                    key = LIFESTYLE_PREFIX + matchedLifeStyle.getLifeStyleId() + "_"
-                        + matcherLifeStyle.getLifeStyleId();
-                    similarity = redisService.getIntValue(key);
-                }
-                lifeStyleSimilaritySum += similarity;
+                max = Math.max(max, similarity);
             }
+            lifeStyleSimilaritySum += max;
         }
 
 //        startTime = Instant.now();
@@ -133,7 +127,7 @@ public class SimilarityFactory {
 //            }
 //        }
         return computeIntAvg(lifeStyleSimilaritySum,
-            matcherLifeStyles.size() * matchedLifeStyles.size());
+            matcherLifeStyles.size());
     }
 
     public int getMbtiSimilarity(User matcher, User matched) {

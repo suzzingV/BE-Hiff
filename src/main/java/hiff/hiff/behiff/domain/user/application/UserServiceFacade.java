@@ -216,7 +216,8 @@ public class UserServiceFacade {
 
     public UserWeightValueResponse getWeightValue(Long userId) {
         WeightValue wv = userWeightValueService.findByUserId(userId);
-        return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti());
+        User user = userCRUDService.findById(userId);
+        return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti(), user.getHopeMinAge(), user.getHopeMaxAge(), user.getMinDistance(), user.getMaxDistance());
     }
 
     public void sendVerificationCode(Long userId, PhoneNumRequest request) {

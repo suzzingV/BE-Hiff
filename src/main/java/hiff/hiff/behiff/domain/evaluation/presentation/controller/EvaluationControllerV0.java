@@ -11,6 +11,7 @@ import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/evaluation")
+@Slf4j
 public class EvaluationControllerV0 {
 
     private final UserRepository userRepository;
@@ -27,6 +29,7 @@ public class EvaluationControllerV0 {
     private final UserPhotoService userPhotoService;
     private final MatchingServiceFacade matchingServiceFacade;
     private final AuthService authService;
+    private final FcmUtils fcmUtils;
 
     @GetMapping("/users")
     public String getUsersWithoutAppearanceScore(Model model) {
@@ -54,10 +57,11 @@ public class EvaluationControllerV0 {
         userRepository.save(user);
         Long matchedId = matchingServiceFacade.performHiffMatching(userId);
         if(matchedId != null) {
+            log.info("매칭 완료");
             Token userToken = authService.findTokenByUserId(userId);
             Token matchedToken = authService.findTokenByUserId(matchedId);
-            FcmUtils.sendMatchingAlarm(userToken.getFcmToken());
-            FcmUtils.sendMatchingAlarm(matchedToken.getFcmToken());
+            fcmUtils.sendMatchingAlarm(matchedToken.getFcmToken());
+            fcmUtils.sendMatchingAlarm(userToken.getFcmToken());
         }
 
         return "redirect:/evaluation/users";

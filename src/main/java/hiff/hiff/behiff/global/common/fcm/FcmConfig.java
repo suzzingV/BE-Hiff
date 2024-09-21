@@ -3,11 +3,13 @@ package hiff.hiff.behiff.global.common.fcm;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
@@ -22,19 +24,19 @@ public class FcmConfig {
     @Value("${fcm.credentials.location}")
     private String keyFileName;
 
-    @PostConstruct
-    private void init() {
+    @Bean
+    FirebaseApp firebaseApp() throws IOException {
+        InputStream keyFile = ResourceUtils.getURL(keyFileName).openStream();
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(
+                        keyFile))
+                .build();
 
-        FirebaseOptions options = null;
-        try {
-            InputStream keyFile = ResourceUtils.getURL(keyFileName).openStream();
-            options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(keyFile))
-                    .build();
-        } catch (IOException e) {
-            throw new AuthException(ErrorCode.FCM_INIT_ERROR, e.getMessage());
-        }
+        return FirebaseApp.initializeApp(options);
+    }
 
-        FirebaseApp.initializeApp(options);
+    @Bean
+    FirebaseMessaging firebaseMessaging() throws IOException {
+        return FirebaseMessaging.getInstance(firebaseApp());
     }
 }

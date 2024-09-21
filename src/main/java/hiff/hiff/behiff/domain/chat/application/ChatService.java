@@ -31,12 +31,13 @@ public class ChatService {
     private final ChatHistoryRepository chatHistoryRepository;
     private final UserCRUDService userCRUDService;
     private final SmsUtil smsUtil;
+    private final FcmUtils fcmUtils;
 
     public ChatProposalResponse proposeChat(Long userId, Long matchedId) {
         User user = userCRUDService.findById(userId);
         Token token = authService.findTokenByUserId(matchedId);
         recordChatHistory(user, matchedId);
-        FcmUtils.sendChatProposal(token.getFcmToken(), user.getNickname());
+        fcmUtils.sendChatProposal(token.getFcmToken(), user.getNickname());
 
         return ChatProposalResponse.builder()
                 .proposedId(matchedId)

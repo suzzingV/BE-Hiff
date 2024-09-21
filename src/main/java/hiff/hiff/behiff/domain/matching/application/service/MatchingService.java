@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class MatchingService {
 
     private final UserPosService userPosService;
@@ -58,7 +57,6 @@ public class MatchingService {
 //        int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
         Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
             lifeStyleSimilarity, matched.getEvaluatedScore());
-
         return MatchingInfoDto.builder()
             .mbtiSimilarity(mbtiSimilarity)
             .hobbySimilarity(hobbySimilarity)
