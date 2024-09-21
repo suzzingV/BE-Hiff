@@ -5,11 +5,13 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.auth.application.dto.LoginDto;
 import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
+import hiff.hiff.behiff.global.auth.presentation.dto.req.FcmTokenRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
@@ -22,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,8 +64,6 @@ public class AuthService {
             .map(user -> {
                 user.updateAge();
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                Token token = findTokenByUserId(user.getId());
-                token.updateFcmToken(request.getFcmToken());
                 boolean isFilled = false;
                 boolean isAuthorized = false;
                 if(user.getPhoneNum() != null) {
@@ -78,7 +77,9 @@ public class AuthService {
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, socialId, socialType,
                     request.getLatitude(), request.getLongitude());
-                saveTokens(request, newUser, loginDto.getRefreshToken());
+                if(socialType == SocialType.APPLE) {
+                    saveRefreshToken(newUser, loginDto.getRefreshToken());
+                }
                 return LoginResponse.of(accessToken, refreshToken, false, false, newUser.getId());
             });
     }
@@ -105,6 +106,14 @@ public class AuthService {
         jwtService.isTokenValid(accessToken);
         jwtService.deleteRefreshToken(refreshToken);
         jwtService.invalidAccessToken(accessToken);
+    }
+
+    public UserUpdateResponse updateFcmToken(Long userId, FcmTokenRequest request) {
+        Token token = tokenRepository.findByUserId(userId)
+            .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
+        token.updateFcmToken(request.getFcmToken());
+
+        return UserUpdateResponse.from(userId);
     }
 
     private LoginDto getSocialInfoByType(String idToken, SocialType socialType, String authorizationCode) {
@@ -137,9 +146,8 @@ public class AuthService {
         return jwtService.createClientSecret(privateKey);
     }
 
-    private void saveTokens(LoginRequest request, User newUser, String appleRefreshToken) {
+    private void saveRefreshToken(User newUser, String appleRefreshToken) {
         Token newToken = Token.builder()
-            .fcmToken(request.getFcmToken())
             .userId(newUser.getId())
             .appleRefreshToken(appleRefreshToken)
             .build();

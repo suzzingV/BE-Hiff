@@ -3,8 +3,10 @@ package hiff.hiff.behiff.global.auth.presentation.controller;
 import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.matching.application.service.MatchingServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
+import hiff.hiff.behiff.global.auth.presentation.dto.req.FcmTokenRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
@@ -77,5 +79,13 @@ public class AuthController {
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
         authService.logout(accessToken, refreshToken);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/fcm-token")
+    public ResponseEntity<UserUpdateResponse> getFcmToken(@AuthenticationPrincipal User user, @Valid @RequestBody
+        FcmTokenRequest request) {
+        UserUpdateResponse response = authService.updateFcmToken(user.getId(), request);
+
+        return ResponseEntity.ok(response);
     }
 }

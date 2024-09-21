@@ -25,8 +25,5 @@ public class LoginRequest {
     @NotNull
     private Double longitude;
 
-    @NotNull
-    private String fcmToken;
-
     private String authorizationCode;
 }
