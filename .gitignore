@@ -46,3 +46,6 @@ docker-compose.yml
 apple-keyfile.p8
 fcm-keyfile.json
 gcp-keyfile.json
+
+### sql ###
+*.sql
