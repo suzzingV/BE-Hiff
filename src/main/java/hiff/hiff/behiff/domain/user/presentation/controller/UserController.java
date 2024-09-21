@@ -320,8 +320,8 @@ public class UserController {
         description = "User 가중치 업데이트에 성공하였습니다."
     )
     @PutMapping("/weight-value")
-    public ResponseEntity<UserUpdateResponse> updateWeight(@AuthenticationPrincipal User user,
-        @Valid @RequestBody WeightValueRequest request) {
+    public ResponseEntity<UserUpdateResponse> updateWeightValue(@AuthenticationPrincipal User user,
+                                                                @Valid @RequestBody WeightValueRequest request) {
         UserUpdateResponse response = userServiceFacade.updateWeightValue(user.getId(), request);
         return ResponseEntity.ok(response);
     }
