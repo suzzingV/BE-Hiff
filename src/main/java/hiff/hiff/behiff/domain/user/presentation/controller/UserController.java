@@ -341,6 +341,20 @@ public class UserController {
     }
 
     @Operation(
+            summary = "User 위치 업데이트",
+            description = "User의 위치를 업데이트합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "User 위치 업데이트에 성공하였습니다."
+    )
+    @PatchMapping("/pos")
+    public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user, @Valid @RequestBody PosRequest request) {
+        UserUpdateResponse response = userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
         summary = "본인 인증 코드 전송",
         description = "본인 인증 코드를 User에게 문자로 전송합니다. 토큰 o"
     )
