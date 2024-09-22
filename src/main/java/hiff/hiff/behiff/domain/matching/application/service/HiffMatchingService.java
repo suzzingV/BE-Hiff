@@ -110,6 +110,10 @@ public class HiffMatchingService extends MatchingService {
                 continue;
             }
 
+            if(checkMatchingHistory(matched.getId())) {
+                continue;
+            }
+
             UserPos matchedPos = userPosService.findPosByUserId(matched.getId());
             Double distance = computeDistance(matcherPos.getLat(), matcherPos.getLon(),
                 matchedPos.getLat(),
@@ -305,5 +309,9 @@ public class HiffMatchingService extends MatchingService {
 
     private boolean hasProposed(Long proposerId, Long proposedId) {
         return chatHistoryRepository.findByProposerIdAndProposedId(proposerId, proposedId).isPresent();
+    }
+
+    private boolean checkMatchingHistory(Long matchedId) {
+        return !redisService.keys(HIFF_MATCHING_PREFIX + matchedId).isEmpty();
     }
 }

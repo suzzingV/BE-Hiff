@@ -7,6 +7,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -100,5 +102,9 @@ public class RedisService {
 
     public void delete(String key) {
         redisTemplate.delete(key);
+    }
+
+    public Set<String> keys(String prefix) {
+        return redisTemplate.keys(prefix);
     }
 }
