@@ -56,7 +56,7 @@ public class SmsUtil {
 
     @NotNull
     private String generateVerificationText(String verificationCode) {
-        return "[Hiff] 인증번호를 입력해주세요 [" + verificationCode + "]";
+        return "[Hiff] 인증번호는 " + verificationCode + "입니다.";
     }
 
     @NotNull
