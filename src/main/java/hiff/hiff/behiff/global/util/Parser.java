@@ -8,6 +8,7 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
+import hiff.hiff.behiff.global.common.webClient.WebClientUtils;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import hiff.hiff.behiff.global.util.exception.UtilsException;
 import java.io.IOException;
@@ -39,7 +40,9 @@ public class Parser {
         }
     }
 
-    public static String getAppleIdByIdToken(List<Map<String, Object>> keys, String idToken) {
+    public static String getAppleIdByIdToken(String idToken) {
+        Map keyResponse = WebClientUtils.getAppleKeys();
+        List<Map<String, Object>> keys = (List<Map<String, Object>>) keyResponse.get("keys");
         try {
             SignedJWT signedJWT = SignedJWT.parse(idToken);
             for (Map<String, Object> key : keys) {

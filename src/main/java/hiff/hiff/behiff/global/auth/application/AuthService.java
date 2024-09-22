@@ -6,7 +6,6 @@ import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
-import hiff.hiff.behiff.global.auth.application.dto.LoginDto;
 import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
@@ -20,7 +19,6 @@ import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import hiff.hiff.behiff.global.util.Parser;
 import hiff.hiff.behiff.global.util.FileReader;
 import java.security.PrivateKey;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -51,9 +49,7 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         SocialType socialType = request.getSocialType();
-        LoginDto loginDto = getSocialInfoByType(request.getIdToken(), socialType,
-            request.getAuthorizationCode());
-        String socialId = loginDto.getSocialId();
+        String socialId = Parser.getAppleIdByIdToken(request.getIdToken());
         String socialInfo = socialType.getPrefix() + " " + socialId;
 
         String accessToken = jwtService.createAccessToken(socialInfo);
@@ -78,7 +74,8 @@ public class AuthService {
                 User newUser = userServiceFacade.registerUser(Role.USER, socialId, socialType,
                     request.getLatitude(), request.getLongitude());
                 if(socialType == SocialType.APPLE) {
-                    saveRefreshToken(newUser, loginDto.getRefreshToken());
+                    String appleRefreshToken = getAppleRefreshToken(request.getAuthorizationCode());
+                    saveRefreshToken(newUser, appleRefreshToken);
                 }
                 return LoginResponse.of(accessToken, refreshToken, false, false, newUser.getId());
             });
@@ -110,18 +107,10 @@ public class AuthService {
 
     public UserUpdateResponse updateFcmToken(Long userId, FcmTokenRequest request) {
         Token token = tokenRepository.findByUserId(userId)
-            .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
+                .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
         token.updateFcmToken(request.getFcmToken());
 
         return UserUpdateResponse.from(userId);
-    }
-
-    private LoginDto getSocialInfoByType(String idToken, SocialType socialType, String authorizationCode) {
-        if(socialType == SocialType.APPLE) {
-            return authorizeAppleUser(authorizationCode);
-        }
-        String socialId = Parser.getSocialIdByIdToken(idToken);
-        return LoginDto.of(socialId, null);
     }
 
     private String checkRefreshToken(String refreshToken) {
@@ -129,15 +118,11 @@ public class AuthService {
         return jwtService.checkRefreshToken(refreshToken);
     }
 
-    private LoginDto authorizeAppleUser(String authorizationCode) {
+    private String getAppleRefreshToken(String authorizationCode) {
             String clientSecret = createClientSecret();
             Map tokenResponse = WebClientUtils.getAppleToken(clientSecret, authorizationCode, appleIdentifier);
-            String idToken = tokenResponse.get("id_token").toString();
             String refreshToken = tokenResponse.get("refresh_token").toString();
-            Map keyResponse = WebClientUtils.getAppleKeys();
-            List<Map<String, Object>> keys = (List<Map<String, Object>>) keyResponse.get("keys");
-            String socialId = Parser.getAppleIdByIdToken(keys, idToken);
-            return LoginDto.of(socialId, refreshToken);
+            return refreshToken;
     }
 
     private String createClientSecret() {
