@@ -49,7 +49,7 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         SocialType socialType = request.getSocialType();
-        String socialId = Parser.getAppleIdByIdToken(request.getIdToken());
+        String socialId = Parser.getSocialId(request.getSocialType(), request.getIdToken());
         String socialInfo = socialType.getPrefix() + " " + socialId;
 
         String accessToken = jwtService.createAccessToken(socialInfo);

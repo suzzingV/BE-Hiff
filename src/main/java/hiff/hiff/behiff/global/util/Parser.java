@@ -8,6 +8,7 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
+import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.global.common.webClient.WebClientUtils;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import hiff.hiff.behiff.global.util.exception.UtilsException;
@@ -40,28 +41,30 @@ public class Parser {
         }
     }
 
-    public static String getAppleIdByIdToken(String idToken) {
-        Map keyResponse = WebClientUtils.getAppleKeys();
-        List<Map<String, Object>> keys = (List<Map<String, Object>>) keyResponse.get("keys");
-        try {
-            SignedJWT signedJWT = SignedJWT.parse(idToken);
-            for (Map<String, Object> key : keys) {
-                RSAKey rsaKey = (RSAKey) JWK.parse(new ObjectMapper().writeValueAsString(key));
-                RSAPublicKey rsaPublicKey = rsaKey.toRSAPublicKey();
-                JWSVerifier jwsVerifier = new RSASSAVerifier(rsaPublicKey);
+    public static String getSocialId(SocialType socialType, String idToken) {
+        if (socialType == SocialType.APPLE) {
+            Map keyResponse = WebClientUtils.getAppleKeys();
+            List<Map<String, Object>> keys = (List<Map<String, Object>>) keyResponse.get("keys");
+            try {
+                SignedJWT signedJWT = SignedJWT.parse(idToken);
+                for (Map<String, Object> key : keys) {
+                    RSAKey rsaKey = (RSAKey) JWK.parse(new ObjectMapper().writeValueAsString(key));
+                    RSAPublicKey rsaPublicKey = rsaKey.toRSAPublicKey();
+                    JWSVerifier jwsVerifier = new RSASSAVerifier(rsaPublicKey);
 
-                if (signedJWT.verify(jwsVerifier)) {
-                    String payload = idToken.split("[.]")[1];
-                    Map payloadMap = new ObjectMapper().readValue(new String(
-                        Base64.getDecoder().decode(payload)), Map.class);
-                    return payloadMap.get("sub").toString();
+                    if (signedJWT.verify(jwsVerifier)) {
+                        String payload = idToken.split("[.]")[1];
+                        Map payloadMap = new ObjectMapper().readValue(new String(
+                                Base64.getDecoder().decode(payload)), Map.class);
+                        return payloadMap.get("sub").toString();
+                    }
                 }
+            } catch (Exception e) {
+                throw new UtilsException(ErrorCode.ID_TOKEN_PARSER_ERROR);
             }
-        } catch (Exception e) {
-            throw new UtilsException(ErrorCode.ID_TOKEN_PARSER_ERROR);
         }
 
-        return null;
+        return getSocialIdByIdToken(idToken);
     }
 
     public static String getSocialIdByIdToken(String idToken) {
