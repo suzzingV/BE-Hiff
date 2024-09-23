@@ -26,8 +26,10 @@ public class UserPhotoService {
     private static final int PHOTO_COUNT_LIMIT = 2;
 
     public void registerPhoto(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos) {
-        String mainPhotoUrl = gcsService.saveImage(mainPhoto, MAIN_PHOTO_FOLDER_NAME);
-        saveMainPhotoUrl(userId, mainPhotoUrl);
+        if(mainPhoto != null) {
+            String mainPhotoUrl = gcsService.saveImage(mainPhoto, MAIN_PHOTO_FOLDER_NAME);
+            saveMainPhotoUrl(userId, mainPhotoUrl);
+        }
 
         for (MultipartFile photo : photos) {
             String photoUrl = gcsService.saveImage(photo, PHOTOS_FOLDER_NAME);
@@ -44,7 +46,7 @@ public class UserPhotoService {
     }
 
     public void deletePhotos(List<String> trashPhotos) {
-        if (trashPhotos != null) {
+        if (!trashPhotos.isEmpty()) {
             trashPhotos
                 .forEach(photoUrl -> {
                     userPhotoRepository.deleteByPhotoUrl(photoUrl);

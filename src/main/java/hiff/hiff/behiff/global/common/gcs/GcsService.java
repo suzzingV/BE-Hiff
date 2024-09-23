@@ -10,6 +10,8 @@ import hiff.hiff.behiff.global.common.gcs.exception.GcsException;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.io.InputStream;
 import java.util.UUID;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @Transactional
+@Slf4j
 public class GcsService {
 
     @Value("${spring.cloud.gcp.storage.credentials.location}")
@@ -46,6 +49,7 @@ public class GcsService {
                 BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, folderName + "/" + objectName)
                     .setContentType(ext).build();
 
+                log.info("?");
                 storage.create(blobInfo, image.getInputStream());
             }
         } catch (Exception e) {
@@ -67,10 +71,12 @@ public class GcsService {
                 .setCredentials(GoogleCredentials.fromStream(keyFile))
                 .build()
                 .getService();
-
             Blob blob = storage.get(bucketName, objectName);
+            log.info(bucketName + objectName);
             BlobId idWithGeneration = blob.getBlobId();
+            log.info("id");
             storage.delete(idWithGeneration);
+            log.info("삭제 완료");
         } catch (Exception e) {
             throw new GcsException(ErrorCode.IMAGE_STORAGE_SAVE_ERROR);
         }
