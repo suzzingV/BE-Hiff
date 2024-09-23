@@ -46,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 public class HiffMatchingService extends MatchingService {
 
     private final UserCRUDService userCRUDService;
@@ -106,11 +107,19 @@ public class HiffMatchingService extends MatchingService {
 
         while (!matchedQueue.isEmpty()) {
             User matched = matchedQueue.remove();
+            log.info("matched: "  + matched.getId());
+            if(user.getEvaluatedScore() == 0) {
+                log.info("외모 점수");
+                continue;
+            }
+
             if (checkAge(user, matched)) {
+                log.info("나이");
                 continue;
             }
 
             if(checkMatchingHistory(matched.getId())) {
+                log.info("매칭기록");
                 continue;
             }
 
@@ -119,6 +128,7 @@ public class HiffMatchingService extends MatchingService {
                 matchedPos.getLat(),
                 matchedPos.getLon());
             if (checkDistance(user, matched, distance)) {
+                log.info("거리");
                 continue;
             }
 
@@ -131,6 +141,7 @@ public class HiffMatchingService extends MatchingService {
             MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
                 matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
 
+            log.info("총 점수: " + userMatchingInfo + " " + matchedMatchingInfo);
             if (checkTotalScore(userMatchingInfo, matchedMatchingInfo)) {
                 String today = getTodayDate();
                 cachMatchingScore(userId, matched.getId(), userMatchingInfo,
