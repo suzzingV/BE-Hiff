@@ -141,7 +141,7 @@ public class HiffMatchingService extends MatchingService {
             MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
                 matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
 
-            log.info("총 점수: " + userMatchingInfo + " " + matchedMatchingInfo);
+            log.info("총 점수: " + userMatchingInfo.getTotalScoreByMatcher() + " " + matchedMatchingInfo.getTotalScoreByMatcher());
             if (checkTotalScore(userMatchingInfo, matchedMatchingInfo)) {
                 String today = getTodayDate();
                 cachMatchingScore(userId, matched.getId(), userMatchingInfo,
@@ -323,6 +323,6 @@ public class HiffMatchingService extends MatchingService {
     }
 
     private boolean checkMatchingHistory(Long matchedId) {
-        return !redisService.keys(HIFF_MATCHING_PREFIX + matchedId).isEmpty();
+        return !redisService.keys(HIFF_MATCHING_PREFIX + matchedId + "*").isEmpty();
     }
 }
