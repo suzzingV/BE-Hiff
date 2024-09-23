@@ -60,8 +60,8 @@ public class EvaluationControllerV0 {
             log.info("매칭 완료");
             Token userToken = authService.findTokenByUserId(userId);
             Token matchedToken = authService.findTokenByUserId(matchedId);
-            fcmUtils.sendMatchingAlarm(matchedToken.getFcmToken());
-            fcmUtils.sendMatchingAlarm(userToken.getFcmToken());
+            fcmUtils.sendMatchingAlarm(matchedToken.getFcmToken(), userId);
+            fcmUtils.sendMatchingAlarm(userToken.getFcmToken(), matchedId);
         }
 
         return "redirect:/evaluation/users";

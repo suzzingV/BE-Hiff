@@ -42,7 +42,7 @@ public class FcmUtils {
         }
     }
 
-    public void sendMatchingAlarm(String token) {
+    public void sendMatchingAlarm(String token, Long matchedId) {
         Notification notification = Notification.builder()
                 .setTitle(PUSH_TITLE)
                 .setBody(MATCHING_ALARM_BODY + LocalDateTime.now())
@@ -51,6 +51,7 @@ public class FcmUtils {
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(notification)
+                .putData("matchedId", matchedId.toString())
                 .build();
 
         try {
