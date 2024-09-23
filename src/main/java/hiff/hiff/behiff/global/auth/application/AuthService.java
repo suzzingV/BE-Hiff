@@ -76,6 +76,10 @@ public class AuthService {
                 if(socialType == SocialType.APPLE) {
                     String appleRefreshToken = getAppleRefreshToken(request.getAuthorizationCode());
                     saveRefreshToken(newUser, appleRefreshToken);
+                } else {
+                    Token.builder()
+                            .userId(newUser.getId())
+                            .build();
                 }
                 return LoginResponse.of(accessToken, refreshToken, false, false, newUser.getId());
             });
