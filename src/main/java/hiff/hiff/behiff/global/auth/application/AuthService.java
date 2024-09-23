@@ -73,14 +73,11 @@ public class AuthService {
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, socialId, socialType,
                     request.getLatitude(), request.getLongitude());
+                String appleRefreshToken = null;
                 if(socialType == SocialType.APPLE) {
-                    String appleRefreshToken = getAppleRefreshToken(request.getAuthorizationCode());
-                    saveRefreshToken(newUser, appleRefreshToken);
-                } else {
-                    Token.builder()
-                            .userId(newUser.getId())
-                            .build();
+                    appleRefreshToken = getAppleRefreshToken(request.getAuthorizationCode());
                 }
+                saveToken(newUser, appleRefreshToken);
                 return LoginResponse.of(accessToken, refreshToken, false, false, newUser.getId());
             });
     }
@@ -135,7 +132,7 @@ public class AuthService {
         return jwtService.createClientSecret(privateKey);
     }
 
-    private void saveRefreshToken(User newUser, String appleRefreshToken) {
+    private void saveToken(User newUser, String appleRefreshToken) {
         Token newToken = Token.builder()
             .userId(newUser.getId())
             .appleRefreshToken(appleRefreshToken)
