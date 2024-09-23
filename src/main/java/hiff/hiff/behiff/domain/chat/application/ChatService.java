@@ -91,6 +91,11 @@ public class ChatService {
     }
 
     private void recordChatHistory(User user, Long matchedId) {
+        // TODO: 테스트용
+        if(chatHistoryRepository.findByProposerIdAndProposedId(user.getId(), matchedId)
+                .isPresent()) {
+            return;
+        }
         ChatHistory chatHistory = ChatHistory.builder()
                 .proposerId(user.getId())
                 .proposedId(matchedId)
