@@ -58,7 +58,7 @@ public class GcsService {
     }
 
     public void deleteImage(String imgUrl, String folderName) {
-        if(imgUrl.isEmpty()) {
+        if(imgUrl == null) {
             return;
         }
         String objectName = getObjectNameFromUrl(imgUrl, folderName);
