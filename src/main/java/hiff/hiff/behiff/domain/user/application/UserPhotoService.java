@@ -36,7 +36,7 @@ public class UserPhotoService {
 
     public void registerPhotos(Long userId, List<MultipartFile> photos) {
         for (MultipartFile photo : photos) {
-            if(photo.getOriginalFilename().isEmpty()) {
+            if(photo.getSize() == 0) {
                 return;
             }
             String photoUrl = gcsService.saveImage(photo, PHOTOS_FOLDER_NAME);
