@@ -9,6 +9,7 @@ import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,13 +26,19 @@ public class UserPhotoService {
     public static final String PHOTOS_FOLDER_NAME = "photos";
     private static final int PHOTO_COUNT_LIMIT = 2;
 
-    public void registerPhoto(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos) {
-        if(mainPhoto != null) {
-            String mainPhotoUrl = gcsService.saveImage(mainPhoto, MAIN_PHOTO_FOLDER_NAME);
-            saveMainPhotoUrl(userId, mainPhotoUrl);
+    public void registerMainPhoto(Long userId, MultipartFile mainPhoto) {
+        if(mainPhoto.isEmpty()) {
+            return;
         }
+        String mainPhotoUrl = gcsService.saveImage(mainPhoto, MAIN_PHOTO_FOLDER_NAME);
+        saveMainPhotoUrl(userId, mainPhotoUrl);
+    }
 
+    public void registerPhotos(Long userId, List<MultipartFile> photos) {
         for (MultipartFile photo : photos) {
+            if(photo.getOriginalFilename().isEmpty()) {
+                return;
+            }
             String photoUrl = gcsService.saveImage(photo, PHOTOS_FOLDER_NAME);
             savePhotoUrl(userId, photoUrl);
         }
@@ -61,17 +68,17 @@ public class UserPhotoService {
         }
     }
 
-    private void savePhotoUrl(Long userId, String mainPhotoUrl) {
+    private void savePhotoUrl(Long userId, String photoUrl) {
         UserPhoto userPhoto = UserPhoto.builder()
             .userId(userId)
-            .photoUrl(mainPhotoUrl)
+            .photoUrl(photoUrl)
             .build();
         userPhotoRepository.save(userPhoto);
     }
 
     private void saveMainPhotoUrl(Long userId, String mainPhotoUrl) {
         User user = userCRUDService.findById(userId);
-            gcsService.deleteImage(user.getMainPhoto(), MAIN_PHOTO_FOLDER_NAME);
+        gcsService.deleteImage(user.getMainPhoto(), MAIN_PHOTO_FOLDER_NAME);
         user.updateMainPhoto(mainPhotoUrl);
     }
 }

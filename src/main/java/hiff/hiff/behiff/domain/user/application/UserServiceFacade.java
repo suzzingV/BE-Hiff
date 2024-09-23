@@ -11,6 +11,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +46,8 @@ public class UserServiceFacade {
         User user = userCRUDService.findById(userId);
         WeightValue wv = userWeightValueService.findByUserId(userId);
         userProfileService.updateNickname(user, request.getNickname());
-        userPhotoService.registerPhoto(userId, mainPhoto, photos);
+        userPhotoService.registerMainPhoto(userId, mainPhoto);
+        userPhotoService.registerPhotos(userId, photos);
         userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
         userProfileService.updateGender(user, request.getGender());
         userProfileService.updateMbti(user, request.getMbti());
@@ -70,7 +72,8 @@ public class UserServiceFacade {
     public UserUpdateResponse updatePhotos(Long userId, MultipartFile mainPhoto,
         List<MultipartFile> photos, UserPhotoRequest request) {
         userCRUDService.findById(userId);
-        userPhotoService.registerPhoto(userId, mainPhoto, photos);
+        userPhotoService.registerMainPhoto(userId, mainPhoto);
+        userPhotoService.registerPhotos(userId, photos);
         userPhotoService.deletePhotos(request.getTrashPhotos());
         return UserUpdateResponse.from(userId);
     }

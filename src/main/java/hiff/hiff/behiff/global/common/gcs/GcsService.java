@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @Transactional
-@Slf4j
 public class GcsService {
 
     @Value("${spring.cloud.gcp.storage.credentials.location}")
@@ -49,7 +48,6 @@ public class GcsService {
                 BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, folderName + "/" + objectName)
                     .setContentType(ext).build();
 
-                log.info("?");
                 storage.create(blobInfo, image.getInputStream());
             }
         } catch (Exception e) {
@@ -60,7 +58,7 @@ public class GcsService {
     }
 
     public void deleteImage(String imgUrl, String folderName) {
-        if(imgUrl == null) {
+        if(imgUrl.isEmpty()) {
             return;
         }
         String objectName = getObjectNameFromUrl(imgUrl, folderName);
@@ -72,11 +70,8 @@ public class GcsService {
                 .build()
                 .getService();
             Blob blob = storage.get(bucketName, objectName);
-            log.info(bucketName + objectName);
             BlobId idWithGeneration = blob.getBlobId();
-            log.info("id");
             storage.delete(idWithGeneration);
-            log.info("삭제 완료");
         } catch (Exception e) {
             throw new GcsException(ErrorCode.IMAGE_STORAGE_SAVE_ERROR);
         }
