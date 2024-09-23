@@ -61,7 +61,6 @@ public class FcmUtils {
         } catch (FirebaseMessagingException e) {
             log.info("실패: " + token);
             log.info(e.getMessage());
-            throw new AuthException(ErrorCode.FCM_SEND_ERROR);
         }
     }
 }
