@@ -37,7 +37,7 @@ public class ChatService {
         User user = userCRUDService.findById(userId);
         Token token = authService.findTokenByUserId(matchedId);
         recordChatHistory(user, matchedId);
-        fcmUtils.sendChatProposal(token.getFcmToken(), user.getNickname());
+        fcmUtils.sendChatProposal(userId, token.getFcmToken(), user.getNickname());
 
         return ChatProposalResponse.builder()
                 .proposedId(matchedId)

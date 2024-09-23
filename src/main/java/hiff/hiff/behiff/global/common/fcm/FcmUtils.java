@@ -24,7 +24,7 @@ public class FcmUtils {
 
     private final FirebaseMessaging firebaseMessaging;
 
-    public void sendChatProposal(String token, String nickname) {
+    public void sendChatProposal(Long proposerId, String token, String nickname) {
         Notification notification = Notification.builder()
                 .setTitle(PUSH_TITLE)
                 .setBody(nickname + CHAT_PROPOSAL_BODY)
@@ -32,6 +32,7 @@ public class FcmUtils {
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(notification)
+                .putData("proposerId", proposerId.toString())
                 .build();
 
         try {
