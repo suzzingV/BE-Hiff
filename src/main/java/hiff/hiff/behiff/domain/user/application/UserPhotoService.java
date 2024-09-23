@@ -26,8 +26,6 @@ public class UserPhotoService {
     private static final int PHOTO_COUNT_LIMIT = 2;
 
     public void registerPhoto(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos) {
-        checkPhotoQuantity(photos);
-
         String mainPhotoUrl = gcsService.saveImage(mainPhoto, MAIN_PHOTO_FOLDER_NAME);
         saveMainPhotoUrl(userId, mainPhotoUrl);
 
@@ -55,7 +53,7 @@ public class UserPhotoService {
         }
     }
 
-    private void checkPhotoQuantity(List<MultipartFile> photos) {
+    public void checkPhotoQuantity(List<MultipartFile> photos) {
         if (photos.size() < PHOTO_COUNT_LIMIT) {
             throw new UserException(ErrorCode.PHOTO_QUANTITY_ERROR);
         }
