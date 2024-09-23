@@ -239,7 +239,7 @@ public class HiffMatchingService extends MatchingService {
 
     private MatchingInfoDto getCachedMatchingInfo(Long matcherId, Long matchedId) {
         String today = getTodayDate();
-        String value = getCachedValue(matcherId, matchedId, today + HIFF_MATCHING_PREFIX);
+        String value = getCachedValue(matcherId, matchedId, HIFF_MATCHING_PREFIX);
 
         StringTokenizer st = new StringTokenizer(value, "/");
         int totalScoreByMatcher = Integer.parseInt(st.nextToken());

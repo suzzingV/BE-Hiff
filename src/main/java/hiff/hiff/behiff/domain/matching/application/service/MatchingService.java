@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MatchingService {
 
     private final UserPosService userPosService;
@@ -40,6 +41,7 @@ public class MatchingService {
 
     protected String getCachedValue(Long matcherId, Long matchedId, String prefix) {
         String key = prefix + matcherId + "_" + matchedId;
+        log.info(prefix);
         String value = redisService.getStrValue(key);
         if (value.equals(NOT_EXIST)) {
             throw new MatchingException(ErrorCode.MATCHING_SCORE_NOT_FOUND);
