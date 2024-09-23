@@ -196,10 +196,10 @@ public class HiffMatchingService extends MatchingService {
                 continue;
             }
 
-            if (isMatchedBefore(matcher.getId(), matched.getId())) {
-                tmp.add(matchedWithCount);
-                continue;
-            }
+//            if (isMatchedBefore(matcher.getId(), matched.getId())) {
+//                tmp.add(matchedWithCount);
+//                continue;
+//            }
 
             UserPos matchedPos = userPosService.findPosByUserId(matched.getId());
             Double distance = computeDistance(matcherPos.getLat(), matcherPos.getLon(),
