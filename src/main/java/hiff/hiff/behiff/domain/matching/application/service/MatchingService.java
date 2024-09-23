@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
+import static hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
@@ -19,6 +20,7 @@ import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,8 +94,10 @@ public class MatchingService {
     }
 
     protected boolean isMatchedBefore(Long matcherId, Long matchedId) {
-        List<Long> matchingHistory = matchingRepository.findByUsers(matcherId, matchedId);
-        return !matchingHistory.isEmpty();
+//        List<Long> matchingHistory = matchingRepository.findByUsers(matcherId, matchedId);
+        Set<String> keys = redisService.keys(HIFF_MATCHING_PREFIX + matcherId + "_" + matchedId);
+        return !keys.isEmpty();
+//        return !matchingHistory.isEmpty();
     }
 
     protected Long getMatchedIdFromKey(String key) {
