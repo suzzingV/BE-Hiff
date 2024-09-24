@@ -87,11 +87,11 @@ public class User implements UserDetails {
 
     private String career;
 
-    @Min(20)
+    @Min(19)
     @Max(50)
     private Integer hopeMinAge;
 
-    @Min(20)
+    @Min(19)
     @Max(50)
     private Integer hopeMaxAge;
 

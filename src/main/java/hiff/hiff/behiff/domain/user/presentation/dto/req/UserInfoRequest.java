@@ -67,12 +67,12 @@ public class UserInfoRequest {
     @Max(5)
     private Integer mbtiWV;
 
-    @Min(20)
+    @Min(19)
     @Max(50)
     @NotNull
     private Integer minAge;
 
-    @Min(20)
+    @Min(19)
     @Max(50)
     @NotNull
     private Integer maxAge;
