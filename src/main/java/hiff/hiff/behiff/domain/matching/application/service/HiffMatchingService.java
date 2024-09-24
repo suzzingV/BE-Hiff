@@ -62,7 +62,7 @@ public class HiffMatchingService extends MatchingService {
     private final ChatHistoryRepository chatHistoryRepository;
 
     private static final Integer HIFF_MATCHING_HEART = 3;
-    private static final int TOTAL_SCORE_STANDARD = 80;
+    private static final int TOTAL_SCORE_STANDARD = 75;
     public static final Duration DAILY_HIFF_MATCHING_DURATION = Duration.ofDays(2);
     public static final String HIFF_MATCHING_PREFIX = "hiff_";
 
@@ -156,9 +156,9 @@ public class HiffMatchingService extends MatchingService {
     }
 
     public HiffMatchingDetailResponse getMatchingDetails(Long matcherId, Long matchedId) {
-        if (!isMatchedBefore(matcherId, matchedId)) {
-            throw new MatchingException(ErrorCode.MATCHING_HISTORY_NOT_FOUND);
-        }
+//        if (!isMatchedBefore(matcherId, matchedId)) {
+//            throw new MatchingException(ErrorCode.MATCHING_HISTORY_NOT_FOUND);
+//        }
         User matcher = userCRUDService.findById(matcherId);
         User matched = userCRUDService.findById(matchedId);
 
@@ -284,6 +284,7 @@ public class HiffMatchingService extends MatchingService {
         return originalMatching.stream()
             .map(key -> {
                 Long matchedId = getMatchedIdFromKey(key);
+                log.info(matchedId + "");
                 User matched = userCRUDService.findById(matchedId);
                 MatchingInfoDto matchingInfo = getCachedMatchingInfo(userId,
                     matchedId);
