@@ -141,7 +141,7 @@ public class HiffMatchingService extends MatchingService {
             MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
                 matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
 
-            log.info("총 점수: " + userMatchingInfo.getTotalScoreByMatcher() + " " + matchedMatchingInfo.getTotalScoreByMatcher());
+            log.info(userId + " " + matched.getId() + " 총 점수: " + userMatchingInfo.getTotalScoreByMatcher() + " " + matchedMatchingInfo.getTotalScoreByMatcher());
             if (checkTotalScore(userMatchingInfo, matchedMatchingInfo)) {
                 String today = getTodayDate();
                 cachMatchingScore(userId, matched.getId(), userMatchingInfo,
