@@ -32,7 +32,7 @@ public class FcmUtils {
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(notification)
-//                .putData("proposerId", proposerId.toString())
+                .putData("proposerId", proposerId.toString())
                 .build();
 
         try {
