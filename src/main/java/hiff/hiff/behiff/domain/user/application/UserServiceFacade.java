@@ -1,20 +1,35 @@
 package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.evaluation.application.EvaluationService;
+import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
+import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
+import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
+import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
+import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+
+import hiff.hiff.behiff.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import static hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService.HIFF_MATCHING_PREFIX;
+import static hiff.hiff.behiff.domain.matching.application.service.MatchingService.MATCHING_DURATION;
+import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
+import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +46,9 @@ public class UserServiceFacade {
     private final UserPosService userPosService;
     private final UserIdentifyVerificationService userIdentifyVerificationService;
     private final EvaluationService evaluationService;
+    private final HiffMatchingService hiffMatchingService;
+    private final SimilarityFactory similarityFactory;
+    private final RedisService redisService;
 
     public User registerUser(
         Role role, String socialId, SocialType socialType, Double lat, Double lon) {
@@ -155,9 +173,63 @@ public class UserServiceFacade {
     }
 
     public UserUpdateResponse updateWeightValue(Long userId, WeightValueRequest request) {
-        userCRUDService.findById(userId);
+        User user = userCRUDService.findById(userId);
         userWeightValueService.updateWeightValue(userId, request.getAppearance(), request.getHobby(), request.getLifeStyle(), request.getMbti());
+        List<UserHobby> matcherHobbies = userHobbyService.findByUserId(userId);
+        List<UserLifeStyle> matcherLifeStyles = userLifeStyleService.findByUserId(userId);
+        WeightValue matcherWV = userWeightValueService.findByUserId(userId);
+        List<MatchingSimpleResponse> matchings = hiffMatchingService.getMatchings(userId);
+        MatchingSimpleResponse matchedResponse = matchings.get(0);
+        User matched = userCRUDService.findById(matchedResponse.getUserId());
+        WeightValue matchedWV = userWeightValueService.findByUserId(matchedResponse.getUserId());
+        List<UserHobby> matchedHobbies = userHobbyService.findByUserId(matchedResponse.getUserId());
+        List<UserLifeStyle> matchedLifeStyle = userLifeStyleService.findByUserId(
+                matchedResponse.getUserId());
+        MatchingInfoDto userMatchingInfo = getNewMatchingInfo(user, matched, matcherWV,
+                matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
+        MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
+                matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
+        String today = getTodayDate();
+        cachMatchingScore(userId, matched.getId(), userMatchingInfo,
+                matchedMatchingInfo.getTotalScoreByMatcher(), today, MATCHING_DURATION);
         return UserUpdateResponse.from(userId);
+    }
+
+    private void cachMatchingScore(Long matcherId, Long matchedId, MatchingInfoDto matchingInfoDto,
+                                   int matchedTotalScore, String date, Duration duration) {
+//        String prefix = date + HIFF_MATCHING_PREFIX;
+        String key = HIFF_MATCHING_PREFIX + matcherId + "_" + matchedId;
+        String value = matchingInfoDto.getTotalScoreByMatcher() + "/" + matchedTotalScore + "/"
+                + matchingInfoDto.getMbtiSimilarity() + "/"
+                + matchingInfoDto.getHobbySimilarity() + "/"
+                + matchingInfoDto.getLifeStyleSimilarity();
+        redisService.setValue(key, value, duration);
+
+        key = HIFF_MATCHING_PREFIX + matchedId + "_" + matcherId;
+        value = matchedTotalScore + "/" + matchingInfoDto.getTotalScoreByMatcher() + "/" +
+                +matchingInfoDto.getMbtiSimilarity() + "/"
+                + matchingInfoDto.getHobbySimilarity() + "/"
+                + matchingInfoDto.getLifeStyleSimilarity();
+        redisService.setValue(key, value, duration);
+    }
+
+    protected MatchingInfoDto getNewMatchingInfo(User matcher, User matched,
+                                                 WeightValue matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
+                                                 List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
+        int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
+        int hobbySimilarity = similarityFactory.getHobbySimilarity(matcherHobbies, matchedHobbies);
+        int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcherLifeStyles,
+                matchedLifeStyles);
+//        int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
+        Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
+                lifeStyleSimilarity, matched.getEvaluatedScore());
+        return MatchingInfoDto.builder()
+                .mbtiSimilarity(mbtiSimilarity)
+                .hobbySimilarity(hobbySimilarity)
+                .lifeStyleSimilarity(lifeStyleSimilarity)
+//            .incomeSimilarity(incomeSimilarity)
+                .totalScoreByMatcher(totalScore)
+                .build();
     }
 
     public UserUpdateResponse updatePos(Long userId, Double x, Double y) {
