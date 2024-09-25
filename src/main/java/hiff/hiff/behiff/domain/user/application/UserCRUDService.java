@@ -31,12 +31,14 @@ import jakarta.transaction.Transactional;
 import java.security.PrivateKey;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserCRUDService {
 
     private final UserRepository userRepository;
@@ -85,6 +87,7 @@ public class UserCRUDService {
             .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
+    @org.springframework.transaction.annotation.Transactional(noRollbackFor = UserException.class)
     public void checkDuplication(Long userId, String phoneNum) {
         userRepository.findByPhoneNum(phoneNum)
                 .ifPresent(user -> {
@@ -154,6 +157,7 @@ public class UserCRUDService {
     }
 
     protected void deleteById(Long userId) {
+        log.info("userId: " + userId);
         userRepository.deleteById(userId);
         userRepository.flush();
     }
