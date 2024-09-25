@@ -153,7 +153,8 @@ public class UserCRUDService {
             });
     }
 
-    private void deleteById(Long userId) {
+    @org.springframework.transaction.annotation.Transactional
+    protected void deleteById(Long userId) {
         userRepository.deleteById(userId);
     }
 }
