@@ -62,7 +62,7 @@ public class HiffMatchingService extends MatchingService {
     private final ChatHistoryRepository chatHistoryRepository;
 
     private static final Integer HIFF_MATCHING_HEART = 3;
-    private static final int TOTAL_SCORE_STANDARD = 75;
+    private static final int TOTAL_SCORE_STANDARD = 70;
     public static final Duration DAILY_HIFF_MATCHING_DURATION = Duration.ofDays(2);
     public static final String HIFF_MATCHING_PREFIX = "hiff_";
 
@@ -323,7 +323,7 @@ public class HiffMatchingService extends MatchingService {
         return chatHistoryRepository.findByProposerIdAndProposedId(proposerId, proposedId).isPresent();
     }
 
-    private boolean checkMatchingHistory(Long matchedId) {
+    public boolean checkMatchingHistory(Long matchedId) {
         return !redisService.keys(HIFF_MATCHING_PREFIX + matchedId + "*").isEmpty();
     }
 }
