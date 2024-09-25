@@ -29,6 +29,7 @@ import hiff.hiff.behiff.global.util.FileReader;
 import hiff.hiff.behiff.global.util.Parser;
 import jakarta.transaction.Transactional;
 import java.security.PrivateKey;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +104,10 @@ public class UserCRUDService {
         deleteUserRecord(user);
 
         invalidTokens(access, refresh);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     private void deleteUserRecord(User user) {
