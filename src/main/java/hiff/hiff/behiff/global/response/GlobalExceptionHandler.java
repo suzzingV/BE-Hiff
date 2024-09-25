@@ -115,6 +115,9 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleException(
         Exception e, HttpServletRequest request
     ) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        e.printStackTrace(printWriter);
         return ErrorResponse.toResponseEntity(ErrorCode.SERVER_ERROR, e.getMessage());
     }
 }
