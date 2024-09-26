@@ -108,7 +108,7 @@ public class HiffMatchingService extends MatchingService {
         while (!matchedQueue.isEmpty()) {
             User matched = matchedQueue.remove();
             log.info("matched: "  + matched.getId());
-            if(user.getEvaluatedScore() == 0) {
+            if(matched.getEvaluatedScore() == 0 || matched.getNickname() == null) {
                 log.info("외모 점수");
                 continue;
             }

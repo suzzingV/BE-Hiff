@@ -55,9 +55,11 @@ public class MatchingServiceFacade {
                 .forEach(user -> {
                     if(!hiffMatchingService.checkMatchingHistory(user.getId())) {
                         Long matchedId = hiffMatchingService.performMatching(user.getId());
-                        User matched = userCRUDService.findById(matchedId);
-                        smsUtil.sendMatchingMessage(user.getPhoneNum());
-                        smsUtil.sendMatchingMessage(matched.getPhoneNum());
+                        if(matchedId != null) {
+                            User matched = userCRUDService.findById(matchedId);
+                            smsUtil.sendMatchingMessage(user.getPhoneNum());
+                            smsUtil.sendMatchingMessage(matched.getPhoneNum());
+                        }
                     }
                 });
     }
