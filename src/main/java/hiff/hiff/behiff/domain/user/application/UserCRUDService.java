@@ -129,9 +129,6 @@ public class UserCRUDService {
         userPosRepository.deleteByUserId(user.getId());
         weightValueRepository.deleteByUserId(user.getId());
         deletePhotos(user.getId());
-        Set<String> matchingDatas = redisService.keys(HIFF_MATCHING_PREFIX + user.getId() + "*");
-        matchingDatas
-                .forEach(redisService::delete);
         userRepository.delete(user);
     }
 
