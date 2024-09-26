@@ -113,13 +113,13 @@ public class HiffMatchingService extends MatchingService {
                 continue;
             }
 
-            if (checkAge(user, matched)) {
-                log.info("나이");
+            if(checkMatchingHistory(matched.getId())) {
+                log.info("매칭기록");
                 continue;
             }
 
-            if(checkMatchingHistory(matched.getId())) {
-                log.info("매칭기록");
+            if (checkAge(user, matched)) {
+                log.info("나이");
                 continue;
             }
 
