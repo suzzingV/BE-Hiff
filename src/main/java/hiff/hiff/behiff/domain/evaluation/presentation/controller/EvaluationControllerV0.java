@@ -60,13 +60,13 @@ public class EvaluationControllerV0 {
         Long matchedId = matchingServiceFacade.performHiffMatching(userId);
         if(matchedId != null) {
             log.info("매칭 완료");
-            User matched = userServiceFacade.findById(matchedId);
-//            Token userToken = authService.findTokenByUserId(userId);
-//            Token matchedToken = authService.findTokenByUserId(matchedId);
-//            fcmUtils.sendMatchingAlarm(matchedToken.getFcmToken(), userId);
-//            fcmUtils.sendMatchingAlarm(userToken.getFcmToken(), matchedId);
-            smsUtil.sendMatchingMessage(user.getPhoneNum());
-            smsUtil.sendMatchingMessage(matched.getPhoneNum());
+//            User matched = userServiceFacade.findById(matchedId);
+            Token userToken = authService.findTokenByUserId(userId);
+            Token matchedToken = authService.findTokenByUserId(matchedId);
+            fcmUtils.sendMatchingAlarm(matchedToken.getFcmToken(), userId);
+            fcmUtils.sendMatchingAlarm(userToken.getFcmToken(), matchedId);
+//            smsUtil.sendMatchingMessage(user.getPhoneNum());
+//            smsUtil.sendMatchingMessage(matched.getPhoneNum());
         }
 
         return "redirect:/evaluation/users";
