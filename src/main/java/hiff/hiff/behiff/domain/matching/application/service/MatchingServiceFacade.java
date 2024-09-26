@@ -6,6 +6,8 @@ import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleRespo
 import java.util.List;
 
 import hiff.hiff.behiff.domain.user.application.UserCRUDService;
+import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.global.common.sms.SmsUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class MatchingServiceFacade {
     private final HiffMatchingService hiffMatchingService;
 
     private final UserCRUDService userCRUDService;
+    private final SmsUtil smsUtil;
 
     public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
         return dailyMatchingService.getMatchings(userId);
@@ -51,7 +54,10 @@ public class MatchingServiceFacade {
         userCRUDService.findAll()
                 .forEach(user -> {
                     if(!hiffMatchingService.checkMatchingHistory(user.getId())) {
-                        hiffMatchingService.performMatching(user.getId());
+                        Long matchedId = hiffMatchingService.performMatching(user.getId());
+                        User matched = userCRUDService.findById(matchedId);
+                        smsUtil.sendMatchingMessage(user.getPhoneNum());
+                        smsUtil.sendMatchingMessage(matched.getPhoneNum());
                     }
                 });
     }

@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import static hiff.hiff.behiff.global.common.fcm.FcmUtils.MATCHING_ALARM_BODY;
+
 @Component
 // TODO: Util 리팩토링
 public class SmsUtil {
@@ -45,6 +47,20 @@ public class SmsUtil {
         return messageService.sendOne(new SingleMessageSendingRequest(coolsms));
     }
 
+    public SingleMessageSentResponse sendProposeMessage(String to, String proposerNickname) {
+        String text = generateProposeText(proposerNickname);
+        Message coolsms = generateMessage(to, text);
+
+        return messageService.sendOne(new SingleMessageSendingRequest(coolsms));
+    }
+
+    public SingleMessageSentResponse sendMatchingMessage(String to) {
+        String text = generateMatchingText();
+        Message coolsms = generateMessage(to, text);
+
+        return messageService.sendOne(new SingleMessageSendingRequest(coolsms));
+    }
+
     @NotNull
     private Message generateMessage(String to, String text) {
         Message coolsms = new Message();
@@ -62,5 +78,15 @@ public class SmsUtil {
     @NotNull
     private String generateAcceptanceText(String nickname, String phoneNum) {
         return "[Hiff] " + nickname + "님이 대화 신청을 수락하였습니다. " + nickname + "님의 연락처는 " + phoneNum + " 입니다.";
+    }
+
+    @NotNull
+    private String generateMatchingText() {
+        return "[Hiff] " + MATCHING_ALARM_BODY;
+    }
+
+    @NotNull
+    private String generateProposeText(String proposerNickname) {
+        return "[Hiff] " + proposerNickname + "님이 대화를 신청했습니다. 수락을 원하시면 이 문자가 온 번호로 '수락'이라고 답장해주세요!";
     }
 }
