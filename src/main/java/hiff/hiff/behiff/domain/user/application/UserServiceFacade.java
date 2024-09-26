@@ -179,19 +179,21 @@ public class UserServiceFacade {
         List<UserLifeStyle> matcherLifeStyles = userLifeStyleService.findByUserId(userId);
         WeightValue matcherWV = userWeightValueService.findByUserId(userId);
         List<MatchingSimpleResponse> matchings = hiffMatchingService.getMatchings(userId);
-        MatchingSimpleResponse matchedResponse = matchings.get(0);
-        User matched = userCRUDService.findById(matchedResponse.getUserId());
-        WeightValue matchedWV = userWeightValueService.findByUserId(matchedResponse.getUserId());
-        List<UserHobby> matchedHobbies = userHobbyService.findByUserId(matchedResponse.getUserId());
-        List<UserLifeStyle> matchedLifeStyle = userLifeStyleService.findByUserId(
-                matchedResponse.getUserId());
-        MatchingInfoDto userMatchingInfo = getNewMatchingInfo(user, matched, matcherWV,
-                matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
-        MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
-                matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
-        String today = getTodayDate();
-        cachMatchingScore(userId, matched.getId(), userMatchingInfo,
-                matchedMatchingInfo.getTotalScoreByMatcher(), today, MATCHING_DURATION);
+        if(!matchings.isEmpty()) {
+            MatchingSimpleResponse matchedResponse = matchings.get(0);
+            User matched = userCRUDService.findById(matchedResponse.getUserId());
+            WeightValue matchedWV = userWeightValueService.findByUserId(matchedResponse.getUserId());
+            List<UserHobby> matchedHobbies = userHobbyService.findByUserId(matchedResponse.getUserId());
+            List<UserLifeStyle> matchedLifeStyle = userLifeStyleService.findByUserId(
+                    matchedResponse.getUserId());
+            MatchingInfoDto userMatchingInfo = getNewMatchingInfo(user, matched, matcherWV,
+                    matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
+            MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
+                    matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
+            String today = getTodayDate();
+            cachMatchingScore(userId, matched.getId(), userMatchingInfo,
+                    matchedMatchingInfo.getTotalScoreByMatcher(), today, MATCHING_DURATION);
+        }
         return UserUpdateResponse.from(userId);
     }
 
