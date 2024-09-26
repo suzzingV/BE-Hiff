@@ -10,6 +10,7 @@ import hiff.hiff.behiff.global.auth.domain.FcmToken;
 import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.common.fcm.FcmUtils;
+import hiff.hiff.behiff.global.common.sms.SmsUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ public class EvaluationControllerV0 {
     private final MatchingServiceFacade matchingServiceFacade;
     private final AuthService authService;
     private final FcmUtils fcmUtils;
+    private final SmsUtil smsUtil;
 
     @GetMapping("/users")
     public String getUsersWithoutAppearanceScore(Model model) {
@@ -58,10 +60,13 @@ public class EvaluationControllerV0 {
         Long matchedId = matchingServiceFacade.performHiffMatching(userId);
         if(matchedId != null) {
             log.info("매칭 완료");
-            Token userToken = authService.findTokenByUserId(userId);
-            Token matchedToken = authService.findTokenByUserId(matchedId);
-            fcmUtils.sendMatchingAlarm(matchedToken.getFcmToken(), userId);
-            fcmUtils.sendMatchingAlarm(userToken.getFcmToken(), matchedId);
+            User matched = userServiceFacade.findById(matchedId);
+//            Token userToken = authService.findTokenByUserId(userId);
+//            Token matchedToken = authService.findTokenByUserId(matchedId);
+//            fcmUtils.sendMatchingAlarm(matchedToken.getFcmToken(), userId);
+//            fcmUtils.sendMatchingAlarm(userToken.getFcmToken(), matchedId);
+            smsUtil.sendMatchingMessage(user.getPhoneNum());
+            smsUtil.sendMatchingMessage(matched.getPhoneNum());
         }
 
         return "redirect:/evaluation/users";
