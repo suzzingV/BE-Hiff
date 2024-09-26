@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.user.application;
 
+import static hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.domain.user.application.UserPhotoService.PHOTOS_FOLDER_NAME;
 
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
@@ -23,6 +24,7 @@ import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.common.gcs.GcsService;
+import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.common.webClient.WebClientUtils;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import hiff.hiff.behiff.global.util.FileReader;
@@ -31,6 +33,8 @@ import jakarta.transaction.Transactional;
 import java.security.PrivateKey;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,6 +60,7 @@ public class UserCRUDService {
     private final GcsService gcsService;
     private final UserPosRepository userPosRepository;
     private final WeightValueRepository weightValueRepository;
+    private final RedisService redisService;
 
     @Value("${apple.redirect-url}")
     private String appleRedirectUrl;
@@ -124,6 +129,9 @@ public class UserCRUDService {
         userPosRepository.deleteByUserId(user.getId());
         weightValueRepository.deleteByUserId(user.getId());
         deletePhotos(user.getId());
+        Set<String> matchingDatas = redisService.keys(HIFF_MATCHING_PREFIX + user.getId() + "*");
+        matchingDatas
+                .forEach(redisService::delete);
         userRepository.delete(user);
     }
 
