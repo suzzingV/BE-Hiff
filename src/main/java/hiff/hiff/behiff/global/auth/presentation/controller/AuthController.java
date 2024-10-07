@@ -130,8 +130,8 @@ public class AuthController {
                                          @AuthenticationPrincipal User user) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
-        // TODO: 탈퇴수정
         authService.withdraw(user, accessToken, refreshToken);
+
         return ResponseEntity.noContent().build();
     }
 }

@@ -64,7 +64,7 @@ public class AuthService {
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, request.getPhoneNum(),
                     request.getLatitude(), request.getLongitude());
-                //TODO: fcm 토큰 객체 생성
+                generateTokenContainer(newUser.getId());
                 return LoginResponse.of(accessToken, refreshToken, false, newUser.getId());
             });
     }
@@ -130,5 +130,11 @@ public class AuthService {
         jwtService.isTokenValid(accessToken);
         jwtService.deleteRefreshToken(refreshToken);
         jwtService.invalidAccessToken(accessToken);
+    }
+
+    private void generateTokenContainer(Long userId) {
+        Token token = Token.builder()
+                .userId(userId)
+                .build();
     }
 }
