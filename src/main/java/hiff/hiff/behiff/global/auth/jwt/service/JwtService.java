@@ -6,7 +6,6 @@ import static hiff.hiff.behiff.global.common.webClient.WebClientUtils.APPLE_URL;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.common.redis.RedisService;
@@ -47,32 +46,21 @@ public class JwtService {
     @Value("${jwt.refresh.header}")
     private String refreshHeader;
 
-    @Value("${apple.redirect-url}")
-    public String appleRedirectUrl;
-    @Value("${apple.credentials.key-id}")
-    public String appleKeyId;
-    @Value("${apple.credentials.location}")
-    private String appleKeyFile;
-    @Value("${apple.credentials.identifier}")
-    public String appleIdentifier;
-    @Value("${apple.credentials.team-id}")
-    public String appleTeamId;
-
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String SOCIAL_ID_CLAIM = "socialId";
+    private static final String SOURCE_CLAIM = "source";
     private static final String LOGOUT = "logout";
     private static final String BEARER = "Bearer ";
 
     private final UserRepository userRepository;
     private final RedisService redisService;
 
-    public String createAccessToken(String socialInfo) {
+    public String createAccessToken(String source) {
         Date now = new Date();
         return JWT.create()
             .withSubject(ACCESS_TOKEN_SUBJECT)
             .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-            .withClaim(SOCIAL_ID_CLAIM, socialInfo)
+            .withClaim(SOURCE_CLAIM, source)
             .sign(Algorithm.HMAC512(secretKey));
     }
 
@@ -103,12 +91,12 @@ public class JwtService {
             .map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
-    public Optional<String> extractSocialInfo(String accessToken) {
+    public Optional<String> extractSource(String accessToken) {
         try {
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
                 .build()
                 .verify(accessToken) //검증
-                .getClaim(SOCIAL_ID_CLAIM) //추출
+                .getClaim(SOURCE_CLAIM) //추출
                 .asString());
         } catch (JWTVerificationException e) {
             throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
@@ -116,8 +104,8 @@ public class JwtService {
     }
 
     //RefreshToken redis 저장
-    public void updateRefreshToken(String refreshToken, String socialInfo) {
-        redisService.setValue(refreshToken, socialInfo,
+    public void updateRefreshToken(String refreshToken, String source) {
+        redisService.setValue(refreshToken, source,
             Duration.ofMillis(refreshTokenExpirationPeriod));
     }
 
@@ -147,24 +135,5 @@ public class JwtService {
             throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
         }
         return redisService.getStrValue(refreshToken);
-    }
-
-    public String createClientSecret(PrivateKey privateKey) {
-        Map<String, Object> headerParamsMap = new HashMap<>();
-        headerParamsMap.put("kid", appleKeyId);
-        headerParamsMap.put("alg", "ES256");
-
-        Date expirationDate = Date.from(
-            LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
-        return Jwts
-            .builder()
-            .setHeaderParams(headerParamsMap)
-            .setIssuer(appleTeamId)
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(expirationDate)
-            .setAudience(APPLE_URL)
-            .setSubject(appleIdentifier)
-            .signWith(SignatureAlgorithm.ES256, privateKey)
-            .compact();
     }
 }

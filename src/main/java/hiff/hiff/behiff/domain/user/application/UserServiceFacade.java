@@ -3,7 +3,6 @@ package hiff.hiff.behiff.domain.user.application;
 import hiff.hiff.behiff.domain.evaluation.application.EvaluationService;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
-import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
@@ -11,7 +10,6 @@ import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
-import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 
@@ -21,7 +19,6 @@ import java.util.Optional;
 
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,12 +48,13 @@ public class UserServiceFacade {
     private final RedisService redisService;
 
     public User registerUser(
-        Role role, String socialId, SocialType socialType, Double lat, Double lon) {
-        User user = userCRUDService.registerUser(role, socialId, socialType);
+        Role role, String phoneNum, Double lat, Double lon) {
+        User user = userCRUDService.registerUser(role, phoneNum);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), lat, lon);
-        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
-        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
+        // 처음 가입한 유저 빨리 평가 받을 수 있게
+//        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
+//        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
         return user;
     }
 
@@ -295,16 +293,5 @@ public class UserServiceFacade {
         WeightValue wv = userWeightValueService.findByUserId(userId);
         User user = userCRUDService.findById(userId);
         return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti(), user.getHopeMinAge(), user.getHopeMaxAge(), user.getMinDistance(), user.getMaxDistance());
-    }
-
-    public void sendVerificationCode(Long userId, PhoneNumRequest request) {
-        User user = userCRUDService.findById(userId);
-        userCRUDService.checkDuplication(userId, request.getPhoneNum());
-        userIdentifyVerificationService.sendIdentificationSms(user, request.getPhoneNum());
-    }
-
-    public void identifyVerification(Long userId, VerificationCodeRequest request) {
-        userIdentifyVerificationService.checkCode(userId, request.getCode());
-        userProfileService.updatePhoneNum(userId, request.getPhoneNum());
     }
 }

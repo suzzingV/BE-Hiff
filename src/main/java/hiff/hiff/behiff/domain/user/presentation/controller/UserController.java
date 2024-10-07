@@ -8,6 +8,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserWeightValueResponse;
+import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.common.sms.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,7 @@ public class UserController {
     private final UserServiceFacade userServiceFacade;
     private final JwtService jwtService;
     private final EmailService emailService;
+    private final AuthService authService;
 
     @Operation(
             summary = "User 최초 정보 등록",
@@ -210,6 +212,7 @@ public class UserController {
         responseCode = "200",
         description = "User 학력 업데이트에 성공하였습니다."
     )
+    // TODO: 학교 인증 구현
     @PatchMapping("/education")
     public ResponseEntity<UserUpdateResponse> updateEducation(@AuthenticationPrincipal User user,
         @Valid @RequestBody
@@ -352,52 +355,5 @@ public class UserController {
     public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user, @Valid @RequestBody PosRequest request) {
         UserUpdateResponse response = userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
         return ResponseEntity.ok(response);
-    }
-
-    @Operation(
-        summary = "본인 인증 코드 전송",
-        description = "본인 인증 코드를 User에게 문자로 전송합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "인증 코드 전송에 성공하였습니다."
-    )
-    @PostMapping("/verification-code")
-    public ResponseEntity<Void> sendVerificationCode(
-        @AuthenticationPrincipal User user, @Valid @RequestBody PhoneNumRequest request) {
-        userServiceFacade.sendVerificationCode(user.getId(), request);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(
-        summary = "본인 인증 코드 확인",
-        description = "인증을 완료합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "본인 인증에 성공하였습니다."
-    )
-    @PatchMapping("/verification")
-    public ResponseEntity<Void> sendVerificationCode(
-        @AuthenticationPrincipal User user, @Valid @RequestBody VerificationCodeRequest request) {
-        userServiceFacade.identifyVerification(user.getId(), request);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(
-        summary = "User 탈퇴",
-        description = "User가 탈퇴합니다. 토큰 o, 리프레시 토큰도 필요(헤더 이름: Authentication-refresh)"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "User 탈퇴에 성공하였습니다."
-    )
-    @DeleteMapping
-    public ResponseEntity<Void> withdraw(HttpServletRequest request,
-        @AuthenticationPrincipal User user) {
-        Optional<String> accessToken = jwtService.extractAccessToken(request);
-        Optional<String> refreshToken = jwtService.extractRefreshToken(request);
-        userServiceFacade.withdraw(user.getId(), accessToken, refreshToken);
-        return ResponseEntity.noContent().build();
     }
 }

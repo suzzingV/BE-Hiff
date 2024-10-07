@@ -29,11 +29,7 @@ public class UserHobbyService {
     public static final String HOBBY_PREFIX = "hobby_";
 
     public UserUpdateResponse updateHobby(Long userId, List<Long> hobbies) {
-//        List<String> newHobbies = request.getNewHobbies();
-
         updateUserHobbies(userId, hobbies);
-//        registerNewHobbies(userId, newHobbies); // TODO : 레디스 캐싱
-
         return UserUpdateResponse.from(userId);
     }
 

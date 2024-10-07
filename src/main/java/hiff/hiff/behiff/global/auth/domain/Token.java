@@ -24,13 +24,10 @@ public class Token {
 
     private String fcmToken;
 
-    private String appleRefreshToken;
-
     @Builder
-    private Token(Long userId, String fcmToken, String appleRefreshToken) {
+    private Token(Long userId, String fcmToken) {
         this.userId = userId;
         this.fcmToken = fcmToken;
-        this.appleRefreshToken = appleRefreshToken;
     }
 
     public void updateFcmToken(String fcmToken) {

@@ -1,8 +1,8 @@
 package hiff.hiff.behiff.global.auth.presentation.controller;
 
-import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
-import hiff.hiff.behiff.domain.matching.application.service.MatchingServiceFacade;
+import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
@@ -34,20 +34,21 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtService jwtService;
+    private final UserServiceFacade userServiceFacade;
 
-    @Operation(
-            summary = "로그인",
-            description = "로그인합니다. 토큰 x"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "로그인에 성공하였습니다."
-    )
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        LoginResponse response = authService.login(request);
-        return ResponseEntity.ok(response);
-    }
+//    @Operation(
+//            summary = "로그인",
+//            description = "로그인합니다. 토큰 x"
+//    )
+//    @ApiResponse(
+//            responseCode = "200",
+//            description = "로그인에 성공하였습니다."
+//    )
+//    @PostMapping("/login")
+//    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+//        LoginResponse response = authService.login(request);
+//        return ResponseEntity.ok(response);
+//    }
 
     @Operation(
             summary = "토큰 재발급",
@@ -72,7 +73,6 @@ public class AuthController {
             responseCode = "200",
             description = "로그아웃에 성공하였습니다."
     )
-    // TODO: 로그 아웃 세부
     @PatchMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
@@ -87,5 +87,52 @@ public class AuthController {
         UserUpdateResponse response = authService.updateFcmToken(user.getId(), request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "본인 인증 코드 전송",
+            description = "본인 인증 코드를 User에게 문자로 전송합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "인증 코드 전송에 성공하였습니다."
+    )
+    @PostMapping("/verification-code")
+    public ResponseEntity<Void> sendVerificationCode(@Valid @RequestBody PhoneNumRequest request) {
+        authService.sendVerificationCode(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            summary = "본인 인증 코드 확인",
+            description = "인증을 완료합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "본인 인증에 성공하였습니다."
+    )
+    @PatchMapping("/verification")
+    public ResponseEntity<LoginResponse> sendVerificationCode(@Valid @RequestBody LoginRequest request) {
+        authService.checkCode(request);
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "User 탈퇴",
+            description = "User가 탈퇴합니다. 토큰 o, 리프레시 토큰도 필요(헤더 이름: Authentication-refresh)"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "User 탈퇴에 성공하였습니다."
+    )
+    @DeleteMapping
+    public ResponseEntity<Void> withdraw(HttpServletRequest request,
+                                         @AuthenticationPrincipal User user) {
+        Optional<String> accessToken = jwtService.extractAccessToken(request);
+        Optional<String> refreshToken = jwtService.extractRefreshToken(request);
+        // TODO: 탈퇴수정
+        userServiceFacade.withdraw(user.getId(), accessToken, refreshToken);
+        return ResponseEntity.noContent().build();
     }
 }

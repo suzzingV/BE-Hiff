@@ -4,7 +4,6 @@ import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
-import hiff.hiff.behiff.domain.user.domain.enums.SocialType;
 import hiff.hiff.behiff.global.util.DateCalculator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,13 +53,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SocialType socialType;
-
-    @Column(nullable = false)
-    private String socialId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -121,11 +113,9 @@ public class User implements UserDetails {
 
     @Builder
     private User(String email, Role role,
-        String socialId, SocialType socialType) {
+        String phoneNum) {
         this.email = email;
         this.role = role;
-        this.socialId = socialId;
-        this.socialType = socialType;
         this.hopeMaxAge = 50;
         this.hopeMinAge = 20;
         this.maxDistance = 700;
@@ -138,6 +128,7 @@ public class User implements UserDetails {
         this.birth = LocalDate.now();
         this.gender = Gender.MALE;
         this.age = DateCalculator.calculateAge(LocalDate.now());
+        this.phoneNum = phoneNum;
     }
 
     public void changeNickname(String nickname) {
