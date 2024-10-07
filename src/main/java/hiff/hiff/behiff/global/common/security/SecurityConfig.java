@@ -41,7 +41,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/api/v0/auth/login", "/api/v0/auth/reissue", "/api/v1/batch/**",
-                    "/api/v0/auth/verification-code", "/api/v0/auth/verification").permitAll()
+                    "/api/v0/auth/verification-code", "/api/v0/auth/verification", "/api/v1/user/hobby/list", "/api/v1/user/life-style/list", "/api/v1/user/career/list").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/**").permitAll())
             .exceptionHandling(customizer -> customizer

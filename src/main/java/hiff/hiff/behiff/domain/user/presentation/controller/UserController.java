@@ -39,9 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserServiceFacade userServiceFacade;
-    private final JwtService jwtService;
     private final EmailService emailService;
-    private final AuthService authService;
 
     @Operation(
             summary = "User 최초 정보 등록",
