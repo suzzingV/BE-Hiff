@@ -136,5 +136,6 @@ public class AuthService {
         Token token = Token.builder()
                 .userId(userId)
                 .build();
+        tokenRepository.save(token);
     }
 }
