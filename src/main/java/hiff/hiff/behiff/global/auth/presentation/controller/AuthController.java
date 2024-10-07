@@ -34,7 +34,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtService jwtService;
-    private final UserServiceFacade userServiceFacade;
 
 //    @Operation(
 //            summary = "로그인",
@@ -77,7 +76,7 @@ public class AuthController {
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
-        authService.logout(accessToken, refreshToken);
+        authService.invalidTokens(accessToken, refreshToken);
         return ResponseEntity.ok().build();
     }
 
@@ -132,7 +131,7 @@ public class AuthController {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
         // TODO: 탈퇴수정
-        userServiceFacade.withdraw(user.getId(), accessToken, refreshToken);
+        authService.withdraw(user, accessToken, refreshToken);
         return ResponseEntity.noContent().build();
     }
 }

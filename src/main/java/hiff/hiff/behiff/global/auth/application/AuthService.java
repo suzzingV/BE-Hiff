@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.global.auth.application;
 
+import hiff.hiff.behiff.domain.user.application.UserCRUDService;
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
@@ -40,6 +41,7 @@ public class AuthService {
     private final TokenRepository tokenRepository;
     private final SmsUtil smsUtil;
     private final RedisService redisService;
+    private final UserCRUDService userCRUDService;
 
     private static final Duration IDENTIFY_VERIFICATION_DURATION = Duration.ofMinutes(5);
     private static final String IDENTIFY_VERIFICATION_PREFIX = "verify_";
@@ -80,17 +82,6 @@ public class AuthService {
             .build();
     }
 
-    public void logout(Optional<String> access, Optional<String> refresh) {
-        String accessToken = access.orElseThrow(
-            () -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
-        String refreshToken = refresh.orElseThrow(
-            () -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
-        jwtService.isTokenValid(refreshToken);
-        jwtService.isTokenValid(accessToken);
-        jwtService.deleteRefreshToken(refreshToken);
-        jwtService.invalidAccessToken(accessToken);
-    }
-
     public UserUpdateResponse updateFcmToken(Long userId, FcmTokenRequest request) {
         Token token = tokenRepository.findByUserId(userId)
                 .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
@@ -122,5 +113,22 @@ public class AuthService {
     public Token findTokenByUserId(Long userId) {
         return tokenRepository.findByUserId(userId)
             .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
+    }
+
+    public void withdraw(User user, Optional<String> accessToken, Optional<String> refreshToken) {
+        userCRUDService.deleteUserRecord(user);
+        invalidTokens(accessToken, refreshToken);
+    }
+
+    public void invalidTokens(Optional<String> access, Optional<String> refresh) {
+        String accessToken = access.orElseThrow(
+                () -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
+        String refreshToken = refresh.orElseThrow(
+                () -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
+
+        jwtService.isTokenValid(refreshToken);
+        jwtService.isTokenValid(accessToken);
+        jwtService.deleteRefreshToken(refreshToken);
+        jwtService.invalidAccessToken(accessToken);
     }
 }

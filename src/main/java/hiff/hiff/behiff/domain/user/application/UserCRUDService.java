@@ -77,16 +77,11 @@ public class UserCRUDService {
                 });
     }
 
-    public void withdraw(User user, Optional<String> access, Optional<String> refresh) {
-        deleteUserRecord(user);
-        invalidTokens(access, refresh);
-    }
-
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    private void deleteUserRecord(User user) {
+    public void deleteUserRecord(User user) {
         chatHistoryRepository.deleteByProposedIdOrProposedId(user.getId(), user.getId());
         evaluatedUserRepository.deleteByUserId(user.getId());
         evaluationRepository.deleteByEvaluatedIdOrEvaluatorId(user.getId(), user.getId());
@@ -103,18 +98,6 @@ public class UserCRUDService {
         userRepository.delete(user);
     }
 
-    private void invalidTokens(Optional<String> access, Optional<String> refresh) {
-        String accessToken = access.orElseThrow(
-            () -> new AuthException(ErrorCode.ACCESS_TOKEN_REQUIRED));
-        String refreshToken = refresh.orElseThrow(
-            () -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
-
-        jwtService.isTokenValid(refreshToken);
-        jwtService.isTokenValid(accessToken);
-        jwtService.deleteRefreshToken(refreshToken);
-        jwtService.invalidAccessToken(accessToken);
-    }
-
     private void deletePhotos(Long userId) {
         userPhotoRepository.findByUserId(userId)
             .forEach(userPhoto -> {
@@ -125,6 +108,7 @@ public class UserCRUDService {
     }
 
     protected void deleteById(Long userId) {
+        // TODO: 삭제 고치기
         log.info("userId: " + userId);
         userRepository.deleteById(userId);
         userRepository.flush();

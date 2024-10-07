@@ -41,7 +41,6 @@ public class UserServiceFacade {
     private final UserProfileService userProfileService;
     private final UserCRUDService userCRUDService;
     private final UserPosService userPosService;
-    private final UserIdentifyVerificationService userIdentifyVerificationService;
     private final EvaluationService evaluationService;
     private final HiffMatchingService hiffMatchingService;
     private final SimilarityFactory similarityFactory;
@@ -78,11 +77,6 @@ public class UserServiceFacade {
 
     public User findById(Long userId) {
         return userCRUDService.findById(userId);
-    }
-
-    public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {
-        User user = userCRUDService.findById(userId);
-        userCRUDService.withdraw(user, accessToken, refreshToken);
     }
 
     public UserUpdateResponse updatePhotos(Long userId, MultipartFile mainPhoto,
