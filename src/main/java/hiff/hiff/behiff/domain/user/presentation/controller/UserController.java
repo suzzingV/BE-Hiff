@@ -4,10 +4,7 @@ import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.MyInfoResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.TagResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserWeightValueResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.common.sms.EmailService;
@@ -352,6 +349,20 @@ public class UserController {
     @PatchMapping("/pos")
     public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user, @Valid @RequestBody PosRequest request) {
         UserUpdateResponse response = userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "User 정보 입력 여부 조회",
+            description = "User의 정보 입력 여부를 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "User 정보 입력 여부 조회에 성공하였습니다."
+    )
+    @GetMapping("/info-check")
+    public ResponseEntity<UserIsFilledResponse> isFilled(@AuthenticationPrincipal User user) {
+        UserIsFilledResponse response = userServiceFacade.isFilled(user);
         return ResponseEntity.ok(response);
     }
 }
