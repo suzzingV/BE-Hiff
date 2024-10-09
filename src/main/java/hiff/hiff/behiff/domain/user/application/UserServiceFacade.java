@@ -288,4 +288,15 @@ public class UserServiceFacade {
         User user = userCRUDService.findById(userId);
         return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti(), user.getHopeMinAge(), user.getHopeMaxAge(), user.getMinDistance(), user.getMaxDistance());
     }
+
+    public UserIsFilledResponse isFilled(User user) {
+        boolean isFilled = true;
+        if(user.getNickname() == null) {
+            isFilled = false;
+        }
+        return UserIsFilledResponse.builder()
+                .isFilled(isFilled)
+                .userId(user.getId())
+                .build();
+    }
 }
