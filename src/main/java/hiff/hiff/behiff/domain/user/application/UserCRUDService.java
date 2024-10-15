@@ -69,9 +69,7 @@ public class UserCRUDService {
 
     public void deleteUserRecord(User user) {
         chatHistoryRepository.deleteByProposedIdOrProposedId(user.getId(), user.getId());
-        log.info("헤엥");
         subtractGenderCount(user.getGender());
-        log.info("으잉");
         matchingRepository.deleteByMatchedIdOrMatcherId(user.getId(), user.getId());
         tokenRepository.deleteByUserId(user.getId());
         userHobbyRepository.deleteByUserId(user.getId());
