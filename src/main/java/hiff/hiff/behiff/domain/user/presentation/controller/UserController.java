@@ -39,24 +39,6 @@ public class UserController {
     private final EmailService emailService;
 
     @Operation(
-            summary = "User 최초 정보 등록",
-            description = "User의 최초 정보를 등록합니다. 토큰 o"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "User 최초 정보 등록에 성공하였습니다."
-    )
-    @PostMapping("/info")
-    public ResponseEntity<UserUpdateResponse> registerInfo(@AuthenticationPrincipal User user,
-                                                           @Valid @RequestPart(value = "dto")
-                                                           UserInfoRequest request, @RequestPart(value = "main_photo") MultipartFile mainPhoto,
-                                                           @RequestPart(value = "photos") List<MultipartFile> photos) {
-        UserUpdateResponse response = userServiceFacade.registerInfo(user.getId(), mainPhoto, photos, request);
-        emailService.sendSignUpEmail();
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
         summary = "직업 목록 조회",
         description = "직업 목록을 조회합니다. 토큰 x"
     )
@@ -70,6 +52,7 @@ public class UserController {
         return ResponseEntity.ok(responses);
     }
 
+    // TODO: 취미 자동완성?
     @Operation(
         summary = "취미 목록 조회",
         description = "취미 목록을 조회합니다. 토큰 x"
@@ -349,20 +332,6 @@ public class UserController {
     @PatchMapping("/pos")
     public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user, @Valid @RequestBody PosRequest request) {
         UserUpdateResponse response = userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
-            summary = "User 정보 입력 여부 조회",
-            description = "User의 정보 입력 여부를 조회합니다. 토큰 o"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "User 정보 입력 여부 조회에 성공하였습니다."
-    )
-    @GetMapping("/info-check")
-    public ResponseEntity<UserIsFilledResponse> isFilled(@AuthenticationPrincipal User user) {
-        UserIsFilledResponse response = userServiceFacade.isFilled(user);
         return ResponseEntity.ok(response);
     }
 }
