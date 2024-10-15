@@ -55,17 +55,13 @@ public class AuthService {
             .map(user -> {
                 user.updateAge();
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                boolean isFilled = false;
-                if(user.getNickname() != null) {
-                    isFilled = true;
-                }
-                return LoginResponse.of(accessToken, refreshToken, isFilled, user.getId());
+                return LoginResponse.of(accessToken, refreshToken, user);
             })
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, request.getPhoneNum(),
                     request.getLatitude(), request.getLongitude());
                 generateTokenContainer(newUser.getId());
-                return LoginResponse.of(accessToken, refreshToken, false, newUser.getId());
+                return LoginResponse.of(accessToken, refreshToken, newUser);
             });
     }
 
@@ -98,7 +94,8 @@ public class AuthService {
     public void sendVerificationCode(PhoneNumRequest request) {
         String verificationCode = getCode();
 
-        smsUtil.sendVerificationCode(request.getPhoneNum(), verificationCode);
+//        smsUtil.sendVerificationCode(request.getPhoneNum(), verificationCode);
+        log.info("인증 코드: " + verificationCode);
         redisService.setValue(IDENTIFY_VERIFICATION_PREFIX + verificationCode, request.getPhoneNum(),
                 IDENTIFY_VERIFICATION_DURATION);
     }
