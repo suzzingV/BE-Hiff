@@ -14,6 +14,7 @@ import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.FcmTokenRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.CodeResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
 import hiff.hiff.behiff.global.common.redis.RedisService;
@@ -55,17 +56,13 @@ public class AuthService {
             .map(user -> {
                 user.updateAge();
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                boolean isFilled = false;
-                if(user.getNickname() != null) {
-                    isFilled = true;
-                }
-                return LoginResponse.of(accessToken, refreshToken, isFilled, user.getId());
+                return LoginResponse.of(accessToken, refreshToken, user);
             })
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, request.getPhoneNum(),
                     request.getLatitude(), request.getLongitude());
                 generateTokenContainer(newUser.getId());
-                return LoginResponse.of(accessToken, refreshToken, false, newUser.getId());
+                return LoginResponse.of(accessToken, refreshToken, newUser);
             });
     }
 
@@ -95,13 +92,17 @@ public class AuthService {
         return jwtService.checkRefreshToken(refreshToken);
     }
 
-    public void sendVerificationCode(PhoneNumRequest request) {
+    public CodeResponse sendVerificationCode(PhoneNumRequest request) {
         String verificationCode = getCode();
 
 //        smsUtil.sendVerificationCode(request.getPhoneNum(), verificationCode);
-        log.info("코드: " + verificationCode);
+
+        log.info("인증 코드: " + verificationCode);
         redisService.setValue(IDENTIFY_VERIFICATION_PREFIX + verificationCode, request.getPhoneNum(),
                 IDENTIFY_VERIFICATION_DURATION);
+        return CodeResponse.builder()
+            .code(verificationCode)
+            .build();
     }
 
     public void checkCode(LoginRequest request) {

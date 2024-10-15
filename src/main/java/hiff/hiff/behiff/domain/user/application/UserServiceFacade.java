@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.user.application;
 
-import hiff.hiff.behiff.domain.evaluation.application.EvaluationService;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
@@ -41,7 +40,6 @@ public class UserServiceFacade {
     private final UserProfileService userProfileService;
     private final UserCRUDService userCRUDService;
     private final UserPosService userPosService;
-    private final EvaluationService evaluationService;
     private final HiffMatchingService hiffMatchingService;
     private final SimilarityFactory similarityFactory;
     private final RedisService redisService;

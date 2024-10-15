@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.global.common.redis;
 
-import static hiff.hiff.behiff.domain.evaluation.application.EvaluationService.EVALUATION_DURATION;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -37,20 +36,6 @@ public class RedisService {
         String value = String.valueOf(data);
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, value);
-    }
-
-    public void updateIntValue(String key) {
-        ValueOperations<String, Integer> values = integerRedisTemplate.opsForValue();
-        int count = getIntValue(key);
-        if (count == 0) {
-            values.set(key, 1);
-        } else {
-            if (count == 4) {
-                values.set(key, 5, EVALUATION_DURATION);
-            } else {
-                values.set(key, count + 1);
-            }
-        }
     }
 
     @Transactional(readOnly = true)

@@ -43,9 +43,6 @@ public class User implements UserDetails {
     @Column(length = 20)
     private String nickname;
 
-    @Email
-    private String email;
-
     @Column(length = 20)
     @Pattern(regexp = "^[0-9]*$")
     private String phoneNum;
@@ -55,7 +52,6 @@ public class User implements UserDetails {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
@@ -66,7 +62,6 @@ public class User implements UserDetails {
 //    private Income income;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Education education;
 
     private String school;
@@ -100,9 +95,6 @@ public class User implements UserDetails {
 
     private Double evaluatedScore;
 
-    @Column(nullable = false)
-    private Integer evaluatedCount;
-
     private String mainPhoto;
 
     @CreationTimestamp
@@ -112,22 +104,12 @@ public class User implements UserDetails {
     private LocalDateTime deletedAt;
 
     @Builder
-    private User(String email, Role role,
+    private User(Role role,
         String phoneNum) {
-        this.email = email;
         this.role = role;
-        this.hopeMaxAge = 50;
-        this.hopeMinAge = 20;
-        this.maxDistance = 700;
-        this.minDistance = 0;
         this.heart = 0;
-        this.evaluatedCount = 0;
         this.evaluatedScore = 0.0;
 //        this.income = Income.PRIVATE;
-        this.education = Education.PRIVATE;
-        this.birth = LocalDate.now();
-        this.gender = Gender.MALE;
-        this.age = DateCalculator.calculateAge(LocalDate.now());
         this.phoneNum = phoneNum;
     }
 
@@ -182,14 +164,6 @@ public class User implements UserDetails {
         this.minDistance = minDistance;
     }
 
-    public void updateEvaluatedScore(Integer score) {
-        int originalEvaluatedCount = this.evaluatedCount;
-        double total = this.evaluatedScore * originalEvaluatedCount;
-        total += score;
-        this.evaluatedScore = Math.round(total / (originalEvaluatedCount + 1) * 100) / 100.0;
-        this.evaluatedCount++;
-    }
-
     public void updateEvaluatedScoreTmp(Double score) {
         this.evaluatedScore = score;
     }
@@ -210,11 +184,13 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.phoneNum;
     }
 
     public void updateAge() {
-        this.age = DateCalculator.calculateAge(this.birth);
+        if(this.age != null) {
+            this.age = DateCalculator.calculateAge(this.birth);
+        }
     }
 
     public void addHeart(Integer amount) {
