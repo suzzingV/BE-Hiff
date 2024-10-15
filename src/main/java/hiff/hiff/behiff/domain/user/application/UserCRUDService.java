@@ -3,8 +3,6 @@ package hiff.hiff.behiff.domain.user.application;
 import static hiff.hiff.behiff.domain.user.application.UserPhotoService.PHOTOS_FOLDER_NAME;
 
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
-import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository;
-import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluationRepository;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
@@ -40,10 +38,8 @@ public class UserCRUDService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final EvaluatedUserRepository evaluatedUserRepository;
     private final TokenRepository tokenRepository;
     private final ChatHistoryRepository chatHistoryRepository;
-    private final EvaluationRepository evaluationRepository;
     private final GenderCountRepository genderCountRepository;
     private final MatchingRepository matchingRepository;
     private final UserHobbyRepository userHobbyRepository;
@@ -83,8 +79,6 @@ public class UserCRUDService {
 
     public void deleteUserRecord(User user) {
         chatHistoryRepository.deleteByProposedIdOrProposedId(user.getId(), user.getId());
-        evaluatedUserRepository.deleteByUserId(user.getId());
-        evaluationRepository.deleteByEvaluatedIdOrEvaluatorId(user.getId(), user.getId());
         GenderCount genderCount = genderCountRepository.findById(user.getGender())
             .orElseThrow(() -> new UserException(ErrorCode.GENDER_COUNT_NOT_FOUND));
         genderCount.subtractCount();

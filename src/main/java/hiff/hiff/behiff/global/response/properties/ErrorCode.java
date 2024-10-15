@@ -17,7 +17,6 @@ public enum ErrorCode {
     // 400
     REFRESH_TOKEN_REQUIRED(BAD_REQUEST, "refresh token이 필요합니다."),
     ACCESS_TOKEN_REQUIRED(BAD_REQUEST, "access token이 필요합니다."),
-    EMAIL_NOT_EXTRACTED(BAD_REQUEST, "이메일을 추출할 수 없습니다."),
     S3_ACCESS_DENIED(BAD_REQUEST, "s3에 접근할 수 없습니다."),
     PHOTO_QUANTITY_ERROR(BAD_REQUEST, "사진은 2개 이상 등록해야 합니다."),
     VALIDATION_ERROR(BAD_REQUEST, "입력값이 유효하지 않습니다."),
@@ -29,7 +28,6 @@ public enum ErrorCode {
     EVALUATION_INVALID_GENDER(BAD_REQUEST, "첫인상 평가 대상의 성별이 적절하지 않습니다."),
     EVALUATION_COUNT_EXCEED(BAD_REQUEST, "첫인상 평가 횟수를 초과했습니다."),
     EVALUATION_ALREADY(BAD_REQUEST, "이미 첫인상 평가를 한 대상입니다."),
-    EVALUATION_COUNT_NOT_ENOUGH(BAD_REQUEST, "받은 첫인상 평가 횟수가 충분하지 않습니다."),
     LACK_OF_HEART(BAD_REQUEST, "하트가 부족합니다."),
     INVALID_SIMILARITY_TYPE(BAD_REQUEST, "적절한 유사도 타입이 아닙니다."),
     INCOME_WEIGHT_VALUE_PRIVATE(BAD_REQUEST, "소득이 비공개일 경우 가중치는 0이어야 합니다."),

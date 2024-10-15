@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.user.application;
 
-import hiff.hiff.behiff.domain.evaluation.infrastructure.EvaluatedUserRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
@@ -26,7 +25,6 @@ public class UserProfileService {
 
     private final UserRepository userRepository;
     private final UserPosRepository userPosRepository;
-    private final EvaluatedUserRepository evaluatedUserRepository;
     private final GenderCountRepository genderCountRepository;
     private final UserCRUDService userCRUDService;
     private final MbtiScoreRepository mbtiScoreRepository;
@@ -47,7 +45,6 @@ public class UserProfileService {
     public void updateGender(User user, Gender gender) {
         user.changeGender(gender);
         updateGenderCount(gender);
-        changeEvaluatedUserGender(user, gender);
     }
 
     private void updateGenderCount(Gender gender) {
@@ -115,17 +112,6 @@ public class UserProfileService {
     }
 
     public Double getEvaluatedScore(User user) {
-        if (user.getEvaluatedCount() < 10) {
-            throw new UserException(ErrorCode.EVALUATION_COUNT_NOT_ENOUGH);
-        }
         return user.getEvaluatedScore();
-    }
-
-    private void changeEvaluatedUserGender(User user, Gender gender) {
-        evaluatedUserRepository.findByUserId(user.getId())
-            .forEach(evaluatedUser -> {
-                evaluatedUser.changeGender(gender);
-                evaluatedUserRepository.save(evaluatedUser);
-            });
     }
 }
