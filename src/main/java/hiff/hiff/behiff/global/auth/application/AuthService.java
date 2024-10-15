@@ -98,7 +98,7 @@ public class AuthService {
     public void sendVerificationCode(PhoneNumRequest request) {
         String verificationCode = getCode();
 
-        smsUtil.sendVerificationCode(request.getPhoneNum(), verificationCode);
+//        smsUtil.sendVerificationCode(request.getPhoneNum(), verificationCode);
         redisService.setValue(IDENTIFY_VERIFICATION_PREFIX + verificationCode, request.getPhoneNum(),
                 IDENTIFY_VERIFICATION_DURATION);
     }

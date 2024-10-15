@@ -90,7 +90,7 @@ public class AuthController {
 
     @Operation(
             summary = "본인 인증 코드 전송",
-            description = "본인 인증 코드를 User에게 문자로 전송합니다. 토큰 o"
+            description = "본인 인증 코드를 User에게 문자로 전송합니다."
     )
     @ApiResponse(
             responseCode = "200",
@@ -104,7 +104,7 @@ public class AuthController {
 
     @Operation(
             summary = "본인 인증 코드 확인",
-            description = "인증을 완료합니다. 토큰 o"
+            description = "인증을 완료하고 로그인합니다."
     )
     @ApiResponse(
             responseCode = "200",
