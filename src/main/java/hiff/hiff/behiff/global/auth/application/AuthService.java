@@ -14,6 +14,7 @@ import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.FcmTokenRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
+import hiff.hiff.behiff.global.auth.presentation.dto.res.CodeResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.LoginResponse;
 import hiff.hiff.behiff.global.auth.presentation.dto.res.TokenResponse;
 import hiff.hiff.behiff.global.common.redis.RedisService;
@@ -91,13 +92,16 @@ public class AuthService {
         return jwtService.checkRefreshToken(refreshToken);
     }
 
-    public void sendVerificationCode(PhoneNumRequest request) {
+    public CodeResponse sendVerificationCode(PhoneNumRequest request) {
         String verificationCode = getCode();
 
 //        smsUtil.sendVerificationCode(request.getPhoneNum(), verificationCode);
         log.info("인증 코드: " + verificationCode);
         redisService.setValue(IDENTIFY_VERIFICATION_PREFIX + verificationCode, request.getPhoneNum(),
                 IDENTIFY_VERIFICATION_DURATION);
+        return CodeResponse.builder()
+            .code(verificationCode)
+            .build();
     }
 
     public void checkCode(LoginRequest request) {
