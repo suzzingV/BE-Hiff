@@ -1,6 +1,7 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
 import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
+import hiff.hiff.behiff.domain.user.domain.enums.ConflictResolution;
 import hiff.hiff.behiff.domain.user.domain.enums.ContactFrequency;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
@@ -116,6 +117,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private ContactFrequency contactFrequency;
+
+    @Enumerated(EnumType.STRING)
+    private ConflictResolution conflictResolution;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -242,5 +246,9 @@ public class User implements UserDetails {
 
     public void changeContactFrequency(ContactFrequency contactFrequency) {
         this.contactFrequency = contactFrequency;
+    }
+
+    public void changeConflictResolution(ConflictResolution conflictResolution) {
+        this.conflictResolution = conflictResolution;
     }
 }

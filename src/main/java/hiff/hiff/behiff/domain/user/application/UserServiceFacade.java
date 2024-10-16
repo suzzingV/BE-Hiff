@@ -293,4 +293,10 @@ public class UserServiceFacade {
         userProfileService.updateContactFrequency(user, request.getContactFrequency());
         return UserUpdateResponse.from(user.getId());
     }
+
+    public UserUpdateResponse updateConflictResolution(Long userId, ConflictResolutionRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateConflictResolution(user, request.getConflictResolution());
+        return UserUpdateResponse.from(user.getId());
+    }
 }
