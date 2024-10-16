@@ -12,14 +12,17 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.IdeologyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.FashionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.QuestionResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -170,6 +173,20 @@ public class UserControllerV02 {
     @PatchMapping("/fashion")
     public ResponseEntity<UserUpdateResponse> updateFashion(@AuthenticationPrincipal User user, @RequestBody @Valid FashionRequest request) {
         UserUpdateResponse response = userServiceFacade.updateFashion(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "자기소개 질문 목록 조회",
+        description = "자기소개 질문 목록을 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "자기소개 질문 목록 조회에 성공하였습니다."
+    )
+    @GetMapping("/question/list")
+    public ResponseEntity<List<QuestionResponse>> getQuestionList(@AuthenticationPrincipal User user) {
+        List<QuestionResponse> response = userServiceFacade.getQuestionList();
         return ResponseEntity.ok(response);
     }
 }

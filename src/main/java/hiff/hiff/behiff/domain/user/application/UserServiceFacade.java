@@ -42,6 +42,7 @@ public class UserServiceFacade {
     private final UserCRUDService userCRUDService;
     private final UserPosService userPosService;
     private final UserFashionService userFashionService;
+    private final UserQuestionService userQuestionService;
     private final HiffMatchingService hiffMatchingService;
     private final SimilarityFactory similarityFactory;
     private final RedisService redisService;
@@ -318,5 +319,15 @@ public class UserServiceFacade {
         userCRUDService.findById(userId);
         userFashionService.updateFashion(userId, request.getFashions());
         return UserUpdateResponse.from(userId);
+    }
+
+    public List<QuestionResponse> getQuestionList() {
+        return userQuestionService.getAllQuestions()
+            .stream().map(question ->
+                QuestionResponse.builder()
+                    .id(question.getId())
+                    .question(question.getQuestion())
+                    .build())
+            .toList();
     }
 }
