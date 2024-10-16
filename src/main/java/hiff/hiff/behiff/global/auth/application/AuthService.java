@@ -57,14 +57,14 @@ public class AuthService {
             .map(user -> {
                 user.updateAge();
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                UserInfoResponse userInfo = userServiceFacade.getMyInfo(user.getId());
+                UserInfoResponse userInfo = userServiceFacade.getUserInfo(user.getId());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
             })
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, request.getPhoneNum(),
                     request.getLatitude(), request.getLongitude());
                 generateTokenContainer(newUser.getId());
-                UserInfoResponse userInfo = userServiceFacade.getMyInfo(newUser.getId());
+                UserInfoResponse userInfo = userServiceFacade.getUserInfo(newUser.getId());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
             });
     }

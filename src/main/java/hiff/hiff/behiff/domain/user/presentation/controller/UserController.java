@@ -4,7 +4,6 @@ import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
-import hiff.hiff.behiff.global.common.sms.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserServiceFacade userServiceFacade;
-    private final EmailService emailService;
 
     @Operation(
         summary = "직업 목록 조회",
@@ -85,7 +83,7 @@ public class UserController {
     )
     @GetMapping("/me")
     public ResponseEntity<UserInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
-        UserInfoResponse response = userServiceFacade.getMyInfo(user.getId());
+        UserInfoResponse response = userServiceFacade.getUserInfo(user.getId());
         return ResponseEntity.ok(response);
     }
 
