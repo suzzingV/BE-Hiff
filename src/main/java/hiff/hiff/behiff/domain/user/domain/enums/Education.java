@@ -16,7 +16,7 @@ public enum Education {
     MASTER_DEGREE("석사"),
     DOCTOR_DEGREE("박사");
 
-    private final String key;
+    private final String text;
 
     public static final Set<Education> ALL_VALUES = EnumSet.allOf(Education.class);
 }

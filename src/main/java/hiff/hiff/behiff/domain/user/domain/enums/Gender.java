@@ -11,7 +11,7 @@ public enum Gender {
 
     MALE("남"), FEMALE("여");
 
-    private final String key;
+    private final String text;
 
     public static final Set<Gender> ALL_VALUES = EnumSet.allOf(Gender.class);
 }
