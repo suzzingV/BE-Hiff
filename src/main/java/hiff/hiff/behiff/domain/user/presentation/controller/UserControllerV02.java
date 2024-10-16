@@ -11,6 +11,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.HeightRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IdeologyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.FashionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -155,6 +156,20 @@ public class UserControllerV02 {
     @PatchMapping("/body-type")
     public ResponseEntity<UserUpdateResponse> updateBodyType(@AuthenticationPrincipal User user, @RequestBody @Valid BodyTypeRequest request) {
         UserUpdateResponse response = userServiceFacade.updateBodyType(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 패션 갱신",
+        description = "user 패션을 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 패션 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/fashion")
+    public ResponseEntity<UserUpdateResponse> updateFashion(@AuthenticationPrincipal User user, @RequestBody @Valid FashionRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateFashion(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

@@ -2,16 +2,8 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
-import hiff.hiff.behiff.domain.user.domain.enums.BodyType;
-import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
-import hiff.hiff.behiff.domain.user.domain.enums.ConflictResolution;
-import hiff.hiff.behiff.domain.user.domain.enums.ContactFrequency;
-import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
-import hiff.hiff.behiff.domain.user.domain.enums.Gender;
-import hiff.hiff.behiff.domain.user.domain.enums.Ideology;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
-import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
@@ -53,7 +45,7 @@ public class UserInfoResponse {
 
     private String phoneNum;
 
-    private Gender gender;
+    private String gender;
 
     private Mbti mbti;
 
@@ -75,25 +67,27 @@ public class UserInfoResponse {
 
     private Boolean isSmoking;
 
-    private Drinking isDrinking;
+    private String drinking;
 
-    private Buddy buddy;
+    private String buddy;
 
-    private Religion religion;
+    private String religion;
 
-    private Ideology ideology;
+    private String ideology;
 
-    private ContactFrequency contactFrequency;
+    private String contactFrequency;
 
-    private ConflictResolution conflictResolution;
+    private String conflictResolution;
 
     private Integer height;
 
-    private BodyType bodyType;
+    private String bodyType;
+
+    private List<String> fashions;
 
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
-        List<String> lifeStyles, WeightValue weightValue) {
+        List<String> lifeStyles, WeightValue weightValue, List<String> fashions) {
         return UserInfoResponse.builder()
             .userId(user.getId())
             .nickname(user.getNickname())
@@ -111,7 +105,7 @@ public class UserInfoResponse {
             .appearanceWeight(weightValue.getAppearance())
             .mbtiWeight(weightValue.getMbti())
             .phoneNum(user.getPhoneNum())
-            .gender(user.getGender())
+            .gender(user.getGenderText())
             .mbti(user.getMbti())
 //            .income(user.getIncome())
             .education(user.getEducation())
@@ -122,14 +116,15 @@ public class UserInfoResponse {
             .heart(user.getHeart())
             .appearanceScore(user.getEvaluatedScore())
             .isSmoking(user.getIsSmoking())
-            .isDrinking(user.getIsDrinking())
-            .buddy(user.getBuddy())
-            .religion(user.getReligion())
-            .ideology(user.getIdeology())
-            .contactFrequency(user.getContactFrequency())
-            .conflictResolution(user.getConflictResolution())
+            .drinking(user.getDrinkingText())
+            .buddy(user.getBuddyText())
+            .religion(user.getReligionText())
+            .ideology(user.getIdeologyText())
+            .contactFrequency(user.getContactFrequencyText())
+            .conflictResolution(user.getConflictResolutionText())
             .height(user.getHeight())
-            .bodyType(user.getBodyType())
+            .bodyType(user.getBodyTypeText())
+            .fashions(fashions)
             .build();
     }
 }

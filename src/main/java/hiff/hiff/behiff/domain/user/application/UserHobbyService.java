@@ -80,8 +80,7 @@ public class UserHobbyService {
     }
 
     private void updateUserHobbies(Long userId, List<Long> originHobbies) {
-        List<UserHobby> oldHobbies = userHobbyRepository.findByUserId(userId);
-        userHobbyRepository.deleteAll(oldHobbies);
+        userHobbyRepository.deleteByUserId(userId);
 
         for (Long hobbyId : originHobbies) {
             Hobby hobby = findHobbyById(hobbyId);

@@ -41,6 +41,7 @@ public class UserServiceFacade {
     private final UserProfileService userProfileService;
     private final UserCRUDService userCRUDService;
     private final UserPosService userPosService;
+    private final UserFashionService userFashionService;
     private final HiffMatchingService hiffMatchingService;
     private final SimilarityFactory similarityFactory;
     private final RedisService redisService;
@@ -215,8 +216,9 @@ public class UserServiceFacade {
         List<String> hobbies = userHobbyService.findNameByUser(userId);
         List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
+        List<String> fashions = userFashionService.findNameByUser(userId);
 
-        return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue);
+        return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue, fashions);
     }
 
     @Transactional(readOnly = true)
@@ -266,7 +268,7 @@ public class UserServiceFacade {
 
     public UserUpdateResponse updateDrinkingStatus(Long userId, DrinkingRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateDrinkingStatus(user, request.getIsDrinking());
+        userProfileService.updateDrinkingStatus(user, request.getDrinking());
         return UserUpdateResponse.from(userId);
     }
 
@@ -310,5 +312,11 @@ public class UserServiceFacade {
         User user = userCRUDService.findById(userId);
         userProfileService.updateBodyType(user, request.getBodyType());
         return UserUpdateResponse.from(user.getId());
+    }
+
+    public UserUpdateResponse updateFashion(Long userId, FashionRequest request) {
+        userCRUDService.findById(userId);
+        userFashionService.updateFashion(userId, request.getFashions());
+        return UserUpdateResponse.from(userId);
     }
 }
