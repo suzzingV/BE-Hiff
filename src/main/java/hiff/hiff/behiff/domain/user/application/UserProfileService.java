@@ -95,8 +95,8 @@ public class UserProfileService {
         user.changeIsSmoking(isSmoking);
     }
 
-    public void updateDrinkingStatus(User user, Drinking isDrinking) {
-        user.changeIsDrinking(isDrinking);
+    public void updateDrinkingStatus(User user, Drinking drinking) {
+        user.changeDrinking(drinking);
     }
 
     public void updateBuddy(User user, Buddy buddy) {

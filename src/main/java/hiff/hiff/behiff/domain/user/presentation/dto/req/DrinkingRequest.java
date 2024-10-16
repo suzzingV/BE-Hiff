@@ -10,5 +10,5 @@ public class DrinkingRequest {
 
     @ValidDrinking
     @NotNull
-    Drinking isDrinking;
+    Drinking drinking;
 }

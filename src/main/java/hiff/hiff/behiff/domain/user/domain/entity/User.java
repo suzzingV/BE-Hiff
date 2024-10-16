@@ -106,7 +106,7 @@ public class User implements UserDetails {
     private Boolean isSmoking;
 
     @Enumerated(EnumType.STRING)
-    private Drinking isDrinking;
+    private Drinking drinking;
 
     private Buddy buddy;
 
@@ -236,8 +236,8 @@ public class User implements UserDetails {
         this.isSmoking = isSmoking;
     }
 
-    public void changeIsDrinking(Drinking isDrinking) {
-        this.isDrinking = isDrinking;
+    public void changeDrinking(Drinking drinking) {
+        this.drinking = drinking;
     }
 
     public void changeBuddy(Buddy buddy) {
@@ -266,5 +266,61 @@ public class User implements UserDetails {
 
     public void changeBodyType(BodyType bodyType) {
         this.bodyType = bodyType;
+    }
+
+    public String getDrinkingText() {
+        if(this.drinking == null) {
+            return null;
+        }
+        return this.drinking.getText();
+    }
+
+    public String getBuddyText() {
+        if(this.buddy == null) {
+            return null;
+        }
+        return this.buddy.getText();
+    }
+
+    public String getReligionText() {
+        if(this.religion == null) {
+            return null;
+        }
+        return this.religion.getText();
+    }
+
+    public String getIdeologyText() {
+        if(this.ideology == null) {
+            return null;
+        }
+        return this.ideology.getText();
+    }
+
+    public String getContactFrequencyText() {
+        if(this.contactFrequency == null) {
+            return null;
+        }
+        return this.contactFrequency.getText();
+    }
+
+    public String getConflictResolutionText() {
+        if(this.conflictResolution == null) {
+            return null;
+        }
+        return this.conflictResolution.getText();
+    }
+
+    public String getBodyTypeText() {
+        if(this.bodyType == null) {
+            return null;
+        }
+        return this.bodyType.getText();
+    }
+
+    public String getGenderText() {
+        if(this.gender == null) {
+            return null;
+        }
+        return this.gender.getText();
     }
 }

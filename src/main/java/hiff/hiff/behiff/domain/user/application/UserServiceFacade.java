@@ -268,7 +268,7 @@ public class UserServiceFacade {
 
     public UserUpdateResponse updateDrinkingStatus(Long userId, DrinkingRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateDrinkingStatus(user, request.getIsDrinking());
+        userProfileService.updateDrinkingStatus(user, request.getDrinking());
         return UserUpdateResponse.from(userId);
     }
 
