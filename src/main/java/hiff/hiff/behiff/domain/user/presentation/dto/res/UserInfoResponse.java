@@ -12,11 +12,9 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MyInfoResponse {
+public class UserInfoResponse {
 
     private Long userId;
-
-//    private String email;
 
     private String nickname;
 
@@ -68,12 +66,11 @@ public class MyInfoResponse {
 
     private Double appearanceScore;
 
-    public static MyInfoResponse of(User user, List<String> hobbies, String mainPhoto,
+    public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
-        return MyInfoResponse.builder()
+        return UserInfoResponse.builder()
             .userId(user.getId())
-//            .email(user.getEmail())
             .nickname(user.getNickname())
             .birth(user.getBirth())
             .age(user.getAge())

@@ -14,7 +14,6 @@ import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +48,6 @@ public class UserServiceFacade {
         User user = userCRUDService.registerUser(role, phoneNum);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), lat, lon);
-        // 처음 가입한 유저 빨리 평가 받을 수 있게
-//        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
-//        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
         return user;
     }
 
@@ -228,7 +224,7 @@ public class UserServiceFacade {
         return userPosService.updatePos(userId, x, y);
     }
 
-    public MyInfoResponse getMyInfo(Long userId) {
+    public UserInfoResponse getMyInfo(Long userId) {
         User user = userCRUDService.findById(userId);
         String mainPhoto = user.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
@@ -236,7 +232,7 @@ public class UserServiceFacade {
         List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
 
-        return MyInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue);
+        return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue);
     }
 
     @Transactional(readOnly = true)

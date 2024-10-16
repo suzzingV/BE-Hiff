@@ -7,6 +7,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
@@ -56,13 +57,15 @@ public class AuthService {
             .map(user -> {
                 user.updateAge();
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                return LoginResponse.of(accessToken, refreshToken, user);
+                UserInfoResponse userInfo = userServiceFacade.getMyInfo(user.getId());
+                return LoginResponse.of(accessToken, refreshToken, userInfo);
             })
             .orElseGet(() -> {
                 User newUser = userServiceFacade.registerUser(Role.USER, request.getPhoneNum(),
                     request.getLatitude(), request.getLongitude());
                 generateTokenContainer(newUser.getId());
-                return LoginResponse.of(accessToken, refreshToken, newUser);
+                UserInfoResponse userInfo = userServiceFacade.getMyInfo(newUser.getId());
+                return LoginResponse.of(accessToken, refreshToken, userInfo);
             });
     }
 

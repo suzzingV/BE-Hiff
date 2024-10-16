@@ -2,23 +2,17 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
-import hiff.hiff.behiff.global.auth.application.AuthService;
-import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.common.sms.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,8 +84,8 @@ public class UserController {
         description = "내 정보 조회에 성공하였습니다."
     )
     @GetMapping("/me")
-    public ResponseEntity<MyInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
-        MyInfoResponse response = userServiceFacade.getMyInfo(user.getId());
+    public ResponseEntity<UserInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
+        UserInfoResponse response = userServiceFacade.getMyInfo(user.getId());
         return ResponseEntity.ok(response);
     }
 
