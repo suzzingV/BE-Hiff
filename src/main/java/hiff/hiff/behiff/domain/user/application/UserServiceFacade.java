@@ -266,8 +266,14 @@ public class UserServiceFacade {
 
     public UserUpdateResponse updateDrinkingStatus(Long userId, DrinkingRequest request) {
         User user = userCRUDService.findById(userId);
-        log.info(request.getIsDrinking() + " ");
         userProfileService.updateDrinkingStatus(user, request.getIsDrinking());
         return UserUpdateResponse.from(userId);
+    }
+
+    public UserUpdateResponse updateBuddy(Long userId, BuddyRequest request) {
+        User user = userCRUDService.findById(userId);
+        log.info(user.getId() + " "+ request.getBuddy());
+        userProfileService.updateBuddy(user, request.getBuddy());
+        return UserUpdateResponse.from(user.getId());
     }
 }
