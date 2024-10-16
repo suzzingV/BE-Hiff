@@ -11,6 +11,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.IdeologyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
@@ -103,6 +104,20 @@ public class UserControllerV02 {
     @PatchMapping("/religion")
     public ResponseEntity<UserUpdateResponse> updateReligion(@AuthenticationPrincipal User user, @RequestBody @Valid ReligionRequest request) {
         UserUpdateResponse response = userServiceFacade.updateReligion(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "종교 갱신",
+        description = "종교를 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "종교 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/ideology")
+    public ResponseEntity<UserUpdateResponse> updateIdeology(@AuthenticationPrincipal User user, @RequestBody @Valid IdeologyRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateIdeology(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

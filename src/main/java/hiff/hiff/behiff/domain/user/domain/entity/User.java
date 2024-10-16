@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
+import hiff.hiff.behiff.domain.user.domain.enums.Ideology;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
@@ -108,6 +109,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Religion religion;
+
+    @Enumerated(EnumType.STRING)
+    private Ideology ideology;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -226,5 +230,9 @@ public class User implements UserDetails {
 
     public void changeReligion(Religion religion) {
         this.religion = religion;
+    }
+
+    public void changeIdeology(Ideology ideology) {
+        this.ideology = ideology;
     }
 }
