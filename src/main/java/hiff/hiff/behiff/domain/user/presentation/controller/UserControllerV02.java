@@ -5,6 +5,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.DrinkingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
@@ -56,8 +57,22 @@ public class UserControllerV02 {
         description = "흡연 여부 갱신에 성공하였습니다."
     )
     @PatchMapping("/smoking")
-    public ResponseEntity<UserUpdateResponse> updateSmokingStatus(@AuthenticationPrincipal User user, SmokingRequest request) {
-        UserUpdateResponse response = userServiceFacade.updateSmokingStatus(user, request);
+    public ResponseEntity<UserUpdateResponse> updateSmokingStatus(@AuthenticationPrincipal User user, @RequestBody @Valid SmokingRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateSmokingStatus(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "음주 여부 갱신",
+        description = "음주 여부를 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "음주 여부 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/drinking")
+    public ResponseEntity<UserUpdateResponse> updateDrinkingStatus(@AuthenticationPrincipal User user, @RequestBody @Valid DrinkingRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateDrinkingStatus(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

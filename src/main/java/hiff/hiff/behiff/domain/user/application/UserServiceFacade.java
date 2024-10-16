@@ -17,6 +17,7 @@ import java.util.List;
 
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,7 @@ import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserServiceFacade {
 
     private final UserHobbyService userHobbyService;
@@ -256,8 +258,16 @@ public class UserServiceFacade {
         return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti(), user.getHopeMinAge(), user.getHopeMaxAge(), user.getMinDistance(), user.getMaxDistance());
     }
 
-    public UserUpdateResponse updateSmokingStatus(User user, SmokingRequest request) {
+    public UserUpdateResponse updateSmokingStatus(Long userId, SmokingRequest request) {
+        User user = userCRUDService.findById(userId);
         userProfileService.updateSmokingStatus(user, request.getIsSmoking());
-        return UserUpdateResponse.from(user.getId());
+        return UserUpdateResponse.from(userId);
+    }
+
+    public UserUpdateResponse updateDrinkingStatus(Long userId, DrinkingRequest request) {
+        User user = userCRUDService.findById(userId);
+        log.info(request.getIsDrinking() + " ");
+        userProfileService.updateDrinkingStatus(user, request.getIsDrinking());
+        return UserUpdateResponse.from(userId);
     }
 }

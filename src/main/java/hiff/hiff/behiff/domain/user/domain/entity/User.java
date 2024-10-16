@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
+import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
@@ -98,6 +99,9 @@ public class User implements UserDetails {
 
     private Boolean isSmoking;
 
+    @Enumerated(EnumType.STRING)
+    private Drinking isDrinking;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -174,7 +178,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.getKey()));
+        return List.of(new SimpleGrantedAuthority(role.getText()));
     }
 
     @Override
@@ -203,5 +207,9 @@ public class User implements UserDetails {
 
     public void changeIsSmoking(Boolean isSmoking) {
         this.isSmoking = isSmoking;
+    }
+
+    public void changeIsDrinking(Drinking isDrinking) {
+        this.isDrinking = isDrinking;
     }
 }

@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
@@ -14,11 +15,13 @@ import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserProfileService {
 
     private final UserRepository userRepository;
@@ -84,6 +87,11 @@ public class UserProfileService {
 
     public void updateSmokingStatus(User user, Boolean isSmoking) {
         user.changeIsSmoking(isSmoking);
+    }
+
+    public void updateDrinkingStatus(User user, Drinking isDrinking) {
+        log.info(user.getId() + " " + isDrinking);
+        user.changeIsDrinking(isDrinking);
     }
 
     public void cacheMbtiSimilarity() {
