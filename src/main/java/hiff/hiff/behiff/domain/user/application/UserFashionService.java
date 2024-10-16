@@ -20,8 +20,6 @@ public class UserFashionService {
     private final UserFashionRepository userFashionRepository;
 
     public void updateFashion(Long userId, List<Fashion> fashions) {
-//        List<UserHobby> oldFashions = userFashionRepository.findByUserId(userId);
-//        userFashionRepository.deleteAll(oldFashions);
         userFashionRepository.deleteByUserId(userId);
 
         for (Fashion fashion : fashions) {

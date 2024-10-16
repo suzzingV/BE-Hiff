@@ -28,10 +28,7 @@ public class UserLifeStyleService {
     public static final String LIFESTYLE_PREFIX = "lifestyle_";
 
     public UserUpdateResponse updateLifeStyle(Long userId, List<Long> lifeStyles) {
-//        List<String> newLifeStyles = request.getNewLifeStyles();
-
         updateUserLifeStyles(userId, lifeStyles);
-//        registerNewLifeStyles(userId, newLifeStyles);
 
         return UserUpdateResponse.from(userId);
     }
@@ -90,8 +87,7 @@ public class UserLifeStyleService {
 //    }
 
     private void updateUserLifeStyles(Long userId, List<Long> originLifeStyles) {
-        List<UserLifeStyle> oldLifeStyles = userLifeStyleRepository.findByUserId(userId);
-        userLifeStyleRepository.deleteAll(oldLifeStyles);
+        userLifeStyleRepository.deleteByUserId(userId);
 
         for (Long lifeStyleId : originLifeStyles) {
             LifeStyle lifeStyle = findLifeStyleById(lifeStyleId);
