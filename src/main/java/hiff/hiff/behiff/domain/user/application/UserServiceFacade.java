@@ -305,4 +305,10 @@ public class UserServiceFacade {
         userProfileService.updateHeight(user, request.getHeight());
         return UserUpdateResponse.from(user.getId());
     }
+
+    public UserUpdateResponse updateBodyType(Long userId, BodyTypeRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateBodyType(user, request.getBodyType());
+        return UserUpdateResponse.from(user.getId());
+    }
 }

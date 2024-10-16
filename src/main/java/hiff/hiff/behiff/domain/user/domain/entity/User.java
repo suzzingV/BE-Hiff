@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
+import hiff.hiff.behiff.domain.user.domain.enums.BodyType;
 import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
 import hiff.hiff.behiff.domain.user.domain.enums.ConflictResolution;
 import hiff.hiff.behiff.domain.user.domain.enums.ContactFrequency;
@@ -124,6 +125,9 @@ public class User implements UserDetails {
     @Min(0)
     @Max(300)
     private Integer height;
+
+    @Enumerated(EnumType.STRING)
+    private BodyType bodyType;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -258,5 +262,9 @@ public class User implements UserDetails {
 
     public void changeHeight(Integer height) {
         this.height = height;
+    }
+
+    public void changeBodyType(BodyType bodyType) {
+        this.bodyType = bodyType;
     }
 }

@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
+import hiff.hiff.behiff.domain.user.domain.enums.BodyType;
 import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
 import hiff.hiff.behiff.domain.user.domain.enums.ConflictResolution;
 import hiff.hiff.behiff.domain.user.domain.enums.ContactFrequency;
@@ -88,6 +89,8 @@ public class UserInfoResponse {
 
     private Integer height;
 
+    private BodyType bodyType;
+
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
@@ -126,6 +129,7 @@ public class UserInfoResponse {
             .contactFrequency(user.getContactFrequency())
             .conflictResolution(user.getConflictResolution())
             .height(user.getHeight())
+            .bodyType(user.getBodyType())
             .build();
     }
 }
