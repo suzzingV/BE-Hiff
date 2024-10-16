@@ -6,6 +6,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ConflictResolutionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ContactFrequencyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DrinkingRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HeightRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IdeologyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
@@ -125,6 +126,20 @@ public class UserControllerV02 {
     @PatchMapping("/conflict-resolution")
     public ResponseEntity<UserUpdateResponse> updateContactFrequency(@AuthenticationPrincipal User user, @RequestBody @Valid ConflictResolutionRequest request) {
         UserUpdateResponse response = userServiceFacade.updateConflictResolution(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "유저 키 갱신",
+        description = "유저 키를 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "유저 키 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/height")
+    public ResponseEntity<UserUpdateResponse> updateHeight(@AuthenticationPrincipal User user, @RequestBody @Valid HeightRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateHeight(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }
