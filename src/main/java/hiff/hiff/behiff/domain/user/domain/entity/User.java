@@ -121,6 +121,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private ConflictResolution conflictResolution;
 
+    @Min(0)
+    @Max(300)
+    private Integer height;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -250,5 +254,9 @@ public class User implements UserDetails {
 
     public void changeConflictResolution(ConflictResolution conflictResolution) {
         this.conflictResolution = conflictResolution;
+    }
+
+    public void changeHeight(Integer height) {
+        this.height = height;
     }
 }

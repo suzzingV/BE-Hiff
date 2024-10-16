@@ -299,4 +299,10 @@ public class UserServiceFacade {
         userProfileService.updateConflictResolution(user, request.getConflictResolution());
         return UserUpdateResponse.from(user.getId());
     }
+
+    public UserUpdateResponse updateHeight(Long userId, HeightRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateHeight(user, request.getHeight());
+        return UserUpdateResponse.from(user.getId());
+    }
 }

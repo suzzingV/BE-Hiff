@@ -144,4 +144,8 @@ public class UserProfileService {
     public void updateConflictResolution(User user, ConflictResolution conflictResolution) {
         user.changeConflictResolution(conflictResolution);
     }
+
+    public void updateHeight(User user, Integer height) {
+        user.changeHeight(height);
+    }
 }

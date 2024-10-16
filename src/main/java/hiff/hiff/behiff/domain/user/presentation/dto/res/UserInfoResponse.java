@@ -86,6 +86,8 @@ public class UserInfoResponse {
 
     private ConflictResolution conflictResolution;
 
+    private Integer height;
+
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
@@ -123,6 +125,7 @@ public class UserInfoResponse {
             .ideology(user.getIdeology())
             .contactFrequency(user.getContactFrequency())
             .conflictResolution(user.getConflictResolution())
+            .height(user.getHeight())
             .build();
     }
 }
