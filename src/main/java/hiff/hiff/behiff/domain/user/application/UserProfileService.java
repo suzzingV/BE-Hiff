@@ -2,7 +2,6 @@ package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
@@ -14,7 +13,6 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -84,8 +82,8 @@ public class UserProfileService {
         user.changeMinDistance(minDistance);
     }
 
-    public Optional<UserPos> findUserPosByUserId(Long userId) {
-        return userPosRepository.findByUserId(userId);
+    public void updateSmokingStatus(User user, Boolean isSmoking) {
+        user.changeIsSmoking(isSmoking);
     }
 
     public void cacheMbtiSimilarity() {

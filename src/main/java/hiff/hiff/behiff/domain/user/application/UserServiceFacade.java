@@ -51,24 +51,6 @@ public class UserServiceFacade {
         return user;
     }
 
-    public UserUpdateResponse registerInfo(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos, UserInfoRequest request) {
-        User user = userCRUDService.findById(userId);
-        WeightValue wv = userWeightValueService.findByUserId(userId);
-        userProfileService.updateNickname(user, request.getNickname());
-        userPhotoService.registerMainPhoto(userId, mainPhoto);
-        userPhotoService.registerPhotos(userId, photos);
-        userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
-        userProfileService.updateGender(user, request.getGender());
-        userProfileService.updateMbti(user, request.getMbti());
-        userHobbyService.updateHobby(userId, request.getOriginHobbies());
-        userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
-        wv.changeWeightValue(request.getAppearanceWV(), request.getHobbyWV(), request.getLifeStyleWV(), request.getMbtiWV());
-        userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
-        userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
-
-        return UserUpdateResponse.from(userId);
-    }
-
     public User findById(Long userId) {
         return userCRUDService.findById(userId);
     }
@@ -224,7 +206,7 @@ public class UserServiceFacade {
         return userPosService.updatePos(userId, x, y);
     }
 
-    public UserInfoResponse getMyInfo(Long userId) {
+    public UserInfoResponse getUserInfo(Long userId) {
         User user = userCRUDService.findById(userId);
         String mainPhoto = user.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
@@ -268,29 +250,14 @@ public class UserServiceFacade {
             .toList();
     }
 
-    public UserEvaluatedScoreResponse getEvaluatedScore(Long userId) {
-        User user = userCRUDService.findById(userId);
-        Double score = userProfileService.getEvaluatedScore(user);
-        return UserEvaluatedScoreResponse.builder()
-            .evaluatedScore(score)
-            .userId(userId)
-            .build();
-    }
-
     public UserWeightValueResponse getWeightValue(Long userId) {
         WeightValue wv = userWeightValueService.findByUserId(userId);
         User user = userCRUDService.findById(userId);
         return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti(), user.getHopeMinAge(), user.getHopeMaxAge(), user.getMinDistance(), user.getMaxDistance());
     }
 
-    public UserIsFilledResponse isFilled(User user) {
-        boolean isFilled = true;
-        if(user.getNickname() == null) {
-            isFilled = false;
-        }
-        return UserIsFilledResponse.builder()
-                .isFilled(isFilled)
-                .userId(user.getId())
-                .build();
+    public UserUpdateResponse updateSmokingStatus(User user, SmokingRequest request) {
+        userProfileService.updateSmokingStatus(user, request.getIsSmoking());
+        return UserUpdateResponse.from(user.getId());
     }
 }

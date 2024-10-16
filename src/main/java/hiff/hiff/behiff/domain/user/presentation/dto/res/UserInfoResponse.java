@@ -66,6 +66,8 @@ public class UserInfoResponse {
 
     private Double appearanceScore;
 
+    private Boolean isSmoking;
+
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
@@ -96,6 +98,7 @@ public class UserInfoResponse {
             .hopeMaxAge(user.getHopeMaxAge())
             .heart(user.getHeart())
             .appearanceScore(user.getEvaluatedScore())
+            .isSmoking(user.getIsSmoking())
             .build();
     }
 }
