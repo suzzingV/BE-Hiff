@@ -3,6 +3,7 @@ package hiff.hiff.behiff.domain.user.application;
 import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
+import hiff.hiff.behiff.domain.user.domain.enums.ConflictResolution;
 import hiff.hiff.behiff.domain.user.domain.enums.ContactFrequency;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
@@ -138,5 +139,9 @@ public class UserProfileService {
 
     public void updateContactFrequency(User user, ContactFrequency contactFrequency) {
         user.changeContactFrequency(contactFrequency);
+    }
+
+    public void updateConflictResolution(User user, ConflictResolution conflictResolution) {
+        user.changeConflictResolution(conflictResolution);
     }
 }
