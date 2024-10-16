@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
+import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
@@ -13,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
@@ -97,6 +97,11 @@ public class User implements UserDetails {
 
     private String mainPhoto;
 
+    private Boolean isSmoking;
+
+    @Enumerated(EnumType.STRING)
+    private Drinking isDrinking;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -109,7 +114,6 @@ public class User implements UserDetails {
         this.role = role;
         this.heart = 0;
         this.evaluatedScore = 0.0;
-//        this.income = Income.PRIVATE;
         this.phoneNum = phoneNum;
     }
 
@@ -174,7 +178,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.getKey()));
+        return List.of(new SimpleGrantedAuthority(role.getText()));
     }
 
     @Override
@@ -199,5 +203,13 @@ public class User implements UserDetails {
 
     public void subtractHeart(Integer amount) {
         this.heart -= amount;
+    }
+
+    public void changeIsSmoking(Boolean isSmoking) {
+        this.isSmoking = isSmoking;
+    }
+
+    public void changeIsDrinking(Drinking isDrinking) {
+        this.isDrinking = isDrinking;
     }
 }

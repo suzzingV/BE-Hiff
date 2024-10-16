@@ -2,23 +2,16 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
-import hiff.hiff.behiff.global.auth.application.AuthService;
-import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
-import hiff.hiff.behiff.global.common.sms.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,25 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserServiceFacade userServiceFacade;
-    private final EmailService emailService;
-
-    @Operation(
-            summary = "User 최초 정보 등록",
-            description = "User의 최초 정보를 등록합니다. 토큰 o"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "User 최초 정보 등록에 성공하였습니다."
-    )
-    @PostMapping("/info")
-    public ResponseEntity<UserUpdateResponse> registerInfo(@AuthenticationPrincipal User user,
-                                                           @Valid @RequestPart(value = "dto")
-                                                           UserInfoRequest request, @RequestPart(value = "main_photo") MultipartFile mainPhoto,
-                                                           @RequestPart(value = "photos") List<MultipartFile> photos) {
-        UserUpdateResponse response = userServiceFacade.registerInfo(user.getId(), mainPhoto, photos, request);
-        emailService.sendSignUpEmail();
-        return ResponseEntity.ok(response);
-    }
 
     @Operation(
         summary = "직업 목록 조회",
@@ -70,6 +44,7 @@ public class UserController {
         return ResponseEntity.ok(responses);
     }
 
+    // TODO: 취미 자동완성?
     @Operation(
         summary = "취미 목록 조회",
         description = "취미 목록을 조회합니다. 토큰 x"
@@ -107,8 +82,8 @@ public class UserController {
         description = "내 정보 조회에 성공하였습니다."
     )
     @GetMapping("/me")
-    public ResponseEntity<MyInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
-        MyInfoResponse response = userServiceFacade.getMyInfo(user.getId());
+    public ResponseEntity<UserInfoResponse> getMyInfo(@AuthenticationPrincipal User user) {
+        UserInfoResponse response = userServiceFacade.getUserInfo(user.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -349,20 +324,6 @@ public class UserController {
     @PatchMapping("/pos")
     public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user, @Valid @RequestBody PosRequest request) {
         UserUpdateResponse response = userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
-            summary = "User 정보 입력 여부 조회",
-            description = "User의 정보 입력 여부를 조회합니다. 토큰 o"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "User 정보 입력 여부 조회에 성공하였습니다."
-    )
-    @GetMapping("/info-check")
-    public ResponseEntity<UserIsFilledResponse> isFilled(@AuthenticationPrincipal User user) {
-        UserIsFilledResponse response = userServiceFacade.isFilled(user);
         return ResponseEntity.ok(response);
     }
 }

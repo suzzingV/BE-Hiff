@@ -37,36 +37,25 @@ public class WeightValue {
 
     @Min(1)
     @Max(5)
-    @Column(nullable = false)
     private Integer appearance;
 
     @Min(1)
     @Max(5)
-    @Column(nullable = false)
     private Integer hobby;
 
     @Min(1)
     @Max(5)
-    @Column(nullable = false)
     private Integer lifeStyle;
 
     @Min(1)
     @Max(5)
-    @Column(nullable = false)
     private Integer mbti;
 
-    @Column(nullable = false)
     private Integer total;
 
     @Builder
     private WeightValue(Long userId) {
         this.userId = userId;
-//        this.income = 3;
-        this.appearance = 3;
-        this.hobby = 3;
-        this.lifeStyle = 3;
-        this.mbti = 3;
-        this.total = 3 * 4;
     }
 
     public void changeWeightValue(Integer appearance, Integer hobby,

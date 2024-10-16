@@ -14,10 +14,10 @@ import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +30,7 @@ import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserServiceFacade {
 
     private final UserHobbyService userHobbyService;
@@ -49,28 +50,7 @@ public class UserServiceFacade {
         User user = userCRUDService.registerUser(role, phoneNum);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), lat, lon);
-        // 처음 가입한 유저 빨리 평가 받을 수 있게
-//        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
-//        evaluationService.addEvaluatedUser(user.getId(), user.getGender());
         return user;
-    }
-
-    public UserUpdateResponse registerInfo(Long userId, MultipartFile mainPhoto, List<MultipartFile> photos, UserInfoRequest request) {
-        User user = userCRUDService.findById(userId);
-        WeightValue wv = userWeightValueService.findByUserId(userId);
-        userProfileService.updateNickname(user, request.getNickname());
-        userPhotoService.registerMainPhoto(userId, mainPhoto);
-        userPhotoService.registerPhotos(userId, photos);
-        userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
-        userProfileService.updateGender(user, request.getGender());
-        userProfileService.updateMbti(user, request.getMbti());
-        userHobbyService.updateHobby(userId, request.getOriginHobbies());
-        userLifeStyleService.updateLifeStyle(userId, request.getOriginLifeStyles());
-        wv.changeWeightValue(request.getAppearanceWV(), request.getHobbyWV(), request.getLifeStyleWV(), request.getMbtiWV());
-        userProfileService.updateDistance(user, request.getMaxDistance(), request.getMinDistance());
-        userProfileService.updateHopeAge(user, request.getMaxAge(), request.getMinAge());
-
-        return UserUpdateResponse.from(userId);
     }
 
     public User findById(Long userId) {
@@ -228,7 +208,7 @@ public class UserServiceFacade {
         return userPosService.updatePos(userId, x, y);
     }
 
-    public MyInfoResponse getMyInfo(Long userId) {
+    public UserInfoResponse getUserInfo(Long userId) {
         User user = userCRUDService.findById(userId);
         String mainPhoto = user.getMainPhoto();
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
@@ -236,7 +216,7 @@ public class UserServiceFacade {
         List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
 
-        return MyInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue);
+        return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue);
     }
 
     @Transactional(readOnly = true)
@@ -272,29 +252,22 @@ public class UserServiceFacade {
             .toList();
     }
 
-    public UserEvaluatedScoreResponse getEvaluatedScore(Long userId) {
-        User user = userCRUDService.findById(userId);
-        Double score = userProfileService.getEvaluatedScore(user);
-        return UserEvaluatedScoreResponse.builder()
-            .evaluatedScore(score)
-            .userId(userId)
-            .build();
-    }
-
     public UserWeightValueResponse getWeightValue(Long userId) {
         WeightValue wv = userWeightValueService.findByUserId(userId);
         User user = userCRUDService.findById(userId);
         return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti(), user.getHopeMinAge(), user.getHopeMaxAge(), user.getMinDistance(), user.getMaxDistance());
     }
 
-    public UserIsFilledResponse isFilled(User user) {
-        boolean isFilled = true;
-        if(user.getNickname() == null) {
-            isFilled = false;
-        }
-        return UserIsFilledResponse.builder()
-                .isFilled(isFilled)
-                .userId(user.getId())
-                .build();
+    public UserUpdateResponse updateSmokingStatus(Long userId, SmokingRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateSmokingStatus(user, request.getIsSmoking());
+        return UserUpdateResponse.from(userId);
+    }
+
+    public UserUpdateResponse updateDrinkingStatus(Long userId, DrinkingRequest request) {
+        User user = userCRUDService.findById(userId);
+        log.info(request.getIsDrinking() + " ");
+        userProfileService.updateDrinkingStatus(user, request.getIsDrinking());
+        return UserUpdateResponse.from(userId);
     }
 }

@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.global.auth.presentation.dto.res;
 
-import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,13 +10,13 @@ public class LoginResponse {
 
     private String accessToken;
     private String refreshToken;
-    private User user;
+    private UserInfoResponse userInfoResponse;
 
-    public static LoginResponse of(String accessToken, String refreshToken, User user) {
+    public static LoginResponse of(String accessToken, String refreshToken, UserInfoResponse userInfoResponse) {
         return LoginResponse.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
-            .user(user)
+            .userInfoResponse(userInfoResponse)
             .build();
     }
 }
