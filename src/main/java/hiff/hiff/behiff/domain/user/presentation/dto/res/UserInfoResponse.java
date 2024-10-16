@@ -7,6 +7,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
+import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
@@ -74,6 +75,8 @@ public class UserInfoResponse {
 
     private Buddy buddy;
 
+    private Religion religion;
+
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
@@ -107,6 +110,7 @@ public class UserInfoResponse {
             .isSmoking(user.getIsSmoking())
             .isDrinking(user.getIsDrinking())
             .buddy(user.getBuddy())
+            .religion(user.getReligion())
             .build();
     }
 }
