@@ -287,4 +287,10 @@ public class UserServiceFacade {
         userProfileService.updateIdeology(user, request.getIdeology());
         return UserUpdateResponse.from(user.getId());
     }
+
+    public UserUpdateResponse updateContactFrequency(Long userId, ContactFrequencyRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateContactFrequency(user, request.getContactFrequency());
+        return UserUpdateResponse.from(user.getId());
+    }
 }

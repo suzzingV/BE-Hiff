@@ -3,6 +3,7 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
+import hiff.hiff.behiff.domain.user.domain.enums.ContactFrequency;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
@@ -80,6 +81,8 @@ public class UserInfoResponse {
 
     private Ideology ideology;
 
+    private ContactFrequency contactFrequency;
+
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
@@ -115,6 +118,7 @@ public class UserInfoResponse {
             .buddy(user.getBuddy())
             .religion(user.getReligion())
             .ideology(user.getIdeology())
+            .contactFrequency(user.getContactFrequency())
             .build();
     }
 }

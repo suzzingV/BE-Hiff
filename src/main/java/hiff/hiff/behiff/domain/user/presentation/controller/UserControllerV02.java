@@ -5,6 +5,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.ContactFrequencyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DrinkingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
@@ -118,6 +119,20 @@ public class UserControllerV02 {
     @PatchMapping("/ideology")
     public ResponseEntity<UserUpdateResponse> updateIdeology(@AuthenticationPrincipal User user, @RequestBody @Valid IdeologyRequest request) {
         UserUpdateResponse response = userServiceFacade.updateIdeology(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "연인과의 연락 빈도 갱신",
+        description = "연인과의 연락 빈도를 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "연인과의 연락 빈도 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/contact-frequency")
+    public ResponseEntity<UserUpdateResponse> updateContactFrequency(@AuthenticationPrincipal User user, @RequestBody @Valid ContactFrequencyRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateContactFrequency(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }
