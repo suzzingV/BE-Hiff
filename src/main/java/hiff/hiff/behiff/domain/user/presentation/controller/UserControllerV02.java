@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BodyTypeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ConflictResolutionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ContactFrequencyRequest;
@@ -140,6 +141,20 @@ public class UserControllerV02 {
     @PatchMapping("/height")
     public ResponseEntity<UserUpdateResponse> updateHeight(@AuthenticationPrincipal User user, @RequestBody @Valid HeightRequest request) {
         UserUpdateResponse response = userServiceFacade.updateHeight(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 체형 갱신",
+        description = "user 체형을 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 체형 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/body-type")
+    public ResponseEntity<UserUpdateResponse> updateBodyType(@AuthenticationPrincipal User user, @RequestBody @Valid BodyTypeRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateBodyType(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }
