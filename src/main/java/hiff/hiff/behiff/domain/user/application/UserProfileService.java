@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.user.application;
 
 import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
@@ -90,8 +91,11 @@ public class UserProfileService {
     }
 
     public void updateDrinkingStatus(User user, Drinking isDrinking) {
-        log.info(user.getId() + " " + isDrinking);
         user.changeIsDrinking(isDrinking);
+    }
+
+    public void updateBuddy(User user, Buddy buddy) {
+        user.changeBuddy(buddy);
     }
 
     public void cacheMbtiSimilarity() {

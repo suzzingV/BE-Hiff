@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
+import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
@@ -71,6 +72,8 @@ public class UserInfoResponse {
 
     private Drinking isDrinking;
 
+    private Buddy buddy;
+
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue) {
@@ -103,6 +106,7 @@ public class UserInfoResponse {
             .appearanceScore(user.getEvaluatedScore())
             .isSmoking(user.getIsSmoking())
             .isDrinking(user.getIsDrinking())
+            .buddy(user.getBuddy())
             .build();
     }
 }

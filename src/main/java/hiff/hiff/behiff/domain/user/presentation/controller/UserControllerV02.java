@@ -3,6 +3,7 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DrinkingRequest;
@@ -73,6 +74,20 @@ public class UserControllerV02 {
     @PatchMapping("/drinking")
     public ResponseEntity<UserUpdateResponse> updateDrinkingStatus(@AuthenticationPrincipal User user, @RequestBody @Valid DrinkingRequest request) {
         UserUpdateResponse response = userServiceFacade.updateDrinkingStatus(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "친한 이성 수 갱신",
+        description = "친한 이성 수를 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "친한 이성 수에 성공하였습니다."
+    )
+    @PatchMapping("/opposite-buddy")
+    public ResponseEntity<UserUpdateResponse> updateBuddyCount(@AuthenticationPrincipal User user, @RequestBody @Valid BuddyRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateBuddy(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

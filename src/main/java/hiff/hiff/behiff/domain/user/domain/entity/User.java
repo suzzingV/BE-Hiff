@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.user.domain.entity;
 
+import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
@@ -101,6 +102,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Drinking isDrinking;
+
+    @Enumerated(EnumType.STRING)
+    private Buddy buddy;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -211,5 +215,9 @@ public class User implements UserDetails {
 
     public void changeIsDrinking(Drinking isDrinking) {
         this.isDrinking = isDrinking;
+    }
+
+    public void changeBuddy(Buddy buddy) {
+        this.buddy = buddy;
     }
 }
