@@ -15,6 +15,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserPhotoRequest;
@@ -83,11 +84,25 @@ public class UserControllerV02 {
     )
     @ApiResponse(
         responseCode = "200",
-        description = "친한 이성 수에 성공하였습니다."
+        description = "친한 이성 수 갱신에 성공하였습니다."
     )
     @PatchMapping("/opposite-buddy")
     public ResponseEntity<UserUpdateResponse> updateBuddyCount(@AuthenticationPrincipal User user, @RequestBody @Valid BuddyRequest request) {
         UserUpdateResponse response = userServiceFacade.updateBuddy(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "종교 갱신",
+        description = "종교를 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "종교 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/religion")
+    public ResponseEntity<UserUpdateResponse> updateReligion(@AuthenticationPrincipal User user, @RequestBody @Valid ReligionRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateReligion(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

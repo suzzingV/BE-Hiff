@@ -5,6 +5,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
+import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.global.util.DateCalculator;
 import jakarta.persistence.Column;
@@ -103,8 +104,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Drinking isDrinking;
 
-    @Enumerated(EnumType.STRING)
     private Buddy buddy;
+
+    @Enumerated(EnumType.STRING)
+    private Religion religion;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -219,5 +222,9 @@ public class User implements UserDetails {
 
     public void changeBuddy(Buddy buddy) {
         this.buddy = buddy;
+    }
+
+    public void changeReligion(Religion religion) {
+        this.religion = religion;
     }
 }

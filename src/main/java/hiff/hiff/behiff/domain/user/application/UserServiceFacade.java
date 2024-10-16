@@ -272,8 +272,13 @@ public class UserServiceFacade {
 
     public UserUpdateResponse updateBuddy(Long userId, BuddyRequest request) {
         User user = userCRUDService.findById(userId);
-        log.info(user.getId() + " "+ request.getBuddy());
         userProfileService.updateBuddy(user, request.getBuddy());
+        return UserUpdateResponse.from(user.getId());
+    }
+
+    public UserUpdateResponse updateReligion(Long userId, ReligionRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateReligion(user, request.getReligion());
         return UserUpdateResponse.from(user.getId());
     }
 }

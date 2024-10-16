@@ -7,6 +7,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
+import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.MbtiScoreRepository;
@@ -123,5 +124,9 @@ public class UserProfileService {
 
     public Double getEvaluatedScore(User user) {
         return user.getEvaluatedScore();
+    }
+
+    public void updateReligion(User user, Religion religion) {
+        user.changeReligion(religion);
     }
 }
