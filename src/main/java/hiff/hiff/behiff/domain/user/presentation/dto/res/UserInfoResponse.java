@@ -91,9 +91,11 @@ public class UserInfoResponse {
 
     private BodyType bodyType;
 
+    private List<String> fashions;
+
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
-        List<String> lifeStyles, WeightValue weightValue) {
+        List<String> lifeStyles, WeightValue weightValue, List<String> fashions) {
         return UserInfoResponse.builder()
             .userId(user.getId())
             .nickname(user.getNickname())
@@ -130,6 +132,7 @@ public class UserInfoResponse {
             .conflictResolution(user.getConflictResolution())
             .height(user.getHeight())
             .bodyType(user.getBodyType())
+            .fashions(fashions)
             .build();
     }
 }
