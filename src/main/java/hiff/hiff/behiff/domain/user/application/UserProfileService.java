@@ -6,6 +6,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
+import hiff.hiff.behiff.domain.user.domain.enums.Ideology;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import hiff.hiff.behiff.domain.user.exception.UserException;
@@ -128,5 +129,9 @@ public class UserProfileService {
 
     public void updateReligion(User user, Religion religion) {
         user.changeReligion(religion);
+    }
+
+    public void updateIdeology(User user, Ideology ideology) {
+        user.changeIdeology(ideology);
     }
 }

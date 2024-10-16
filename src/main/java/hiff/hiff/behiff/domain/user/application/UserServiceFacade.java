@@ -281,4 +281,10 @@ public class UserServiceFacade {
         userProfileService.updateReligion(user, request.getReligion());
         return UserUpdateResponse.from(user.getId());
     }
+
+    public UserUpdateResponse updateIdeology(Long userId, IdeologyRequest request) {
+        User user = userCRUDService.findById(userId);
+        userProfileService.updateIdeology(user, request.getIdeology());
+        return UserUpdateResponse.from(user.getId());
+    }
 }
