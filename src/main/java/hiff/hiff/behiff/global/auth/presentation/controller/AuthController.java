@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.global.auth.presentation.controller;
 
-import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;

@@ -1,9 +1,9 @@
 package hiff.hiff.behiff.domain.matching.util;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeIntAvg;
-import static hiff.hiff.behiff.domain.user.application.UserHobbyService.HOBBY_PREFIX;
-import static hiff.hiff.behiff.domain.user.application.UserLifeStyleService.LIFESTYLE_PREFIX;
-import static hiff.hiff.behiff.domain.user.application.UserProfileService.MBTI_PREFIX;
+import static hiff.hiff.behiff.domain.user.application.service.UserHobbyService.HOBBY_PREFIX;
+import static hiff.hiff.behiff.domain.user.application.service.UserLifeStyleService.LIFESTYLE_PREFIX;
+import static hiff.hiff.behiff.domain.user.application.service.UserProfileService.MBTI_PREFIX;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;

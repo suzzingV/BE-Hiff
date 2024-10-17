@@ -44,4 +44,8 @@ public class UserIntroduction {
         this.questionId = questionId;
         this.content = content;
     }
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
 }

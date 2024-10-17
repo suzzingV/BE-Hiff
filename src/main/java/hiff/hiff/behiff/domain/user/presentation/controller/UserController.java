@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.domain.user.presentation.controller;
 
-import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
+import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.*;

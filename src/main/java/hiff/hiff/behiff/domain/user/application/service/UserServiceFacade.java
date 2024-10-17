@@ -1,9 +1,10 @@
-package hiff.hiff.behiff.domain.user.application;
+package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
+import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
@@ -42,7 +43,7 @@ public class UserServiceFacade {
     private final UserCRUDService userCRUDService;
     private final UserPosService userPosService;
     private final UserFashionService userFashionService;
-    private final UserQuestionService userQuestionService;
+    private final UserIntroductionService userIntroductionService;
     private final HiffMatchingService hiffMatchingService;
     private final SimilarityFactory similarityFactory;
     private final RedisService redisService;
@@ -218,8 +219,10 @@ public class UserServiceFacade {
         List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
         WeightValue weightValue = userWeightValueService.findByUserId(userId);
         List<String> fashions = userFashionService.findNameByUser(userId);
+        List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(
+            userId);
 
-        return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue, fashions);
+        return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue, fashions, introductions);
     }
 
     @Transactional(readOnly = true)
@@ -322,12 +325,23 @@ public class UserServiceFacade {
     }
 
     public List<QuestionResponse> getQuestionList() {
-        return userQuestionService.getAllQuestions()
+        return userIntroductionService.getAllQuestions()
             .stream().map(question ->
                 QuestionResponse.builder()
                     .id(question.getId())
                     .question(question.getQuestion())
                     .build())
             .toList();
+    }
+
+    public UserUpdateResponse updateIntroduction(Long userId, IntroductionRequest request) {
+        userIntroductionService.updateIntroduction(userId, request.getQuestionId(), request.getContent());
+        return UserUpdateResponse.from(userId);
+    }
+
+    public UserUpdateResponse updateUserQuestion(Long userId, UserQuestionRequest request) {
+        userCRUDService.findById(userId);
+        userIntroductionService.registerUserIntroduction(userId, request);
+        return UserUpdateResponse.from(userId);
     }
 }

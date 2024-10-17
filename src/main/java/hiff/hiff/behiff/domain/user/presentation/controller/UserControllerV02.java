@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.domain.user.presentation.controller;
 
-import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
+import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BodyTypeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
@@ -9,9 +9,11 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.ContactFrequencyRequest
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DrinkingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.HeightRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IdeologyRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.IntroductionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.FashionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.QuestionResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -187,6 +189,34 @@ public class UserControllerV02 {
     @GetMapping("/question/list")
     public ResponseEntity<List<QuestionResponse>> getQuestionList(@AuthenticationPrincipal User user) {
         List<QuestionResponse> response = userServiceFacade.getQuestionList();
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 자기소개 질문 갱신",
+        description = "user 자기소개 질문을 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 자기소개 질문 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/question")
+    public ResponseEntity<UserUpdateResponse> updateUserQuestion(@AuthenticationPrincipal User user, @RequestBody @Valid UserQuestionRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateUserQuestion(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 자기소개 갱신",
+        description = "user 자기소개를 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 자기소개 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/introduction")
+    public ResponseEntity<UserUpdateResponse> updateIntroduction(@AuthenticationPrincipal User user, @RequestBody @Valid IntroductionRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateIntroduction(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

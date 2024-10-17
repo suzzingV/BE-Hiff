@@ -5,22 +5,20 @@ import static hiff.hiff.behiff.global.common.batch.hiff_matching.HiffMatchingBat
 import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 import static hiff.hiff.behiff.global.util.DateCalculator.getTomorrowDate;
 
-import hiff.hiff.behiff.domain.chat.application.ChatService;
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
-import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.HiffMatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
-import hiff.hiff.behiff.domain.user.application.UserCRUDService;
-import hiff.hiff.behiff.domain.user.application.UserHobbyService;
-import hiff.hiff.behiff.domain.user.application.UserLifeStyleService;
-import hiff.hiff.behiff.domain.user.application.UserPhotoService;
-import hiff.hiff.behiff.domain.user.application.UserPosService;
-import hiff.hiff.behiff.domain.user.application.UserWeightValueService;
+import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
+import hiff.hiff.behiff.domain.user.application.service.UserHobbyService;
+import hiff.hiff.behiff.domain.user.application.service.UserLifeStyleService;
+import hiff.hiff.behiff.domain.user.application.service.UserPhotoService;
+import hiff.hiff.behiff.domain.user.application.service.UserPosService;
+import hiff.hiff.behiff.domain.user.application.service.UserWeightValueService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
@@ -30,7 +28,6 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
-import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -40,7 +37,6 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
