@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.user.application;
+package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserFashion;

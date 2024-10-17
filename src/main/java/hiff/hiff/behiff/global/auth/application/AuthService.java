@@ -1,7 +1,7 @@
 package hiff.hiff.behiff.global.auth.application;
 
-import hiff.hiff.behiff.domain.user.application.UserCRUDService;
-import hiff.hiff.behiff.domain.user.application.UserServiceFacade;
+import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
+import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.exception.UserException;
@@ -55,7 +55,9 @@ public class AuthService {
 
         return userRepository.findByPhoneNum(request.getPhoneNum())
             .map(user -> {
-                user.updateAge();
+                if(user.getBirth() != null) {
+                    user.updateAge();
+                }
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
                 UserInfoResponse userInfo = userServiceFacade.getUserInfo(user.getId());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);

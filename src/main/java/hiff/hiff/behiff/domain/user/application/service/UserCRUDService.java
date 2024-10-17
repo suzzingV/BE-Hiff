@@ -1,6 +1,6 @@
-package hiff.hiff.behiff.domain.user.application;
+package hiff.hiff.behiff.domain.user.application.service;
 
-import static hiff.hiff.behiff.domain.user.application.UserPhotoService.PHOTOS_FOLDER_NAME;
+import static hiff.hiff.behiff.domain.user.application.service.UserPhotoService.PHOTOS_FOLDER_NAME;
 
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;

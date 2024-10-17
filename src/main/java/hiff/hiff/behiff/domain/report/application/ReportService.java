@@ -4,7 +4,7 @@ import hiff.hiff.behiff.domain.report.domain.entity.Report;
 import hiff.hiff.behiff.domain.report.infrastructure.ReportRepository;
 import hiff.hiff.behiff.domain.report.presentation.dto.req.ReportRequest;
 import hiff.hiff.behiff.domain.report.presentation.dto.res.ReportResponse;
-import hiff.hiff.behiff.domain.user.application.UserCRUDService;
+import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

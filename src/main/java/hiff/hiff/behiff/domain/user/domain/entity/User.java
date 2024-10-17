@@ -108,6 +108,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Drinking drinking;
 
+    @Enumerated(EnumType.STRING)
     private Buddy buddy;
 
     @Enumerated(EnumType.STRING)
@@ -219,9 +220,7 @@ public class User implements UserDetails {
     }
 
     public void updateAge() {
-        if(this.age != null) {
-            this.age = DateCalculator.calculateAge(this.birth);
-        }
+        this.age = DateCalculator.calculateAge(this.birth);
     }
 
     public void addHeart(Integer amount) {

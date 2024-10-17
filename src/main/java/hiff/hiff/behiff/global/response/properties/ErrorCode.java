@@ -61,6 +61,8 @@ public enum ErrorCode {
     MAIN_PHOTO_NOT_FOUND(NOT_FOUND, "유저의 메인 사진을 찾을 수 없습니다."),
     CHAT_HISTORY_NOT_FOUND(NOT_FOUND, "대화 신청 내역을 찾을 수 없습니다."),
     TOKEN_NOT_FOUND(NOT_FOUND, "auth를 찾을 수 없습니다."),
+    QUESTION_NOT_FOUND(NOT_FOUND, "자기소개 질문을 찾을 수 없습니다."),
+    USER_INTRODUCTION_NOT_FOUND(NOT_FOUND, "user의 자기소개를 찾을 수 없습니다."),
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),

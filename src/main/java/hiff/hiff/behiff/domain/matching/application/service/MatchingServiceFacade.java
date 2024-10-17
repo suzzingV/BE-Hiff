@@ -5,7 +5,7 @@ import hiff.hiff.behiff.domain.matching.presentation.dto.res.HiffMatchingDetailR
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import java.util.List;
 
-import hiff.hiff.behiff.domain.user.application.UserCRUDService;
+import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.global.common.sms.SmsUtil;
 import lombok.RequiredArgsConstructor;
