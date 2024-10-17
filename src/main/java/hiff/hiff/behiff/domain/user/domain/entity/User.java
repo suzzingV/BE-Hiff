@@ -219,9 +219,7 @@ public class User implements UserDetails {
     }
 
     public void updateAge() {
-        if(this.age != null) {
-            this.age = DateCalculator.calculateAge(this.birth);
-        }
+        this.age = DateCalculator.calculateAge(this.birth);
     }
 
     public void addHeart(Integer amount) {

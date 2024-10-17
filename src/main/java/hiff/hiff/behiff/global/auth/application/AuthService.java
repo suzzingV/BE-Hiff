@@ -55,7 +55,9 @@ public class AuthService {
 
         return userRepository.findByPhoneNum(request.getPhoneNum())
             .map(user -> {
-                user.updateAge();
+                if(user.getBirth() != null) {
+                    user.updateAge();
+                }
                 userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
                 UserInfoResponse userInfo = userServiceFacade.getUserInfo(user.getId());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
