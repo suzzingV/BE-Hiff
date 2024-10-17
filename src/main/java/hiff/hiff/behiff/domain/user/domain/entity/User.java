@@ -108,6 +108,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Drinking drinking;
 
+    @Enumerated(EnumType.STRING)
     private Buddy buddy;
 
     @Enumerated(EnumType.STRING)
