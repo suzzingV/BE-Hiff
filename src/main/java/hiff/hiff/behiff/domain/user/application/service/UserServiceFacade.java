@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import static hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.domain.matching.application.service.MatchingService.MATCHING_DURATION;
@@ -60,11 +59,10 @@ public class UserServiceFacade {
         return userCRUDService.findById(userId);
     }
 
-    public UserUpdateResponse updatePhotos(Long userId, MultipartFile mainPhoto,
-        List<MultipartFile> photos, UserPhotoRequest request) {
+    public UserUpdateResponse updatePhotos(Long userId, UserPhotoRequest request) {
         userCRUDService.findById(userId);
-        userPhotoService.registerMainPhoto(userId, mainPhoto);
-        userPhotoService.registerPhotos(userId, photos);
+        userPhotoService.registerMainPhoto(userId, request.getNewMainPhoto());
+        userPhotoService.registerPhotos(userId, request.getNewPhotos());
         userPhotoService.deletePhotos(request.getTrashPhotos());
         return UserUpdateResponse.from(userId);
     }
@@ -343,5 +341,9 @@ public class UserServiceFacade {
         userCRUDService.findById(userId);
         userIntroductionService.registerUserIntroduction(userId, request);
         return UserUpdateResponse.from(userId);
+    }
+
+    public SignedUrlResponse generateSingedUrl(SignedUrlRequest request) {
+        return userPhotoService.generateSingedUrl(request.getMainPhotoName(), request.getPhotoNames());
     }
 }

@@ -11,11 +11,14 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.HeightRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IdeologyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.IntroductionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SignedUrlRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.FashionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.QuestionResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.SignedUrlResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.global.common.gcs.GcsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserControllerV02 {
 
     private final UserServiceFacade userServiceFacade;
+    private final GcsService gcsService;
 
     @Operation(
         summary = "흡연 여부 갱신",
@@ -217,6 +221,20 @@ public class UserControllerV02 {
     @PatchMapping("/introduction")
     public ResponseEntity<UserUpdateResponse> updateIntroduction(@AuthenticationPrincipal User user, @RequestBody @Valid IntroductionRequest request) {
         UserUpdateResponse response = userServiceFacade.updateIntroduction(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "gcs signed URL 조회",
+        description = "gcs signed URL을 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "gcs signed URL 조회에 성공하였습니다."
+    )
+    @GetMapping("/signed-url")
+    public ResponseEntity<SignedUrlResponse> getSignedUrl(@AuthenticationPrincipal User user, @RequestBody @Valid SignedUrlRequest request) {
+        SignedUrlResponse response = userServiceFacade.generateSingedUrl(request);
         return ResponseEntity.ok(response);
     }
 }

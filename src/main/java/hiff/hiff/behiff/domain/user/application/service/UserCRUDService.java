@@ -76,7 +76,7 @@ public class UserCRUDService {
         userLifeStyleRepository.deleteByUserId(user.getId());
         userPosRepository.deleteByUserId(user.getId());
         weightValueRepository.deleteByUserId(user.getId());
-        deletePhotos(user.getId());
+//        deletePhotos(user.getId());
         userRepository.delete(user);
     }
 
@@ -88,12 +88,12 @@ public class UserCRUDService {
         }
     }
 
-    private void deletePhotos(Long userId) {
-        userPhotoRepository.findByUserId(userId)
-            .forEach(userPhoto -> {
-                String photoUrl = userPhoto.getPhotoUrl();
-                gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
-                userPhotoRepository.delete(userPhoto);
-            });
-    }
+//    private void deletePhotos(Long userId) {
+//        userPhotoRepository.findByUserId(userId)
+//            .forEach(userPhoto -> {
+//                String photoUrl = userPhoto.getPhotoUrl();
+//                gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
+//                userPhotoRepository.delete(userPhoto);
+//            });
+//    }
 }

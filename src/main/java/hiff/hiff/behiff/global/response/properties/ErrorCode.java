@@ -35,6 +35,7 @@ public enum ErrorCode {
     FCM_SEND_ERROR(BAD_REQUEST, "FCM에 메시지를 보내는 도중 에러가 발생하였습니다."),
     USER_ALREADY_EXISTS(BAD_REQUEST, "다른 소셜 계정으로 가입된 유저입니다."),
     USER_UNFILLED(BAD_REQUEST, "유저 정보를 등록하지 않은 유저입니다."),
+    IMAGE_STORAGE_DELETE_ERROR(BAD_REQUEST, "gcs에서 이미지를 삭제하는 데 오류가 발생했습니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
@@ -66,7 +67,7 @@ public enum ErrorCode {
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),
-    IMAGE_STORAGE_SAVE_ERROR(INTERNAL_SERVER_ERROR, "스토리지에 사진을 저장하는 도중 에러가 발생하였습니다."),
+    SIGNED_URL_GENERATION_ERROR(INTERNAL_SERVER_ERROR, "스토리지에 사진을 저장하는 도중 에러가 발생하였습니다."),
     FCM_INIT_ERROR(INTERNAL_SERVER_ERROR, "FCM Admin SDK를 초기화하는 도중 오류가 발생하였습니다."),
     FAILED_TO_SEND_EMAIL(INTERNAL_SERVER_ERROR, "이메일 전송에 실패했습니다."),
     KEY_FILE_IOEXCEPTION(INTERNAL_SERVER_ERROR, "키 파일을 읽는 도중 오류가 발생했습니다."),
