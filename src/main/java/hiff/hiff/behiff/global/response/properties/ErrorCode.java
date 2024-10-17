@@ -35,6 +35,7 @@ public enum ErrorCode {
     FCM_SEND_ERROR(BAD_REQUEST, "FCM에 메시지를 보내는 도중 에러가 발생하였습니다."),
     USER_ALREADY_EXISTS(BAD_REQUEST, "다른 소셜 계정으로 가입된 유저입니다."),
     USER_UNFILLED(BAD_REQUEST, "유저 정보를 등록하지 않은 유저입니다."),
+    IMAGE_STORAGE_DELETE_ERROR(BAD_REQUEST, "gcs에서 이미지를 삭제하는 데 오류가 발생했습니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),

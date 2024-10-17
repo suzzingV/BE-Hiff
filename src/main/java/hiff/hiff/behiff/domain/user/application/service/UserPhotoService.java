@@ -26,23 +26,20 @@ public class UserPhotoService {
     public static final String PHOTOS_FOLDER_NAME = "photos";
     private static final int PHOTO_COUNT_LIMIT = 2;
 
-//    public void registerMainPhoto(Long userId, MultipartFile mainPhoto) {
-//        if(mainPhoto.isEmpty()) {
-//            return;
-//        }
-//        String mainPhotoUrl = gcsService.saveImage(mainPhoto, MAIN_PHOTO_FOLDER_NAME);
-//        saveMainPhotoUrl(userId, mainPhotoUrl);
-//    }
+    public void registerMainPhoto(Long userId, String mainPhoto) {
+        if(mainPhoto == null) {
+            return;
+        }
+        saveMainPhotoUrl(userId, mainPhoto);
+    }
 
-//    public void registerPhotos(Long userId, List<MultipartFile> photos) {
-//        for (MultipartFile photo : photos) {
-//            if(photo.getSize() == 0) {
-//                return;
-//            }
-//            String photoUrl = gcsService.saveImage(photo, PHOTOS_FOLDER_NAME);
-//            savePhotoUrl(userId, photoUrl);
-//        }
-//    }
+    public void registerPhotos(Long userId, List<String> photos) {
+        if(photos != null) {
+            for (String photo : photos) {
+                savePhotoUrl(userId, photo);
+            }
+        }
+    }
 
     public List<String> getPhotosOfUser(Long userId) {
         List<UserPhoto> userPhotos = userPhotoRepository.findByUserId(userId);
@@ -52,19 +49,13 @@ public class UserPhotoService {
             .toList();
     }
 
-//    public void deletePhotos(List<String> trashPhotos) {
-//        if (!trashPhotos.isEmpty()) {
-//            trashPhotos
-//                .forEach(photoUrl -> {
-//                    userPhotoRepository.deleteByPhotoUrl(photoUrl);
-//                    gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
-//                });
-//        }
-//    }
-
-    public void checkPhotoQuantity(List<MultipartFile> photos) {
-        if (photos.size() < PHOTO_COUNT_LIMIT) {
-            throw new UserException(ErrorCode.PHOTO_QUANTITY_ERROR);
+    public void deletePhotos(List<String> trashPhotos) {
+        if (!trashPhotos.isEmpty()) {
+            trashPhotos
+                .forEach(photoUrl -> {
+                    userPhotoRepository.deleteByPhotoUrl(photoUrl);
+                    gcsService.deleteImage(photoUrl, PHOTOS_FOLDER_NAME);
+                });
         }
     }
 
@@ -88,9 +79,9 @@ public class UserPhotoService {
             .build();
     }
 
-//    private void saveMainPhotoUrl(Long userId, String mainPhotoUrl) {
-//        User user = userCRUDService.findById(userId);
-//        gcsService.deleteImage(user.getMainPhoto(), MAIN_PHOTO_FOLDER_NAME);
-//        user.updateMainPhoto(mainPhotoUrl);
-//    }
+    private void saveMainPhotoUrl(Long userId, String mainPhotoUrl) {
+        User user = userCRUDService.findById(userId);
+        gcsService.deleteImage(user.getMainPhoto(), MAIN_PHOTO_FOLDER_NAME);
+        user.updateMainPhoto(mainPhotoUrl);
+    }
 }

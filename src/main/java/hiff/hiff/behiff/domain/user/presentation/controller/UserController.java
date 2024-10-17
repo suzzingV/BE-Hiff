@@ -87,22 +87,19 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-//    @Operation(
-//        summary = "User 사진 업데이트",
-//        description = "User의 사진을 업데이트합니다. 토큰 o"
-//    )
-//    @ApiResponse(
-//        responseCode = "200",
-//        description = "User 사진 업데이트에 성공하였습니다."
-//    )
-//    @PostMapping("/photo")
-//    public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user,
-//        @RequestPart(value = "main_photo") MultipartFile mainPhoto,
-//        @RequestPart(value = "photos") List<MultipartFile> photos,
-//        @RequestPart(value = "dto") UserPhotoRequest request) {
-//        UserUpdateResponse response = userServiceFacade.updatePhotos(user.getId(), mainPhoto, photos, request);
-//        return ResponseEntity.ok(response);
-//    }
+    @Operation(
+        summary = "User 사진 업데이트",
+        description = "User의 사진을 업데이트합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "User 사진 업데이트에 성공하였습니다."
+    )
+    @PostMapping("/photo")
+    public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user, @RequestBody UserPhotoRequest request) {
+        UserUpdateResponse response = userServiceFacade.updatePhotos(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(
         summary = "User 닉네임 업데이트",
