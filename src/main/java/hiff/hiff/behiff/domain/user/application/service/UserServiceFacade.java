@@ -60,14 +60,14 @@ public class UserServiceFacade {
         return userCRUDService.findById(userId);
     }
 
-    public UserUpdateResponse updatePhotos(Long userId, MultipartFile mainPhoto,
-        List<MultipartFile> photos, UserPhotoRequest request) {
-        userCRUDService.findById(userId);
-        userPhotoService.registerMainPhoto(userId, mainPhoto);
-        userPhotoService.registerPhotos(userId, photos);
-        userPhotoService.deletePhotos(request.getTrashPhotos());
-        return UserUpdateResponse.from(userId);
-    }
+//    public UserUpdateResponse updatePhotos(Long userId, MultipartFile mainPhoto,
+//        List<MultipartFile> photos, UserPhotoRequest request) {
+//        userCRUDService.findById(userId);
+//        userPhotoService.registerMainPhoto(userId, mainPhoto);
+//        userPhotoService.registerPhotos(userId, photos);
+//        userPhotoService.deletePhotos(request.getTrashPhotos());
+//        return UserUpdateResponse.from(userId);
+//    }
 
     public UserUpdateResponse updateNickname(Long userId, NicknameRequest request) {
         User user = userCRUDService.findById(userId);
@@ -343,5 +343,9 @@ public class UserServiceFacade {
         userCRUDService.findById(userId);
         userIntroductionService.registerUserIntroduction(userId, request);
         return UserUpdateResponse.from(userId);
+    }
+
+    public SignedUrlResponse generateSingedUrl(SignedUrlRequest request) {
+        return userPhotoService.generateSingedUrl(request.getMainPhotoName(), request.getPhotoNames());
     }
 }
