@@ -13,7 +13,7 @@ public class UserCareerRequest {
     private Company company;
 
     @NotNull
-    private Long fieldId;
+    private String field;
 
     private String verification;
 }

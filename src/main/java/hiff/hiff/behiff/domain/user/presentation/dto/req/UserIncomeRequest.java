@@ -3,9 +3,9 @@ package hiff.hiff.behiff.domain.user.presentation.dto.req;
 import lombok.Getter;
 
 @Getter
-public class UserSchoolRequest {
+public class UserIncomeRequest {
 
-    private String name;
+    private Integer income;
 
     private String verification;
 }

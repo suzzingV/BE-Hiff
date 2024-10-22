@@ -3,6 +3,9 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserCareer;
+import hiff.hiff.behiff.domain.user.domain.entity.UserGrad;
+import hiff.hiff.behiff.domain.user.domain.entity.UserIncome;
+import hiff.hiff.behiff.domain.user.domain.entity.UserUniversity;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
@@ -83,12 +86,18 @@ public class UserInfoResponse {
 
     private List<UserIntroductionDto> introductions;
 
-    private UserCareer career;
+    private String career;
+
+    private String university;
+
+    private String grad;
+
+    private Integer income;
 
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue, List<String> fashions,
-        List<UserIntroductionDto> introductions, UserCareer career) {
+        List<UserIntroductionDto> introductions, String field, String university, String grad, Integer income) {
         return UserInfoResponse.builder()
             .userId(user.getId())
             .nickname(user.getNickname())
@@ -124,7 +133,10 @@ public class UserInfoResponse {
             .bodyType(user.getBodyTypeText())
             .fashions(fashions)
             .introductions(introductions)
-            .career(career)
+            .career(field)
+            .university(university)
+            .grad(grad)
+            .income(income)
             .build();
     }
 }

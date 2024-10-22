@@ -15,6 +15,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SignedUrlRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserCareerRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserIncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserSchoolRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.SignedUrlResponse;
@@ -280,6 +281,36 @@ public class UserControllerV02 {
     public ResponseEntity<UserUpdateResponse> updateGrad(@AuthenticationPrincipal User user,
         @RequestBody @Valid UserSchoolRequest request) {
         UserUpdateResponse response = userServiceFacade.createGrad(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 소득 등록",
+        description = "user 소득을 등록합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 소득 등록에 성공하였습니다."
+    )
+    @PostMapping ("/income")
+    public ResponseEntity<UserUpdateResponse> updateIncome(@AuthenticationPrincipal User user,
+        @RequestBody @Valid UserIncomeRequest request) {
+        UserUpdateResponse response = userServiceFacade.createIncome(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 직업 등록",
+        description = "user 직업을 등록합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 직업 등록에 성공하였습니다."
+    )
+    @PostMapping ("/career")
+    public ResponseEntity<UserUpdateResponse> registerCareer(@AuthenticationPrincipal User user,
+        @RequestBody @Valid UserCareerRequest request) {
+        UserUpdateResponse response = userServiceFacade.createCareer(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

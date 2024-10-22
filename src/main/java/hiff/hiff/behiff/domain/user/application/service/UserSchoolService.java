@@ -18,29 +18,31 @@ public class UserSchoolService {
     private final UserUniversityRepository userUniversityRepository;
     private final UserGradRepository userGradRepository;
 
-    public void createUniversity(Long userId, String name) {
+    public void createUniversity(Long userId, String name, String verification) {
         UserUniversity userUniversity = UserUniversity.builder()
             .userId(userId)
             .name(name)
+            .verification(verification)
             .build();
         userUniversityRepository.save(userUniversity);
     }
 
     public UserUniversity findByUniversityUserId(Long userId) {
         return userUniversityRepository.findByUserId(userId)
-            .orElseThrow(() -> new UserException(ErrorCode.USER_UNIVERSITY_NOT_FOUND));
+            .orElse(UserUniversity.builder().build());
     }
 
-    public void createGrad(Long userId, String name) {
+    public void createGrad(Long userId, String name, String verification) {
         UserGrad userGrad = UserGrad.builder()
             .userId(userId)
             .name(name)
+            .verification(verification)
             .build();
         userGradRepository.save(userGrad);
     }
 
     public UserGrad findByGradUserId(Long userId) {
         return userGradRepository.findByUserId(userId)
-            .orElseThrow(() -> new UserException(ErrorCode.USER_GRAD_NOT_FOUND));
+            .orElse(UserGrad.builder().build());
     }
 }

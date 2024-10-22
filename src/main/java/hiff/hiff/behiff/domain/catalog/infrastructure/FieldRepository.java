@@ -11,7 +11,7 @@ public interface FieldRepository extends JpaRepository<Field, Long> {
 
     Optional<Field> findByName(String careerName);
 
-    @Query("select c from Field c order by c.count desc")
+    @Query("select f from Field f order by f.count desc")
     @NonNull
     List<Field> findAll();
 }

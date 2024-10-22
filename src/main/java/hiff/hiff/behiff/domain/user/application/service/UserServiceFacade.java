@@ -12,8 +12,11 @@ import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
 import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserCareer;
+import hiff.hiff.behiff.domain.user.domain.entity.UserGrad;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
+import hiff.hiff.behiff.domain.user.domain.entity.UserIncome;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
+import hiff.hiff.behiff.domain.user.domain.entity.UserUniversity;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.infrastructure.UserUniversityRepository;
@@ -40,6 +43,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SignedUrlRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserCareerRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserIncomeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserPhotoRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserSchoolRequest;
@@ -73,6 +77,7 @@ public class UserServiceFacade {
     private final UserFashionService userFashionService;
     private final UserIntroductionService userIntroductionService;
     private final UserSchoolService userSchoolService;
+    private final UserIncomeService userIncomeService;
     private final HiffMatchingService hiffMatchingService;
     private final SimilarityFactory similarityFactory;
     private final RedisService redisService;
@@ -82,7 +87,6 @@ public class UserServiceFacade {
         User user = userCRUDService.registerUser(role, phoneNum);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), lat, lon);
-        userCareerService.createCareer(user.getId());
         return user;
     }
 
@@ -143,7 +147,7 @@ public class UserServiceFacade {
 
     public UserUpdateResponse updateCareer(Long userId, UserCareerRequest request) {
         userCRUDService.findById(userId);
-        userCareerService.updateCareer(userId, request.getFieldId(), request.getCompany(), request.getVerification());
+        userCareerService.updateCareer(userId, request.getField(), request.getCompany(), request.getVerification());
         return UserUpdateResponse.from(userId);
     }
 
@@ -243,9 +247,12 @@ public class UserServiceFacade {
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(
             userId);
         UserCareer userCareer = userCareerService.findByUserId(userId);
+        UserUniversity userUniversity = userSchoolService.findByUniversityUserId(userId);
+        UserGrad userGrad = userSchoolService.findByGradUserId(userId);
+        UserIncome userIncome = userIncomeService.findByUserId(userId);
 
         return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue,
-            fashions, introductions, userCareer);
+            fashions, introductions, userCareer.getField(), userUniversity.getName(), userGrad.getName(), userIncome.getIncome());
     }
 
     public UserWeightValueResponse getWeightValue(Long userId) {
@@ -335,12 +342,22 @@ public class UserServiceFacade {
     }
 
     public UserUpdateResponse createUniversity(Long userId, UserSchoolRequest request) {
-        userSchoolService.createUniversity(userId, request.getName());
+        userSchoolService.createUniversity(userId, request.getName(), request.getVerification());
         return UserUpdateResponse.from(userId);
     }
 
     public UserUpdateResponse createGrad(Long userId, UserSchoolRequest request) {
-        userSchoolService.createGrad(userId, request.getName());
+        userSchoolService.createGrad(userId, request.getName(), request.getVerification());
+        return UserUpdateResponse.from(userId);
+    }
+
+    public UserUpdateResponse createIncome(Long userId, UserIncomeRequest request) {
+        userIncomeService.createIncome(userId, request.getIncome(), request.getVerification());
+        return UserUpdateResponse.from(userId);
+    }
+
+    public UserUpdateResponse createCareer(Long userId, UserCareerRequest request) {
+        userCareerService.createCareer(userId, request.getCompany(), request.getField(), request.getVerification());
         return UserUpdateResponse.from(userId);
     }
 }

@@ -26,4 +26,9 @@ public class CatalogFieldService {
     public List<Field> getAllFields() {
         return fieldRepository.findAll();
     }
+
+    public Field findByName(String field) {
+        return fieldRepository.findByName(field)
+            .orElseThrow(() -> new CatalogException(ErrorCode.FIELD_NOT_FOUND));
+    }
 }

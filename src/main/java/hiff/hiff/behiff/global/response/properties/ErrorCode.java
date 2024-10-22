@@ -66,6 +66,7 @@ public enum ErrorCode {
     USER_CAREER_NOT_FOUND(NOT_FOUND, "user의 직장 정보를 찾을 수 없습니다."),
     USER_UNIVERSITY_NOT_FOUND(NOT_FOUND, "user의 대학교를 찾을 수 없습니다."),
     USER_GRAD_NOT_FOUND(NOT_FOUND, "user의 대학원을 찾을 수 없습니다."),
+    USER_INCOME_NOT_FOUND(NOT_FOUND, "user의 소득 정보를 찾을 수 없습니다."),
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),
