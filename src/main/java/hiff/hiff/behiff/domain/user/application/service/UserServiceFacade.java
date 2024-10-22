@@ -1,5 +1,7 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
+import hiff.hiff.behiff.domain.catalog.presentation.dto.res.QuestionResponse;
+import hiff.hiff.behiff.domain.catalog.presentation.dto.res.TagResponse;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
@@ -223,39 +225,6 @@ public class UserServiceFacade {
         return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue, fashions, introductions);
     }
 
-    @Transactional(readOnly = true)
-    public List<TagResponse> getHobbies() {
-        return userHobbyService.getAllHobbies()
-            .stream().map(hobby ->
-                TagResponse.builder()
-                    .id(hobby.getId())
-                    .name(hobby.getName())
-                    .build())
-            .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<TagResponse> getLifeStyles() {
-        return userLifeStyleService.getAllLifeStyles()
-            .stream().map(lifeStyle ->
-                TagResponse.builder()
-                    .id(lifeStyle.getId())
-                    .name(lifeStyle.getName())
-                    .build())
-            .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<TagResponse> getCareers() {
-        return userCareerService.getAllCareers()
-            .stream().map(career ->
-                TagResponse.builder()
-                    .id(career.getId())
-                    .name(career.getName())
-                    .build())
-            .toList();
-    }
-
     public UserWeightValueResponse getWeightValue(Long userId) {
         WeightValue wv = userWeightValueService.findByUserId(userId);
         User user = userCRUDService.findById(userId);
@@ -320,16 +289,6 @@ public class UserServiceFacade {
         userCRUDService.findById(userId);
         userFashionService.updateFashion(userId, request.getFashions());
         return UserUpdateResponse.from(userId);
-    }
-
-    public List<QuestionResponse> getQuestionList() {
-        return userIntroductionService.getAllQuestions()
-            .stream().map(question ->
-                QuestionResponse.builder()
-                    .id(question.getId())
-                    .question(question.getQuestion())
-                    .build())
-            .toList();
     }
 
     public UserUpdateResponse updateIntroduction(Long userId, IntroductionRequest request) {

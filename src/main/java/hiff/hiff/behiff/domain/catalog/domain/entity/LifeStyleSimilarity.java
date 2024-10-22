@@ -1,7 +1,6 @@
-package hiff.hiff.behiff.domain.user.domain.entity;
+package hiff.hiff.behiff.domain.catalog.domain.entity;
 
-import hiff.hiff.behiff.domain.user.domain.compositeKey.HobbySimId;
-import hiff.hiff.behiff.domain.user.domain.compositeKey.LifeStyleSimId;
+import hiff.hiff.behiff.domain.catalog.domain.compositeKey.LifeStyleSimId;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

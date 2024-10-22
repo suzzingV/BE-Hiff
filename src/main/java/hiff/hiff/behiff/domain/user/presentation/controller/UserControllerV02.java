@@ -15,15 +15,12 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.SignedUrlRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.FashionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.QuestionResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.SignedUrlResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
-import hiff.hiff.behiff.global.common.gcs.GcsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserControllerV02 {
 
     private final UserServiceFacade userServiceFacade;
-    private final GcsService gcsService;
 
     @Operation(
         summary = "흡연 여부 갱신",
@@ -179,20 +175,6 @@ public class UserControllerV02 {
     @PatchMapping("/fashion")
     public ResponseEntity<UserUpdateResponse> updateFashion(@AuthenticationPrincipal User user, @RequestBody @Valid FashionRequest request) {
         UserUpdateResponse response = userServiceFacade.updateFashion(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
-        summary = "자기소개 질문 목록 조회",
-        description = "자기소개 질문 목록을 조회합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "자기소개 질문 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/question/list")
-    public ResponseEntity<List<QuestionResponse>> getQuestionList(@AuthenticationPrincipal User user) {
-        List<QuestionResponse> response = userServiceFacade.getQuestionList();
         return ResponseEntity.ok(response);
     }
 

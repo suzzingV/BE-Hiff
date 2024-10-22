@@ -1,5 +1,7 @@
-package hiff.hiff.behiff.domain.user.domain.entity;
+package hiff.hiff.behiff.domain.catalog.domain.entity;
 
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,17 +15,26 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "question_TB")
-public class Question {
+@Table(name = "hobby_TB")
+public class Hobby {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String question;
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private Integer count;
 
     @Builder
-    private Question(String question) {
-        this.question = question;
+    private Hobby(String name) {
+        this.name = name;
+        this.count = 1;
+    }
+
+    public void addCount() {
+        count++;
     }
 }

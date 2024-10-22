@@ -31,49 +31,6 @@ public class UserController {
     private final UserServiceFacade userServiceFacade;
 
     @Operation(
-        summary = "직업 목록 조회",
-        description = "직업 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "직업 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/career/list")
-    public ResponseEntity<List<TagResponse>> getCareers() {
-        List<TagResponse> responses = userServiceFacade.getCareers();
-        return ResponseEntity.ok(responses);
-    }
-
-    // TODO: 취미 자동완성?
-    @Operation(
-        summary = "취미 목록 조회",
-        description = "취미 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "취미 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/hobby/list")
-    public ResponseEntity<List<TagResponse>> getHobbies() {
-        List<TagResponse> responses = userServiceFacade.getHobbies();
-        return ResponseEntity.ok(responses);
-    }
-
-    @Operation(
-        summary = "라이프스타일 목록 조회",
-        description = "라이프스타일 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "라이프스타일 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/life-style/list")
-    public ResponseEntity<List<TagResponse>> getLifeStyles() {
-        List<TagResponse> responses = userServiceFacade.getLifeStyles();
-        return ResponseEntity.ok(responses);
-    }
-
-    @Operation(
         summary = "내 정보 조회",
         description = "내 정보를 조회합니다. 토큰 o"
     )
@@ -164,13 +121,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-//    @PatchMapping("/income")
-//    public ResponseEntity<UserUpdateResponse> updateIncome(@AuthenticationPrincipal User user,
-//        @Valid @RequestBody IncomeRequest request) {
-//        UserUpdateResponse response = userService.updateIncome(user.getId(), request);
-//        return ResponseEntity.ok(response);
-//    }
-
     @Operation(
         summary = "User 학력 업데이트",
         description = "User의 학력을 업데이트합니다. 토큰 o"
@@ -179,7 +129,6 @@ public class UserController {
         responseCode = "200",
         description = "User 학력 업데이트에 성공하였습니다."
     )
-    // TODO: 학교 인증 구현
     @PatchMapping("/education")
     public ResponseEntity<UserUpdateResponse> updateEducation(@AuthenticationPrincipal User user,
         @Valid @RequestBody

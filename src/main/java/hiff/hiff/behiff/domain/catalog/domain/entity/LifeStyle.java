@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.user.domain.entity;
+package hiff.hiff.behiff.domain.catalog.domain.entity;
 
 
 import jakarta.persistence.Column;

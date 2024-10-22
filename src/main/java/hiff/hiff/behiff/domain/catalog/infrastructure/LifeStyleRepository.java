@@ -1,6 +1,6 @@
-package hiff.hiff.behiff.domain.user.infrastructure;
+package hiff.hiff.behiff.domain.catalog.infrastructure;
 
-import hiff.hiff.behiff.domain.user.domain.entity.LifeStyle;
+import hiff.hiff.behiff.domain.catalog.domain.entity.LifeStyle;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

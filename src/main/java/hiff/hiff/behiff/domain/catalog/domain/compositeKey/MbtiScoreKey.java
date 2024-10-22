@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.user.domain.compositeKey;
+package hiff.hiff.behiff.domain.catalog.domain.compositeKey;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

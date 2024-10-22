@@ -14,7 +14,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
-import hiff.hiff.behiff.domain.user.infrastructure.MbtiScoreRepository;
+import hiff.hiff.behiff.domain.catalog.infrastructure.MbtiScoreRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;

@@ -1,8 +1,6 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
-import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserFashion;
-import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.enums.Fashion;
 import hiff.hiff.behiff.domain.user.infrastructure.UserFashionRepository;
 import java.util.List;
