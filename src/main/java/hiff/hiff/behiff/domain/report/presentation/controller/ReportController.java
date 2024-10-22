@@ -20,7 +20,8 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping
-    public ResponseEntity<ReportResponse> report(@AuthenticationPrincipal User user, @RequestBody ReportRequest request) {
+    public ResponseEntity<ReportResponse> report(@AuthenticationPrincipal User user,
+        @RequestBody ReportRequest request) {
         ReportResponse response = reportService.report(user.getId(), request);
 
         return ResponseEntity.ok(response);

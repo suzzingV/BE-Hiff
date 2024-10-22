@@ -1,8 +1,8 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.catalog.application.service.CatalogHobbyService;
-import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.catalog.domain.entity.Hobby;
+import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;

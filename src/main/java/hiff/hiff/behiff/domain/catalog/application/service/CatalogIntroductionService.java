@@ -1,9 +1,9 @@
 package hiff.hiff.behiff.domain.catalog.application.service;
 
-import hiff.hiff.behiff.domain.catalog.exception.CatalogException;
 import hiff.hiff.behiff.domain.catalog.domain.entity.Question;
-import hiff.hiff.behiff.domain.user.domain.entity.UserIntroduction;
+import hiff.hiff.behiff.domain.catalog.exception.CatalogException;
 import hiff.hiff.behiff.domain.catalog.infrastructure.QuestionRepository;
+import hiff.hiff.behiff.domain.user.domain.entity.UserIntroduction;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

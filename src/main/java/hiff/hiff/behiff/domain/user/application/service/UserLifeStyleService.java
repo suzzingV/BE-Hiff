@@ -1,8 +1,8 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.catalog.application.service.CatalogLifeStyleService;
-import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.catalog.domain.entity.LifeStyle;
+import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
@@ -30,7 +30,8 @@ public class UserLifeStyleService {
         return userLifeStyleRepository.findByUserId(userId)
             .stream()
             .map(userLifeStyle -> {
-                LifeStyle lifeStyle = catalogLifeStyleService.findLifeStyleById(userLifeStyle.getLifeStyleId());
+                LifeStyle lifeStyle = catalogLifeStyleService.findLifeStyleById(
+                    userLifeStyle.getLifeStyleId());
                 return lifeStyle.getName();
             })
             .toList();

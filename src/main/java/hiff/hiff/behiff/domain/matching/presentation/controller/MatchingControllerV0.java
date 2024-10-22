@@ -60,12 +60,12 @@ public class MatchingControllerV0 {
     }
 
     @Operation(
-            summary = "매칭 안된 유저 hiff 매칭",
-            description = "매칭 안된 유저를 매칭합니다. 토큰 o"
+        summary = "매칭 안된 유저 hiff 매칭",
+        description = "매칭 안된 유저를 매칭합니다. 토큰 o"
     )
     @ApiResponse(
-            responseCode = "200",
-            description = "매칭 안된 유저 매칭에 성공하였습니다."
+        responseCode = "200",
+        description = "매칭 안된 유저 매칭에 성공하였습니다."
     )
     @PostMapping("/hiff/unmatched")
     public ResponseEntity<Void> matchUnmatched() {

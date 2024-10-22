@@ -2,7 +2,6 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
 import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserIntroduction;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
@@ -91,7 +90,8 @@ public class UserInfoResponse {
 
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
-        List<String> lifeStyles, WeightValue weightValue, List<String> fashions, List<UserIntroductionDto> introductions) {
+        List<String> lifeStyles, WeightValue weightValue, List<String> fashions,
+        List<UserIntroductionDto> introductions) {
         return UserInfoResponse.builder()
             .userId(user.getId())
             .nickname(user.getNickname())

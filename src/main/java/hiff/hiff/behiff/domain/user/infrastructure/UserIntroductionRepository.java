@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.domain.user.infrastructure;
 
 import hiff.hiff.behiff.domain.user.domain.entity.UserIntroduction;
-import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,8 +15,8 @@ public interface UserIntroductionRepository extends JpaRepository<UserIntroducti
     @Modifying
     @Transactional
     @Query("""
-            DELETE FROM UserIntroduction i WHERE i.userId = :userId
-""")
+                    DELETE FROM UserIntroduction i WHERE i.userId = :userId
+        """)
     void deleteByUserIdAndQuestionId(Long userId);
 
     Optional<UserIntroduction> findByUserIdAndQuestionId(Long userId, Long questionId);

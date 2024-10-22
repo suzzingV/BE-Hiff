@@ -1,9 +1,7 @@
 package hiff.hiff.behiff.domain.user.infrastructure;
 
 import hiff.hiff.behiff.domain.user.domain.entity.UserFashion;
-import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +14,7 @@ public interface UserFashionRepository extends JpaRepository<UserFashion, Long> 
     @Modifying
     @Transactional
     @Query("""
-            DELETE FROM UserFashion f WHERE f.userId = :userId
-""")
+                    DELETE FROM UserFashion f WHERE f.userId = :userId
+        """)
     void deleteByUserId(Long userId);
 }

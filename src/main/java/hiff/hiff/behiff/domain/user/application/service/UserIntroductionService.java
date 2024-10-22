@@ -1,8 +1,8 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.catalog.application.service.CatalogIntroductionService;
-import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.catalog.domain.entity.Question;
+import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.user.domain.entity.UserIntroduction;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserIntroductionRepository;
@@ -29,7 +29,7 @@ public class UserIntroductionService {
     }
 
     public List<UserIntroductionDto> findIntroductionByUserId(Long userId) {
-         return userIntroductionRepository.findByUserId(userId)
+        return userIntroductionRepository.findByUserId(userId)
             .stream().map(userIntroduction -> {
                 Question question = catalogIntroductionService.findQuestionById(userIntroduction);
                 return UserIntroductionDto.builder()
@@ -44,7 +44,7 @@ public class UserIntroductionService {
         userIntroductionRepository.findByUserId(userId)
             .forEach(userIntroduction -> {
                 Long questionId = userIntroduction.getQuestionId();
-                if(!questionIds.contains(questionId)) {
+                if (!questionIds.contains(questionId)) {
                     userIntroductionRepository.delete(userIntroduction);
                 } else {
                     questionIds.remove(questionId);

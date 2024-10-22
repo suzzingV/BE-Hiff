@@ -4,12 +4,10 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -38,14 +36,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByGender(Gender gender, Pageable pageable);
 
     @Query("""
-        SELECT u FROM User u
-        WHERE u.evaluatedScore = :score
-""")
+                SELECT u FROM User u
+                WHERE u.evaluatedScore = :score
+        """)
     List<User> findUsersWithoutAppearanceScore(Double score);
 
     @Query("""
-        SELECT u FROM User u
-        WHERE u.phoneNum = :phoneNum
-""")
+                SELECT u FROM User u
+                WHERE u.phoneNum = :phoneNum
+        """)
     Optional<User> findByPhoneNum(String phoneNum);
 }

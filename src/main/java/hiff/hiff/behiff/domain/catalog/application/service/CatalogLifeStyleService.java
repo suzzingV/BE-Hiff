@@ -1,7 +1,7 @@
 package hiff.hiff.behiff.domain.catalog.application.service;
 
-import hiff.hiff.behiff.domain.catalog.exception.CatalogException;
 import hiff.hiff.behiff.domain.catalog.domain.entity.LifeStyle;
+import hiff.hiff.behiff.domain.catalog.exception.CatalogException;
 import hiff.hiff.behiff.domain.catalog.infrastructure.LifeStyleRepository;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;

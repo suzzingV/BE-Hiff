@@ -1,7 +1,10 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
-import hiff.hiff.behiff.domain.catalog.presentation.dto.res.QuestionResponse;
-import hiff.hiff.behiff.domain.catalog.presentation.dto.res.TagResponse;
+import static hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService.HIFF_MATCHING_PREFIX;
+import static hiff.hiff.behiff.domain.matching.application.service.MatchingService.MATCHING_DURATION;
+import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
+import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
+
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
@@ -12,22 +15,43 @@ import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
-
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BodyTypeRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.ConflictResolutionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.ContactFrequencyRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.DrinkingRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.FashionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HeightRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.IdeologyRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.IntroductionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SignedUrlRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserPhotoRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.SignedUrlResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserWeightValueResponse;
+import hiff.hiff.behiff.global.common.redis.RedisService;
 import java.time.Duration;
 import java.util.List;
-
-import hiff.hiff.behiff.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService.HIFF_MATCHING_PREFIX;
-import static hiff.hiff.behiff.domain.matching.application.service.MatchingService.MATCHING_DURATION;
-import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
-import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +101,8 @@ public class UserServiceFacade {
 
     public UserUpdateResponse updateBirth(Long userId, BirthRequest request) {
         User user = userCRUDService.findById(userId);
-        userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(), request.getBirthDay());
+        userProfileService.updateBirth(user, request.getBirthYear(), request.getBirthMonth(),
+            request.getBirthDay());
         return UserUpdateResponse.from(userId);
     }
 
@@ -120,7 +145,7 @@ public class UserServiceFacade {
     public UserUpdateResponse updateCareer(Long userId, CareerRequest request) {
         User user = userCRUDService.findById(userId);
 //        if (request.getCareerId() != null && request.getNewCareerName() == null) {
-            userCareerService.updateOriginCareer(user, request.getCareerId());
+        userCareerService.updateOriginCareer(user, request.getCareerId());
 //        } else if (request.getNewCareerName() != null && request.getCareerId() == null) {
 //            userCareerService.updateNewCareer(user, request.getNewCareerName());
 //        } else {
@@ -147,64 +172,67 @@ public class UserServiceFacade {
 
     public UserUpdateResponse updateWeightValue(Long userId, WeightValueRequest request) {
         User user = userCRUDService.findById(userId);
-        userWeightValueService.updateWeightValue(userId, request.getAppearance(), request.getHobby(), request.getLifeStyle(), request.getMbti());
+        userWeightValueService.updateWeightValue(userId, request.getAppearance(),
+            request.getHobby(), request.getLifeStyle(), request.getMbti());
         List<UserHobby> matcherHobbies = userHobbyService.findByUserId(userId);
         List<UserLifeStyle> matcherLifeStyles = userLifeStyleService.findByUserId(userId);
         WeightValue matcherWV = userWeightValueService.findByUserId(userId);
         List<MatchingSimpleResponse> matchings = hiffMatchingService.getMatchings(userId);
-        if(!matchings.isEmpty()) {
+        if (!matchings.isEmpty()) {
             MatchingSimpleResponse matchedResponse = matchings.get(0);
             User matched = userCRUDService.findById(matchedResponse.getUserId());
-            WeightValue matchedWV = userWeightValueService.findByUserId(matchedResponse.getUserId());
-            List<UserHobby> matchedHobbies = userHobbyService.findByUserId(matchedResponse.getUserId());
+            WeightValue matchedWV = userWeightValueService.findByUserId(
+                matchedResponse.getUserId());
+            List<UserHobby> matchedHobbies = userHobbyService.findByUserId(
+                matchedResponse.getUserId());
             List<UserLifeStyle> matchedLifeStyle = userLifeStyleService.findByUserId(
-                    matchedResponse.getUserId());
+                matchedResponse.getUserId());
             MatchingInfoDto userMatchingInfo = getNewMatchingInfo(user, matched, matcherWV,
-                    matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
+                matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyle);
             MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
-                    matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
+                matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
             String today = getTodayDate();
             cachMatchingScore(userId, matched.getId(), userMatchingInfo,
-                    matchedMatchingInfo.getTotalScoreByMatcher(), today, MATCHING_DURATION);
+                matchedMatchingInfo.getTotalScoreByMatcher(), today, MATCHING_DURATION);
         }
         return UserUpdateResponse.from(userId);
     }
 
     private void cachMatchingScore(Long matcherId, Long matchedId, MatchingInfoDto matchingInfoDto,
-                                   int matchedTotalScore, String date, Duration duration) {
+        int matchedTotalScore, String date, Duration duration) {
 //        String prefix = date + HIFF_MATCHING_PREFIX;
         String key = HIFF_MATCHING_PREFIX + matcherId + "_" + matchedId;
         String value = matchingInfoDto.getTotalScoreByMatcher() + "/" + matchedTotalScore + "/"
-                + matchingInfoDto.getMbtiSimilarity() + "/"
-                + matchingInfoDto.getHobbySimilarity() + "/"
-                + matchingInfoDto.getLifeStyleSimilarity();
+            + matchingInfoDto.getMbtiSimilarity() + "/"
+            + matchingInfoDto.getHobbySimilarity() + "/"
+            + matchingInfoDto.getLifeStyleSimilarity();
         redisService.setValue(key, value, duration);
 
         key = HIFF_MATCHING_PREFIX + matchedId + "_" + matcherId;
         value = matchedTotalScore + "/" + matchingInfoDto.getTotalScoreByMatcher() + "/" +
-                +matchingInfoDto.getMbtiSimilarity() + "/"
-                + matchingInfoDto.getHobbySimilarity() + "/"
-                + matchingInfoDto.getLifeStyleSimilarity();
+            +matchingInfoDto.getMbtiSimilarity() + "/"
+            + matchingInfoDto.getHobbySimilarity() + "/"
+            + matchingInfoDto.getLifeStyleSimilarity();
         redisService.setValue(key, value, duration);
     }
 
     protected MatchingInfoDto getNewMatchingInfo(User matcher, User matched,
-                                                 WeightValue matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
-                                                 List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
+        WeightValue matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
+        List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
         int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcherHobbies, matchedHobbies);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcherLifeStyles,
-                matchedLifeStyles);
+            matchedLifeStyles);
 //        int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
         Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
-                lifeStyleSimilarity, matched.getEvaluatedScore());
+            lifeStyleSimilarity, matched.getEvaluatedScore());
         return MatchingInfoDto.builder()
-                .mbtiSimilarity(mbtiSimilarity)
-                .hobbySimilarity(hobbySimilarity)
-                .lifeStyleSimilarity(lifeStyleSimilarity)
+            .mbtiSimilarity(mbtiSimilarity)
+            .hobbySimilarity(hobbySimilarity)
+            .lifeStyleSimilarity(lifeStyleSimilarity)
 //            .incomeSimilarity(incomeSimilarity)
-                .totalScoreByMatcher(totalScore)
-                .build();
+            .totalScoreByMatcher(totalScore)
+            .build();
     }
 
     public UserUpdateResponse updatePos(Long userId, Double x, Double y) {
@@ -222,13 +250,16 @@ public class UserServiceFacade {
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(
             userId);
 
-        return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue, fashions, introductions);
+        return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue,
+            fashions, introductions);
     }
 
     public UserWeightValueResponse getWeightValue(Long userId) {
         WeightValue wv = userWeightValueService.findByUserId(userId);
         User user = userCRUDService.findById(userId);
-        return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(), wv.getLifeStyle(), wv.getMbti(), user.getHopeMinAge(), user.getHopeMaxAge(), user.getMinDistance(), user.getMaxDistance());
+        return UserWeightValueResponse.of(userId, wv.getAppearance(), wv.getHobby(),
+            wv.getLifeStyle(), wv.getMbti(), user.getHopeMinAge(), user.getHopeMaxAge(),
+            user.getMinDistance(), user.getMaxDistance());
     }
 
     public UserUpdateResponse updateSmokingStatus(Long userId, SmokingRequest request) {
@@ -267,7 +298,8 @@ public class UserServiceFacade {
         return UserUpdateResponse.from(user.getId());
     }
 
-    public UserUpdateResponse updateConflictResolution(Long userId, ConflictResolutionRequest request) {
+    public UserUpdateResponse updateConflictResolution(Long userId,
+        ConflictResolutionRequest request) {
         User user = userCRUDService.findById(userId);
         userProfileService.updateConflictResolution(user, request.getConflictResolution());
         return UserUpdateResponse.from(user.getId());
@@ -292,7 +324,8 @@ public class UserServiceFacade {
     }
 
     public UserUpdateResponse updateIntroduction(Long userId, IntroductionRequest request) {
-        userIntroductionService.updateIntroduction(userId, request.getQuestionId(), request.getContent());
+        userIntroductionService.updateIntroduction(userId, request.getQuestionId(),
+            request.getContent());
         return UserUpdateResponse.from(userId);
     }
 
@@ -303,6 +336,7 @@ public class UserServiceFacade {
     }
 
     public SignedUrlResponse generateSingedUrl(SignedUrlRequest request) {
-        return userPhotoService.generateSingedUrl(request.getMainPhotoName(), request.getPhotoNames());
+        return userPhotoService.generateSingedUrl(request.getMainPhotoName(),
+            request.getPhotoNames());
     }
 }

@@ -1,7 +1,7 @@
 package hiff.hiff.behiff.domain.catalog.application.service;
 
-import hiff.hiff.behiff.domain.catalog.exception.CatalogException;
 import hiff.hiff.behiff.domain.catalog.domain.entity.Hobby;
+import hiff.hiff.behiff.domain.catalog.exception.CatalogException;
 import hiff.hiff.behiff.domain.catalog.infrastructure.HobbyRepository;
 import hiff.hiff.behiff.domain.catalog.infrastructure.HobbySimilarityRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
@@ -35,14 +35,15 @@ public class CatalogHobbyService {
     }
 
     public void cacheHobbySimilarity() {
-        for(long i = 1345L; i <= 1610; i++) {
+        for (long i = 1345L; i <= 1610; i++) {
             hobbySimilarityRepository.findByFromId(i)
                 .forEach(hobbySimilarity -> {
                     Long fromHobbyId = hobbySimilarity.getId().getFromHobbyId();
                     Long toHobbyId = hobbySimilarity.getId().getToHobbyId();
-                    int similarity = (int)Math.round(hobbySimilarity.getSimilarity() * 100);
-                    redisService.setValue(HOBBY_PREFIX + fromHobbyId + "_" + toHobbyId, String.valueOf(
-                        similarity));
+                    int similarity = (int) Math.round(hobbySimilarity.getSimilarity() * 100);
+                    redisService.setValue(HOBBY_PREFIX + fromHobbyId + "_" + toHobbyId,
+                        String.valueOf(
+                            similarity));
                 });
         }
     }

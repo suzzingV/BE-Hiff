@@ -268,56 +268,56 @@ public class User implements UserDetails {
     }
 
     public String getDrinkingText() {
-        if(this.drinking == null) {
+        if (this.drinking == null) {
             return null;
         }
         return this.drinking.getText();
     }
 
     public String getBuddyText() {
-        if(this.buddy == null) {
+        if (this.buddy == null) {
             return null;
         }
         return this.buddy.getText();
     }
 
     public String getReligionText() {
-        if(this.religion == null) {
+        if (this.religion == null) {
             return null;
         }
         return this.religion.getText();
     }
 
     public String getIdeologyText() {
-        if(this.ideology == null) {
+        if (this.ideology == null) {
             return null;
         }
         return this.ideology.getText();
     }
 
     public String getContactFrequencyText() {
-        if(this.contactFrequency == null) {
+        if (this.contactFrequency == null) {
             return null;
         }
         return this.contactFrequency.getText();
     }
 
     public String getConflictResolutionText() {
-        if(this.conflictResolution == null) {
+        if (this.conflictResolution == null) {
             return null;
         }
         return this.conflictResolution.getText();
     }
 
     public String getBodyTypeText() {
-        if(this.bodyType == null) {
+        if (this.bodyType == null) {
             return null;
         }
         return this.bodyType.getText();
     }
 
     public String getGenderText() {
-        if(this.gender == null) {
+        if (this.gender == null) {
             return null;
         }
         return this.gender.getText();

@@ -1,15 +1,16 @@
 package hiff.hiff.behiff.domain.user.presentation.dto.req;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
-import hiff.hiff.behiff.global.validation.annotation.ValidEducation;
 import hiff.hiff.behiff.global.validation.annotation.ValidGender;
 import hiff.hiff.behiff.global.validation.annotation.ValidMbti;
-import jakarta.validation.constraints.*;
-import lombok.Getter;
-
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
+import lombok.Getter;
 
 @Getter
 public class UserInfoRequest {

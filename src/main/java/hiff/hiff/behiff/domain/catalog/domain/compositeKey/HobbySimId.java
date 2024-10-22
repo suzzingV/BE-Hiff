@@ -13,7 +13,8 @@ public class HobbySimId implements Serializable {
 
     private Long toHobbyId;
 
-    public HobbySimId() {}
+    public HobbySimId() {
+    }
 
     public HobbySimId(Long fromHobbyId, Long toHobbyId) {
         this.fromHobbyId = fromHobbyId;
@@ -22,8 +23,12 @@ public class HobbySimId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         HobbySimId hobbySimId = (HobbySimId) o;
         return Objects.equals(fromHobbyId, hobbySimId.fromHobbyId) &&
             Objects.equals(toHobbyId, hobbySimId.toHobbyId);

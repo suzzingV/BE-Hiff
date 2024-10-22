@@ -14,11 +14,10 @@ import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import hiff.hiff.behiff.global.common.sms.SmsUtil;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -39,35 +38,35 @@ public class ChatService {
 //        User matched = userCRUDService.findById(matchedId);
 //        smsUtil.sendProposeMessage(matched.getPhoneNum(), user.getNickname());
         return ChatProposalResponse.builder()
-                .proposedId(matchedId)
-                .proposerId(user.getId())
-                .build();
+            .proposedId(matchedId)
+            .proposerId(user.getId())
+            .build();
     }
 
     public List<ChatProposerResponse> getProposedList(Long userId) {
         return chatHistoryRepository.findByProposedId(userId)
-                .stream().map(chatHistory -> {
-                    User proposer = userCRUDService.findById(chatHistory.getProposerId());
-                    return ChatProposerResponse.builder()
-                            .proposerId(proposer.getId())
-                            .proposerNickname(proposer.getNickname())
-                            .isAccepted(chatHistory.getIsAccepted())
-                            .build();
-                })
-                .toList();
+            .stream().map(chatHistory -> {
+                User proposer = userCRUDService.findById(chatHistory.getProposerId());
+                return ChatProposerResponse.builder()
+                    .proposerId(proposer.getId())
+                    .proposerNickname(proposer.getNickname())
+                    .isAccepted(chatHistory.getIsAccepted())
+                    .build();
+            })
+            .toList();
     }
 
     public List<ChatProposedResponse> getProposalList(Long userId) {
         return chatHistoryRepository.findByProposerId(userId)
-                .stream().map(chatHistory -> {
-                    User proposed = userCRUDService.findById(chatHistory.getProposedId());
-                    return ChatProposedResponse.builder()
-                            .proposedId(proposed.getId())
-                            .proposedNickname(proposed.getNickname())
-                            .isAccepted(chatHistory.getIsAccepted())
-                            .build();
-                })
-                .toList();
+            .stream().map(chatHistory -> {
+                User proposed = userCRUDService.findById(chatHistory.getProposedId());
+                return ChatProposedResponse.builder()
+                    .proposedId(proposed.getId())
+                    .proposedNickname(proposed.getNickname())
+                    .isAccepted(chatHistory.getIsAccepted())
+                    .build();
+            })
+            .toList();
     }
 
     public ChatProposalResponse acceptProposal(Long userId, ChatAcceptanceRequest request) {
@@ -79,26 +78,27 @@ public class ChatService {
         smsUtil.sendAcceptMessage(proposer.getPhoneNum(), user.getNickname(), user.getPhoneNum());
 
         return ChatProposalResponse.builder()
-                .proposerId(proposerId)
-                .proposedId(user.getId()).build();
+            .proposerId(proposerId)
+            .proposedId(user.getId()).build();
     }
 
     private void updateHistory(Long proposerId, Long userId) {
-        ChatHistory chatHistory = chatHistoryRepository.findByProposerIdAndProposedId(proposerId, userId)
-                .orElseThrow(() -> new ChatException(ErrorCode.CHAT_HISTORY_NOT_FOUND));
+        ChatHistory chatHistory = chatHistoryRepository.findByProposerIdAndProposedId(proposerId,
+                userId)
+            .orElseThrow(() -> new ChatException(ErrorCode.CHAT_HISTORY_NOT_FOUND));
         chatHistory.accept();
     }
 
     private void recordChatHistory(User user, Long matchedId) {
         // TODO: 테스트용
-        if(chatHistoryRepository.findByProposerIdAndProposedId(user.getId(), matchedId)
-                .isPresent()) {
+        if (chatHistoryRepository.findByProposerIdAndProposedId(user.getId(), matchedId)
+            .isPresent()) {
             return;
         }
         ChatHistory chatHistory = ChatHistory.builder()
-                .proposerId(user.getId())
-                .proposedId(matchedId)
-                .build();
+            .proposerId(user.getId())
+            .proposedId(matchedId)
+            .build();
         chatHistoryRepository.save(chatHistory);
     }
 }

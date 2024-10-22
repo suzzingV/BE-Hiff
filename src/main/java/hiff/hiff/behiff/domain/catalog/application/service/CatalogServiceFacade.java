@@ -21,7 +21,7 @@ public class CatalogServiceFacade {
 
     public List<TagResponse> getAllHobbies() {
         return catalogHobbyService.getAllHobbies()
-        .stream().map(hobby ->
+            .stream().map(hobby ->
                 TagResponse.builder()
                     .id(hobby.getId())
                     .name(hobby.getName())

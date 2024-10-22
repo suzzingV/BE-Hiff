@@ -1,7 +1,5 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
-import static hiff.hiff.behiff.domain.user.application.service.UserPhotoService.PHOTOS_FOLDER_NAME;
-
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
@@ -22,9 +20,7 @@ import hiff.hiff.behiff.global.common.gcs.GcsService;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -51,7 +47,7 @@ public class UserCRUDService {
 
     public User registerUser(Role role, String phoneNum) {
         User user = User.builder()
-                .phoneNum(phoneNum)
+            .phoneNum(phoneNum)
             .role(role)
             .build();
         return userRepository.save(user);
@@ -81,7 +77,7 @@ public class UserCRUDService {
     }
 
     private void subtractGenderCount(Gender gender) {
-        if(gender != null) {
+        if (gender != null) {
             GenderCount genderCount = genderCountRepository.findById(gender)
                 .orElseThrow(() -> new UserException(ErrorCode.GENDER_COUNT_NOT_FOUND));
             genderCount.subtractCount();

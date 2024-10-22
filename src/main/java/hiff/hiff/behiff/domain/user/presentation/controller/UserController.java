@@ -2,13 +2,27 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserPhotoRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserWeightValueResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,9 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "User", description = "User 관련 API")
 @RestController
@@ -53,7 +65,8 @@ public class UserController {
         description = "User 사진 업데이트에 성공하였습니다."
     )
     @PostMapping("/photo")
-    public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user, @RequestBody UserPhotoRequest request) {
+    public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user,
+        @RequestBody UserPhotoRequest request) {
         UserUpdateResponse response = userServiceFacade.updatePhotos(user.getId(), request);
         return ResponseEntity.ok(response);
     }
@@ -240,36 +253,39 @@ public class UserController {
     )
     @PutMapping("/weight-value")
     public ResponseEntity<UserUpdateResponse> updateWeightValue(@AuthenticationPrincipal User user,
-                                                                @Valid @RequestBody WeightValueRequest request) {
+        @Valid @RequestBody WeightValueRequest request) {
         UserUpdateResponse response = userServiceFacade.updateWeightValue(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
     @Operation(
-            summary = "User 가중치 조회",
-            description = "User의 매칭 가중치를 조회합니다. 토큰 o"
+        summary = "User 가중치 조회",
+        description = "User의 매칭 가중치를 조회합니다. 토큰 o"
     )
     @ApiResponse(
-            responseCode = "200",
-            description = "User 가중치 업데이트에 성공하였습니다."
+        responseCode = "200",
+        description = "User 가중치 업데이트에 성공하였습니다."
     )
     @GetMapping("/weight-value")
-    public ResponseEntity<UserWeightValueResponse> getWeightValue(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserWeightValueResponse> getWeightValue(
+        @AuthenticationPrincipal User user) {
         UserWeightValueResponse response = userServiceFacade.getWeightValue(user.getId());
         return ResponseEntity.ok(response);
     }
 
     @Operation(
-            summary = "User 위치 업데이트",
-            description = "User의 위치를 업데이트합니다. 토큰 o"
+        summary = "User 위치 업데이트",
+        description = "User의 위치를 업데이트합니다. 토큰 o"
     )
     @ApiResponse(
-            responseCode = "200",
-            description = "User 위치 업데이트에 성공하였습니다."
+        responseCode = "200",
+        description = "User 위치 업데이트에 성공하였습니다."
     )
     @PatchMapping("/pos")
-    public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user, @Valid @RequestBody PosRequest request) {
-        UserUpdateResponse response = userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+    public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user,
+        @Valid @RequestBody PosRequest request) {
+        UserUpdateResponse response = userServiceFacade.updatePos(user.getId(),
+            request.getLatitude(), request.getLongitude());
         return ResponseEntity.ok(response);
     }
 }

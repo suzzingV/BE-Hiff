@@ -15,5 +15,6 @@ public enum ConflictResolution {
 
     private final String text;
 
-    public static final Set<ConflictResolution> ALL_VALUES = EnumSet.allOf(ConflictResolution.class);
+    public static final Set<ConflictResolution> ALL_VALUES = EnumSet.allOf(
+        ConflictResolution.class);
 }

@@ -1,10 +1,9 @@
 package hiff.hiff.behiff.domain.catalog.presentation.controller;
 
 import hiff.hiff.behiff.domain.catalog.application.service.CatalogServiceFacade;
-import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.catalog.presentation.dto.res.QuestionResponse;
 import hiff.hiff.behiff.domain.catalog.presentation.dto.res.TagResponse;
+import hiff.hiff.behiff.domain.user.domain.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +32,8 @@ public class CatalogControllerV02 {
         description = "자기소개 질문 목록 조회에 성공하였습니다."
     )
     @GetMapping("/question/list")
-    public ResponseEntity<List<QuestionResponse>> getQuestionList(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<QuestionResponse>> getQuestionList(
+        @AuthenticationPrincipal User user) {
         List<QuestionResponse> response = catalogServiceFacade.getQuestionList();
         return ResponseEntity.ok(response);
     }
