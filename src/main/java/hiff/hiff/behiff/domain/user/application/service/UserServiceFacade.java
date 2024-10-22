@@ -252,7 +252,7 @@ public class UserServiceFacade {
         UserIncome userIncome = userIncomeService.findByUserId(userId);
 
         return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue,
-            fashions, introductions, userCareer.getField(), userUniversity.getName(), userGrad.getName(), userIncome.getIncome());
+            fashions, introductions, userCareer, userUniversity, userGrad, userIncome);
     }
 
     public UserWeightValueResponse getWeightValue(Long userId) {

@@ -86,18 +86,18 @@ public class UserInfoResponse {
 
     private List<UserIntroductionDto> introductions;
 
-    private String career;
+    private UserCareer career;
 
-    private String university;
+    private UserUniversity university;
 
-    private String grad;
+    private UserGrad grad;
 
-    private Integer income;
+    private UserIncome income;
 
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
         List<String> lifeStyles, WeightValue weightValue, List<String> fashions,
-        List<UserIntroductionDto> introductions, String field, String university, String grad, Integer income) {
+        List<UserIntroductionDto> introductions, UserCareer userCareer, UserUniversity userUniversity, UserGrad userGrad, UserIncome userIncome) {
         return UserInfoResponse.builder()
             .userId(user.getId())
             .nickname(user.getNickname())
@@ -133,10 +133,10 @@ public class UserInfoResponse {
             .bodyType(user.getBodyTypeText())
             .fashions(fashions)
             .introductions(introductions)
-            .career(field)
-            .university(university)
-            .grad(grad)
-            .income(income)
+            .career(userCareer)
+            .university(userUniversity)
+            .grad(userGrad)
+            .income(userIncome)
             .build();
     }
 }

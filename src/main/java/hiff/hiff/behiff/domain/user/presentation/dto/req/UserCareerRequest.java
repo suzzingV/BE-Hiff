@@ -8,11 +8,9 @@ import lombok.Getter;
 @Getter
 public class UserCareerRequest {
 
-    @NotNull
     @ValidCompany
     private Company company;
 
-    @NotNull
     private String field;
 
     private String verification;
