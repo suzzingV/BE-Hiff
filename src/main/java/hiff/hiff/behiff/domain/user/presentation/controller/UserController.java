@@ -3,7 +3,6 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
@@ -14,6 +13,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserCareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserPhotoRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
@@ -177,7 +177,7 @@ public class UserController {
     @PatchMapping("/career")
     public ResponseEntity<UserUpdateResponse> updateCareer(@AuthenticationPrincipal User user,
         @Valid @RequestBody
-        CareerRequest request) {
+        UserCareerRequest request) {
         UserUpdateResponse response = userServiceFacade.updateCareer(user.getId(), request);
         return ResponseEntity.ok(response);
     }

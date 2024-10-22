@@ -78,8 +78,6 @@ public class User implements UserDetails {
     @Max(80)
     private Integer age;
 
-    private String career;
-
     @Min(19)
     @Max(50)
     private Integer hopeMinAge;
@@ -163,20 +161,12 @@ public class User implements UserDetails {
         this.mbti = mbti;
     }
 
-//    public void changeIncome(Income income) {
-//        this.income = income;
-//    }
-
     public void changeEducation(Education education) {
         this.education = education;
     }
 
     public void changeSchool(String school) {
         this.school = school;
-    }
-
-    public void changeCareer(String career) {
-        this.career = career;
     }
 
     public void changePhoneNum(String phoneNum) {

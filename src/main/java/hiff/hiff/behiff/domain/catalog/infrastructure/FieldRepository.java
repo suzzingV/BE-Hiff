@@ -1,17 +1,17 @@
 package hiff.hiff.behiff.domain.catalog.infrastructure;
 
-import hiff.hiff.behiff.domain.catalog.domain.entity.Career;
+import hiff.hiff.behiff.domain.catalog.domain.entity.Field;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 
-public interface CareerRepository extends JpaRepository<Career, Long> {
+public interface FieldRepository extends JpaRepository<Field, Long> {
 
-    Optional<Career> findByName(String careerName);
+    Optional<Field> findByName(String careerName);
 
-    @Query("select c from Career c order by c.count desc")
+    @Query("select c from Field c order by c.count desc")
     @NonNull
-    List<Career> findAll();
+    List<Field> findAll();
 }

@@ -17,7 +17,7 @@ public class CatalogServiceFacade {
     private final CatalogHobbyService catalogHobbyService;
     private final CatalogLifeStyleService catalogLifeStyleService;
     private final CatalogIntroductionService catalogIntroductionService;
-    private final CatalogCareerService catalogCareerService;
+    private final CatalogFieldService catalogFieldService;
 
     public List<TagResponse> getAllHobbies() {
         return catalogHobbyService.getAllHobbies()
@@ -51,8 +51,8 @@ public class CatalogServiceFacade {
     }
 
     @Transactional(readOnly = true)
-    public List<TagResponse> getCareers() {
-        return catalogCareerService.getAllCareers()
+    public List<TagResponse> getFields() {
+        return catalogFieldService.getAllFields()
             .stream().map(career ->
                 TagResponse.builder()
                     .id(career.getId())

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "career_TB")
-public class Career {
+public class Field {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Career {
     private Integer count;
 
     @Builder
-    private Career(String name) {
+    private Field(String name) {
         this.name = name;
         this.count = 1;
     }

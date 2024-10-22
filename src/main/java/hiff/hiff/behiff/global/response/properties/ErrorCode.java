@@ -47,11 +47,10 @@ public enum ErrorCode {
 
     // 404
     USER_NOT_FOUND(NOT_FOUND, "user을 찾을 수 없습니다."),
-    CAREER_NOT_FOUND(NOT_FOUND, "직업을 찾을 수 없습니다."),
+    FIELD_NOT_FOUND(NOT_FOUND, "직업을 찾을 수 없습니다."),
     HOBBY_NOT_FOUND(NOT_FOUND, "취미를 찾을 수 없습니다."),
     LIFESTYLE_NOT_FOUND(NOT_FOUND, "라이프스타일을 찾을 수 없습니다."),
     WEIGHT_VALUE_NOT_FOUND(NOT_FOUND, "해당 유저의 가중치 정보를 찾을 수 없습니다."),
-    USER_CAREER_NOT_EXISTS(NOT_FOUND, "user의 직업이 존재하지 않습니다."),
     EVALUATED_USER_NOT_FOUND(NOT_FOUND, "첫인상 평가 대상이 존재하지 않습니다."),
     EVALUATION_NOT_FOUND(NOT_FOUND, "첫인상 평가 대상을 찾을 수 없습니다."),
     USER_POS_NOT_FOUND(NOT_FOUND, "사용자의 위치를 찾을 수 없습니다."),
@@ -64,6 +63,7 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(NOT_FOUND, "auth를 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "자기소개 질문을 찾을 수 없습니다."),
     USER_INTRODUCTION_NOT_FOUND(NOT_FOUND, "user의 자기소개를 찾을 수 없습니다."),
+    USER_CAREER_NOT_FOUND(NOT_FOUND, "user의 직장 정보를 찾을 수 없습니다."),
 
     // 500
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),

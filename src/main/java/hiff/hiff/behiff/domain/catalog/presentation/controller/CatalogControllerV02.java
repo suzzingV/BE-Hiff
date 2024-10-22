@@ -46,9 +46,9 @@ public class CatalogControllerV02 {
         responseCode = "200",
         description = "직업 목록 조회에 성공하였습니다."
     )
-    @GetMapping("/career/list")
-    public ResponseEntity<List<TagResponse>> getCareers() {
-        List<TagResponse> responses = catalogServiceFacade.getCareers();
+    @GetMapping("/field/list")
+    public ResponseEntity<List<TagResponse>> getFields() {
+        List<TagResponse> responses = catalogServiceFacade.getFields();
         return ResponseEntity.ok(responses);
     }
 

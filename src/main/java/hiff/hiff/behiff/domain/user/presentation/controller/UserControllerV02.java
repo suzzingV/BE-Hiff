@@ -14,6 +14,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.IntroductionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SignedUrlRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserCareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.SignedUrlResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
@@ -232,6 +233,21 @@ public class UserControllerV02 {
     public ResponseEntity<SignedUrlResponse> getSignedUrl(@AuthenticationPrincipal User user,
         @RequestBody @Valid SignedUrlRequest request) {
         SignedUrlResponse response = userServiceFacade.generateSingedUrl(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 회사 갱신",
+        description = "user 회사를 갱신합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 회사 갱신에 성공하였습니다."
+    )
+    @PatchMapping("/career")
+    public ResponseEntity<UserUpdateResponse> updateCareer(@AuthenticationPrincipal User user,
+        @RequestBody @Valid UserCareerRequest request) {
+        UserUpdateResponse response = userServiceFacade.updateCareer(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

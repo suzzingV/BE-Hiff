@@ -11,6 +11,7 @@ import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleRespo
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
 import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.UserCareer;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
@@ -18,7 +19,6 @@ import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BodyTypeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.CareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ConflictResolutionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ContactFrequencyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
@@ -38,6 +38,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.ReligionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SignedUrlRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserCareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserPhotoRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
@@ -78,6 +79,7 @@ public class UserServiceFacade {
         User user = userCRUDService.registerUser(role, phoneNum);
         userWeightValueService.createWeightValue(user.getId());
         userPosService.createPos(user.getId(), lat, lon);
+        userCareerService.createCareer(user.getId());
         return user;
     }
 
@@ -118,12 +120,6 @@ public class UserServiceFacade {
         return UserUpdateResponse.from(userId);
     }
 
-//    public UserUpdateResponse updateIncome(Long userId, IncomeRequest request) {
-//        User user = userCRUDService.findById(userId);
-//        userProfileService.updateIncome(user, request);
-//        return UserUpdateResponse.from(userId);
-//    }
-
     public UserUpdateResponse updateEducation(Long userId, EducationRequest request) {
         User user = userCRUDService.findById(userId);
         userProfileService.updateEducation(user, request.getEducation());
@@ -142,15 +138,9 @@ public class UserServiceFacade {
         return UserUpdateResponse.from(userId);
     }
 
-    public UserUpdateResponse updateCareer(Long userId, CareerRequest request) {
-        User user = userCRUDService.findById(userId);
-//        if (request.getCareerId() != null && request.getNewCareerName() == null) {
-        userCareerService.updateOriginCareer(user, request.getCareerId());
-//        } else if (request.getNewCareerName() != null && request.getCareerId() == null) {
-//            userCareerService.updateNewCareer(user, request.getNewCareerName());
-//        } else {
-//            throw new UserException(ErrorCode.CAREER_UPDATE_REQUEST_ERROR);
-//        }
+    public UserUpdateResponse updateCareer(Long userId, UserCareerRequest request) {
+        userCRUDService.findById(userId);
+        userCareerService.updateCareer(userId, request.getFieldId(), request.getCompany(), request.getVerification());
         return UserUpdateResponse.from(userId);
     }
 
@@ -249,9 +239,10 @@ public class UserServiceFacade {
         List<String> fashions = userFashionService.findNameByUser(userId);
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(
             userId);
+        UserCareer userCareer = userCareerService.findByUserId(userId);
 
         return UserInfoResponse.of(user, hobbies, mainPhoto, photos, lifeStyles, weightValue,
-            fashions, introductions);
+            fashions, introductions, userCareer);
     }
 
     public UserWeightValueResponse getWeightValue(Long userId) {
