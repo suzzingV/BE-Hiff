@@ -68,4 +68,13 @@ public class CatalogServiceFacade {
                     .build())
             .toList();
     }
+
+    public List<TagResponse> getAllGrads() {
+        return catalogSchoolService.getAllGrads()
+            .stream().map(grad ->
+                TagResponse.builder()
+                    .name(grad.getName())
+                    .build())
+            .toList();
+    }
 }
