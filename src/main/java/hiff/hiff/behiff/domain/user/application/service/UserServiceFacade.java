@@ -16,6 +16,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
+import hiff.hiff.behiff.domain.user.infrastructure.UserUniversityRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BodyTypeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
@@ -41,6 +42,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserCareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserPhotoRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserSchoolRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.SignedUrlResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
@@ -70,6 +72,7 @@ public class UserServiceFacade {
     private final UserPosService userPosService;
     private final UserFashionService userFashionService;
     private final UserIntroductionService userIntroductionService;
+    private final UserSchoolService userSchoolService;
     private final HiffMatchingService hiffMatchingService;
     private final SimilarityFactory similarityFactory;
     private final RedisService redisService;
@@ -329,5 +332,15 @@ public class UserServiceFacade {
     public SignedUrlResponse generateSingedUrl(SignedUrlRequest request) {
         return userPhotoService.generateSingedUrl(request.getMainPhotoName(),
             request.getPhotoNames());
+    }
+
+    public UserUpdateResponse createUniversity(Long userId, UserSchoolRequest request) {
+        userSchoolService.createUniversity(userId, request.getName());
+        return UserUpdateResponse.from(userId);
+    }
+
+    public UserUpdateResponse createGrad(Long userId, UserSchoolRequest request) {
+        userSchoolService.createGrad(userId, request.getName());
+        return UserUpdateResponse.from(userId);
     }
 }

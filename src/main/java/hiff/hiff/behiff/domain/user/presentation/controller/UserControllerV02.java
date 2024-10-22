@@ -16,6 +16,7 @@ import hiff.hiff.behiff.domain.user.presentation.dto.req.SignedUrlRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.SmokingRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserCareerRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserSchoolRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.SignedUrlResponse;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -248,6 +250,36 @@ public class UserControllerV02 {
     public ResponseEntity<UserUpdateResponse> updateCareer(@AuthenticationPrincipal User user,
         @RequestBody @Valid UserCareerRequest request) {
         UserUpdateResponse response = userServiceFacade.updateCareer(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 대학교 등록",
+        description = "user 대학교를 등록합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 대학교 등록에 성공하였습니다."
+    )
+    @PostMapping ("/university")
+    public ResponseEntity<UserUpdateResponse> updateCareer(@AuthenticationPrincipal User user,
+        @RequestBody @Valid UserSchoolRequest request) {
+        UserUpdateResponse response = userServiceFacade.createUniversity(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "user 대학원 등록",
+        description = "user 대학원을 등록합니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "user 대학원 등록에 성공하였습니다."
+    )
+    @PostMapping ("/grad")
+    public ResponseEntity<UserUpdateResponse> updateGrad(@AuthenticationPrincipal User user,
+        @RequestBody @Valid UserSchoolRequest request) {
+        UserUpdateResponse response = userServiceFacade.createGrad(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }
