@@ -79,4 +79,18 @@ public class CatalogControllerV02 {
         List<TagResponse> responses = catalogServiceFacade.getAllLifeStyles();
         return ResponseEntity.ok(responses);
     }
+
+    @Operation(
+        summary = "대학교 목록 조회",
+        description = "대학교 목록을 조회합니다. 토큰 x"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "대학교 목록 조회에 성공하였습니다."
+    )
+    @GetMapping("/university/list")
+    public ResponseEntity<List<TagResponse>> getUniversities() {
+        List<TagResponse> responses = catalogServiceFacade.getAllUniversities();
+        return ResponseEntity.ok(responses);
+    }
 }

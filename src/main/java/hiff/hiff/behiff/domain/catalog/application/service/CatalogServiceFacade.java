@@ -18,12 +18,12 @@ public class CatalogServiceFacade {
     private final CatalogLifeStyleService catalogLifeStyleService;
     private final CatalogIntroductionService catalogIntroductionService;
     private final CatalogFieldService catalogFieldService;
+    private final CatalogSchoolService catalogSchoolService;
 
     public List<TagResponse> getAllHobbies() {
         return catalogHobbyService.getAllHobbies()
             .stream().map(hobby ->
                 TagResponse.builder()
-                    .id(hobby.getId())
                     .name(hobby.getName())
                     .build())
             .toList();
@@ -34,7 +34,6 @@ public class CatalogServiceFacade {
         return catalogLifeStyleService.getAllLifeStyles()
             .stream().map(lifeStyle ->
                 TagResponse.builder()
-                    .id(lifeStyle.getId())
                     .name(lifeStyle.getName())
                     .build())
             .toList();
@@ -55,8 +54,17 @@ public class CatalogServiceFacade {
         return catalogFieldService.getAllFields()
             .stream().map(career ->
                 TagResponse.builder()
-                    .id(career.getId())
                     .name(career.getName())
+                    .build())
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<TagResponse> getAllUniversities() {
+        return catalogSchoolService.getAllFields()
+            .stream().map(university ->
+                TagResponse.builder()
+                    .name(university.getName())
                     .build())
             .toList();
     }
