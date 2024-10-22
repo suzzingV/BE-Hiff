@@ -17,7 +17,7 @@ public interface UserHobbyRepository extends JpaRepository<UserHobby, Long> {
     @Modifying
     @Transactional
     @Query("""
-            DELETE FROM UserHobby h WHERE h.userId = :userId
-""")
+                    DELETE FROM UserHobby h WHERE h.userId = :userId
+        """)
     void deleteByUserId(Long userId);
 }

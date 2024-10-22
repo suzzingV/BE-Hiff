@@ -14,7 +14,7 @@ public interface UserLifeStyleRepository extends JpaRepository<UserLifeStyle, Lo
     @Modifying
     @Transactional
     @Query("""
-            DELETE FROM UserLifeStyle l WHERE l.userId = :userId
-""")
+                    DELETE FROM UserLifeStyle l WHERE l.userId = :userId
+        """)
     void deleteByUserId(Long userId);
 }

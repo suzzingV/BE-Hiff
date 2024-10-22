@@ -2,7 +2,10 @@ package hiff.hiff.behiff.domain.user.presentation.dto.res;
 
 import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserIntroduction;
+import hiff.hiff.behiff.domain.user.domain.entity.UserCareer;
+import hiff.hiff.behiff.domain.user.domain.entity.UserGrad;
+import hiff.hiff.behiff.domain.user.domain.entity.UserIncome;
+import hiff.hiff.behiff.domain.user.domain.entity.UserUniversity;
 import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
@@ -35,8 +38,6 @@ public class UserInfoResponse {
 
     private List<String> lifeStyles;
 
-//    private Integer incomeWeight;
-
     private Integer appearanceWeight;
 
     private Integer hobbyWeight;
@@ -51,13 +52,9 @@ public class UserInfoResponse {
 
     private Mbti mbti;
 
-//    private Income income;
-
     private Education education;
 
     private String school;
-
-    private String career;
 
     private Integer hopeMinAge;
 
@@ -89,9 +86,18 @@ public class UserInfoResponse {
 
     private List<UserIntroductionDto> introductions;
 
+    private UserCareer career;
+
+    private UserUniversity university;
+
+    private UserGrad grad;
+
+    private UserIncome income;
+
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
-        List<String> lifeStyles, WeightValue weightValue, List<String> fashions, List<UserIntroductionDto> introductions) {
+        List<String> lifeStyles, WeightValue weightValue, List<String> fashions,
+        List<UserIntroductionDto> introductions, UserCareer userCareer, UserUniversity userUniversity, UserGrad userGrad, UserIncome userIncome) {
         return UserInfoResponse.builder()
             .userId(user.getId())
             .nickname(user.getNickname())
@@ -103,7 +109,6 @@ public class UserInfoResponse {
             .photos(photos)
             .hobbies(hobbies)
             .lifeStyles(lifeStyles)
-//            .incomeWeight(weightValue.getIncome())
             .lifeStyleWeight(weightValue.getLifeStyle())
             .hobbyWeight(weightValue.getHobby())
             .appearanceWeight(weightValue.getAppearance())
@@ -111,10 +116,8 @@ public class UserInfoResponse {
             .phoneNum(user.getPhoneNum())
             .gender(user.getGenderText())
             .mbti(user.getMbti())
-//            .income(user.getIncome())
             .education(user.getEducation())
             .school(user.getSchool())
-            .career(user.getCareer())
             .hopeMinAge(user.getHopeMinAge())
             .hopeMaxAge(user.getHopeMaxAge())
             .heart(user.getHeart())
@@ -130,6 +133,10 @@ public class UserInfoResponse {
             .bodyType(user.getBodyTypeText())
             .fashions(fashions)
             .introductions(introductions)
+            .career(userCareer)
+            .university(userUniversity)
+            .grad(userGrad)
+            .income(userIncome)
             .build();
     }
 }

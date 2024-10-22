@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,13 +102,13 @@ public class HiffMatchingService extends MatchingService {
 
         while (!matchedQueue.isEmpty()) {
             User matched = matchedQueue.remove();
-            log.info("matched: "  + matched.getId());
-            if(matched.getEvaluatedScore() == 0 || matched.getNickname() == null) {
+            log.info("matched: " + matched.getId());
+            if (matched.getEvaluatedScore() == 0 || matched.getNickname() == null) {
                 log.info("외모 점수");
                 continue;
             }
 
-            if(checkMatchingHistory(matched.getId())) {
+            if (checkMatchingHistory(matched.getId())) {
                 log.info("매칭기록");
                 continue;
             }
@@ -137,7 +136,9 @@ public class HiffMatchingService extends MatchingService {
             MatchingInfoDto matchedMatchingInfo = getNewMatchingInfo(matched, user, matchedWV,
                 matchedHobbies, matcherHobbies, matchedLifeStyle, matcherLifeStyles);
 
-            log.info(userId + " " + matched.getId() + " 총 점수: " + userMatchingInfo.getTotalScoreByMatcher() + " " + matchedMatchingInfo.getTotalScoreByMatcher());
+            log.info(userId + " " + matched.getId() + " 총 점수: "
+                + userMatchingInfo.getTotalScoreByMatcher() + " "
+                + matchedMatchingInfo.getTotalScoreByMatcher());
             if (checkTotalScore(userMatchingInfo, matchedMatchingInfo)) {
                 String today = getTodayDate();
                 cachMatchingScore(userId, matched.getId(), userMatchingInfo,
@@ -316,7 +317,8 @@ public class HiffMatchingService extends MatchingService {
     }
 
     private boolean hasProposed(Long proposerId, Long proposedId) {
-        return chatHistoryRepository.findByProposerIdAndProposedId(proposerId, proposedId).isPresent();
+        return chatHistoryRepository.findByProposerIdAndProposedId(proposerId, proposedId)
+            .isPresent();
     }
 
     public boolean checkMatchingHistory(Long matchedId) {

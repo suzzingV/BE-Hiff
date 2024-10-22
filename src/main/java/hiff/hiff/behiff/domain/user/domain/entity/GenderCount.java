@@ -34,5 +34,7 @@ public class GenderCount {
         count++;
     }
 
-    public void subtractCount() { count--; }
+    public void subtractCount() {
+        count--;
+    }
 }

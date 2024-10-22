@@ -1,13 +1,17 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
-import hiff.hiff.behiff.domain.user.domain.entity.Career;
+import hiff.hiff.behiff.domain.catalog.application.service.CatalogFieldService;
+import hiff.hiff.behiff.domain.catalog.domain.entity.Field;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.domain.entity.UserCareer;
+import hiff.hiff.behiff.domain.user.domain.entity.UserGrad;
+import hiff.hiff.behiff.domain.user.domain.enums.Company;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.CareerRepository;
+import hiff.hiff.behiff.domain.user.infrastructure.UserCareerRepository;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.ScopeMetadata;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,31 +19,30 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserCareerService {
 
-    private final CareerRepository careerRepository;
+    private final CatalogFieldService catalogFieldService;
+    private final UserCareerRepository userCareerRepository;
 
-    public void updateOriginCareer(User user, Long careerId) {
-        Career career = findById(careerId);
-        user.changeCareer(career.getName());
-        career.addCount();
+    public void updateCareer(Long userId, String fieldName, Company company, String verification) {
+        Field field = catalogFieldService.findByName(fieldName);
+        UserCareer userCareer = findByUserId(userId);
+        userCareer.changeField(fieldName);
+        userCareer.changeCompany(company);
+        userCareer.changeVerification(verification);
+        field.addCount();
     }
 
-    public void updateNewCareer(User user, String careerName) {
-        careerRepository.findByName(careerName)
-            .ifPresentOrElse(Career::addCount, () -> {
-                Career career = Career.builder()
-                    .name(careerName)
-                    .build();
-                careerRepository.save(career);
-            });
-        user.changeCareer(careerName);
+    public void createCareer(Long userId, Company company, String field, String verification) {
+        UserCareer userCareer = UserCareer.builder()
+            .userId(userId)
+            .company(company)
+            .field(field)
+            .verification(verification)
+            .build();
+        userCareerRepository.save(userCareer);
     }
 
-    private Career findById(Long careerId) {
-        return careerRepository.findById(careerId)
-            .orElseThrow(() -> new UserException(ErrorCode.CAREER_NOT_FOUND));
-    }
-
-    public List<Career> getAllCareers() {
-        return careerRepository.findAll();
+    public UserCareer findByUserId(Long userId) {
+        return userCareerRepository.findByUserId(userId)
+            .orElse(UserCareer.builder().build());
     }
 }

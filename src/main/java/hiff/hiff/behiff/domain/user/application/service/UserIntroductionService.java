@@ -1,10 +1,10 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
+import hiff.hiff.behiff.domain.catalog.application.service.CatalogIntroductionService;
+import hiff.hiff.behiff.domain.catalog.domain.entity.Question;
 import hiff.hiff.behiff.domain.user.application.dto.UserIntroductionDto;
-import hiff.hiff.behiff.domain.user.domain.entity.Question;
 import hiff.hiff.behiff.domain.user.domain.entity.UserIntroduction;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.QuestionRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserIntroductionRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.UserQuestionRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
@@ -18,12 +18,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserIntroductionService {
 
-    private final QuestionRepository questionRepository;
     private final UserIntroductionRepository userIntroductionRepository;
-
-    public List<Question> getAllQuestions() {
-        return questionRepository.findAll();
-    }
+    private final CatalogIntroductionService catalogIntroductionService;
 
     public void updateIntroduction(Long userId, Long questionId, String content) {
         UserIntroduction userIntroduction = userIntroductionRepository.findByUserIdAndQuestionId(
@@ -33,9 +29,9 @@ public class UserIntroductionService {
     }
 
     public List<UserIntroductionDto> findIntroductionByUserId(Long userId) {
-         return userIntroductionRepository.findByUserId(userId)
+        return userIntroductionRepository.findByUserId(userId)
             .stream().map(userIntroduction -> {
-                Question question = findQuestionById(userIntroduction);
+                Question question = catalogIntroductionService.findQuestionById(userIntroduction);
                 return UserIntroductionDto.builder()
                     .question(question.getQuestion())
                     .content(userIntroduction.getContent())
@@ -43,17 +39,12 @@ public class UserIntroductionService {
             }).toList();
     }
 
-    private Question findQuestionById(UserIntroduction userIntroduction) {
-        return questionRepository.findById(userIntroduction.getQuestionId())
-            .orElseThrow(() -> new UserException(ErrorCode.QUESTION_NOT_FOUND));
-    }
-
     public void registerUserIntroduction(Long userId, UserQuestionRequest request) {
         List<Long> questionIds = request.getQuestionIds();
         userIntroductionRepository.findByUserId(userId)
             .forEach(userIntroduction -> {
                 Long questionId = userIntroduction.getQuestionId();
-                if(!questionIds.contains(questionId)) {
+                if (!questionIds.contains(questionId)) {
                     userIntroductionRepository.delete(userIntroduction);
                 } else {
                     questionIds.remove(questionId);

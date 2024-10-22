@@ -70,8 +70,8 @@ public class HiffMatchingDetailResponse {
             .lifeStyles(lifeStyles)
             .lifeStyleSimilarity(matchingInfo.getLifeStyleSimilarity())
             .mainPhoto(mainPhoto)
-                .isProposed(isProposed)
-                .isPropose(isPropose)
+            .isProposed(isProposed)
+            .isPropose(isPropose)
             .build();
     }
 }

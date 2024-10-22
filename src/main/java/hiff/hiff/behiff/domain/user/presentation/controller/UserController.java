@@ -2,13 +2,27 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.*;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.*;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.BirthRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.DistanceRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.EducationRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.GenderRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HobbyRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.HopeAgeRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.LifeStyleRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.MbtiRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.NicknameRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.PosRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.SchoolRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserCareerRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.UserPhotoRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.WeightValueRequest;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.user.presentation.dto.res.UserWeightValueResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,9 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "User", description = "User 관련 API")
 @RestController
@@ -29,49 +41,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserServiceFacade userServiceFacade;
-
-    @Operation(
-        summary = "직업 목록 조회",
-        description = "직업 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "직업 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/career/list")
-    public ResponseEntity<List<TagResponse>> getCareers() {
-        List<TagResponse> responses = userServiceFacade.getCareers();
-        return ResponseEntity.ok(responses);
-    }
-
-    // TODO: 취미 자동완성?
-    @Operation(
-        summary = "취미 목록 조회",
-        description = "취미 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "취미 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/hobby/list")
-    public ResponseEntity<List<TagResponse>> getHobbies() {
-        List<TagResponse> responses = userServiceFacade.getHobbies();
-        return ResponseEntity.ok(responses);
-    }
-
-    @Operation(
-        summary = "라이프스타일 목록 조회",
-        description = "라이프스타일 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "라이프스타일 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/life-style/list")
-    public ResponseEntity<List<TagResponse>> getLifeStyles() {
-        List<TagResponse> responses = userServiceFacade.getLifeStyles();
-        return ResponseEntity.ok(responses);
-    }
 
     @Operation(
         summary = "내 정보 조회",
@@ -96,7 +65,8 @@ public class UserController {
         description = "User 사진 업데이트에 성공하였습니다."
     )
     @PostMapping("/photo")
-    public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user, @RequestBody UserPhotoRequest request) {
+    public ResponseEntity<UserUpdateResponse> registerPhoto(@AuthenticationPrincipal User user,
+        @RequestBody UserPhotoRequest request) {
         UserUpdateResponse response = userServiceFacade.updatePhotos(user.getId(), request);
         return ResponseEntity.ok(response);
     }
@@ -164,46 +134,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-//    @PatchMapping("/income")
-//    public ResponseEntity<UserUpdateResponse> updateIncome(@AuthenticationPrincipal User user,
-//        @Valid @RequestBody IncomeRequest request) {
-//        UserUpdateResponse response = userService.updateIncome(user.getId(), request);
-//        return ResponseEntity.ok(response);
-//    }
-
-    @Operation(
-        summary = "User 학력 업데이트",
-        description = "User의 학력을 업데이트합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "User 학력 업데이트에 성공하였습니다."
-    )
-    // TODO: 학교 인증 구현
-    @PatchMapping("/education")
-    public ResponseEntity<UserUpdateResponse> updateEducation(@AuthenticationPrincipal User user,
-        @Valid @RequestBody
-        EducationRequest request) {
-        UserUpdateResponse response = userServiceFacade.updateEducation(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
-        summary = "User 학교 업데이트",
-        description = "User의 학교를 업데이트합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "User 학교 업데이트에 성공하였습니다."
-    )
-    @PatchMapping("/school")
-    public ResponseEntity<UserUpdateResponse> updateEducation(@AuthenticationPrincipal User user,
-        @Valid @RequestBody
-        SchoolRequest request) {
-        UserUpdateResponse response = userServiceFacade.updateSchool(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
-
     @Operation(
         summary = "User 직업 업데이트",
         description = "User의 직업을 업데이트합니다. 토큰 o"
@@ -215,7 +145,7 @@ public class UserController {
     @PatchMapping("/career")
     public ResponseEntity<UserUpdateResponse> updateCareer(@AuthenticationPrincipal User user,
         @Valid @RequestBody
-        CareerRequest request) {
+        UserCareerRequest request) {
         UserUpdateResponse response = userServiceFacade.updateCareer(user.getId(), request);
         return ResponseEntity.ok(response);
     }
@@ -291,36 +221,39 @@ public class UserController {
     )
     @PutMapping("/weight-value")
     public ResponseEntity<UserUpdateResponse> updateWeightValue(@AuthenticationPrincipal User user,
-                                                                @Valid @RequestBody WeightValueRequest request) {
+        @Valid @RequestBody WeightValueRequest request) {
         UserUpdateResponse response = userServiceFacade.updateWeightValue(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
     @Operation(
-            summary = "User 가중치 조회",
-            description = "User의 매칭 가중치를 조회합니다. 토큰 o"
+        summary = "User 가중치 조회",
+        description = "User의 매칭 가중치를 조회합니다. 토큰 o"
     )
     @ApiResponse(
-            responseCode = "200",
-            description = "User 가중치 업데이트에 성공하였습니다."
+        responseCode = "200",
+        description = "User 가중치 업데이트에 성공하였습니다."
     )
     @GetMapping("/weight-value")
-    public ResponseEntity<UserWeightValueResponse> getWeightValue(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserWeightValueResponse> getWeightValue(
+        @AuthenticationPrincipal User user) {
         UserWeightValueResponse response = userServiceFacade.getWeightValue(user.getId());
         return ResponseEntity.ok(response);
     }
 
     @Operation(
-            summary = "User 위치 업데이트",
-            description = "User의 위치를 업데이트합니다. 토큰 o"
+        summary = "User 위치 업데이트",
+        description = "User의 위치를 업데이트합니다. 토큰 o"
     )
     @ApiResponse(
-            responseCode = "200",
-            description = "User 위치 업데이트에 성공하였습니다."
+        responseCode = "200",
+        description = "User 위치 업데이트에 성공하였습니다."
     )
     @PatchMapping("/pos")
-    public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user, @Valid @RequestBody PosRequest request) {
-        UserUpdateResponse response = userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+    public ResponseEntity<UserUpdateResponse> updatePos(@AuthenticationPrincipal User user,
+        @Valid @RequestBody PosRequest request) {
+        UserUpdateResponse response = userServiceFacade.updatePos(user.getId(),
+            request.getLatitude(), request.getLongitude());
         return ResponseEntity.ok(response);
     }
 }

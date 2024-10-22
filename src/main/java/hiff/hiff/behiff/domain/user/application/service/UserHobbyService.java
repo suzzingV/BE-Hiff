@@ -1,16 +1,11 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
+import hiff.hiff.behiff.domain.catalog.application.service.CatalogHobbyService;
+import hiff.hiff.behiff.domain.catalog.domain.entity.Hobby;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
-import hiff.hiff.behiff.domain.user.domain.entity.Hobby;
-import hiff.hiff.behiff.domain.user.domain.entity.HobbySimilarity;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
-import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.HobbyRepository;
-import hiff.hiff.behiff.domain.user.infrastructure.HobbySimilarityRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
-import hiff.hiff.behiff.global.common.redis.RedisService;
-import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,12 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserHobbyService {
 
-    private final HobbyRepository hobbyRepository;
+    private final CatalogHobbyService catalogHobbyService;
     private final UserHobbyRepository userHobbyRepository;
-    private final RedisService redisService;
-    private final HobbySimilarityRepository hobbySimilarityRepository;
-
-    public static final String HOBBY_PREFIX = "hobby_";
 
     public UserUpdateResponse updateHobby(Long userId, List<Long> hobbies) {
         updateUserHobbies(userId, hobbies);
@@ -37,7 +28,7 @@ public class UserHobbyService {
         return userHobbyRepository.findByUserId(userId)
             .stream()
             .map(userHobby -> {
-                Hobby hobby = findHobbyById(userHobby.getHobbyId());
+                Hobby hobby = catalogHobbyService.findHobbyById(userHobby.getHobbyId());
                 return hobby.getName();
             })
             .toList();
@@ -45,11 +36,6 @@ public class UserHobbyService {
 
     public List<UserHobby> findByUserId(Long userId) {
         return userHobbyRepository.findByUserId(userId);
-    }
-
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public List<Hobby> getAllHobbies() {
-        return hobbyRepository.findAll();
     }
 
     public List<NameWithCommonDto> getHobbiesWithCommon(Long matcherId, Long matchedId) {
@@ -66,24 +52,11 @@ public class UserHobbyService {
             }).toList();
     }
 
-    public void cacheHobbySimilarity() {
-        for(long i = 1345L; i <= 1610; i++) {
-            hobbySimilarityRepository.findByFromId(i)
-                .forEach(hobbySimilarity -> {
-                    Long fromHobbyId = hobbySimilarity.getId().getFromHobbyId();
-                    Long toHobbyId = hobbySimilarity.getId().getToHobbyId();
-                    int similarity = (int)Math.round(hobbySimilarity.getSimilarity() * 100);
-                    redisService.setValue(HOBBY_PREFIX + fromHobbyId + "_" + toHobbyId, String.valueOf(
-                        similarity));
-                });
-        }
-    }
-
     private void updateUserHobbies(Long userId, List<Long> originHobbies) {
         userHobbyRepository.deleteByUserId(userId);
 
         for (Long hobbyId : originHobbies) {
-            Hobby hobby = findHobbyById(hobbyId);
+            Hobby hobby = catalogHobbyService.findHobbyById(hobbyId);
             hobby.addCount();
             UserHobby userHobby = UserHobby.builder()
                 .userId(userId)
@@ -91,10 +64,5 @@ public class UserHobbyService {
                 .build();
             userHobbyRepository.save(userHobby);
         }
-    }
-
-    private Hobby findHobbyById(Long hobbyId) {
-        return hobbyRepository.findById(hobbyId)
-            .orElseThrow(() -> new UserException(ErrorCode.HOBBY_NOT_FOUND));
     }
 }

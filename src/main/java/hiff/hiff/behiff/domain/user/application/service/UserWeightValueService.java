@@ -16,7 +16,8 @@ public class UserWeightValueService {
     private final WeightValueRepository weightValueRepository;
     private final UserCRUDService userCRUDService;
 
-    public void updateWeightValue(Long userId, Integer appearanceWV, Integer hobbyWV, Integer lifeStyleWV, Integer mbtiWV) {
+    public void updateWeightValue(Long userId, Integer appearanceWV, Integer hobbyWV,
+        Integer lifeStyleWV, Integer mbtiWV) {
         WeightValue weightValue = weightValueRepository.findByUserId(userId)
             .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
 //        checkIncomePrivate(userId, weightValue);

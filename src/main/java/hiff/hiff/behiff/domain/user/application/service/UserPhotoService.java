@@ -2,16 +2,13 @@ package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPhoto;
-import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.SignedUrlResponse;
 import hiff.hiff.behiff.global.common.gcs.GcsService;
-import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +24,14 @@ public class UserPhotoService {
     private static final int PHOTO_COUNT_LIMIT = 2;
 
     public void registerMainPhoto(Long userId, String mainPhoto) {
-        if(mainPhoto == null) {
+        if (mainPhoto == null) {
             return;
         }
         saveMainPhotoUrl(userId, mainPhoto);
     }
 
     public void registerPhotos(Long userId, List<String> photos) {
-        if(photos != null) {
+        if (photos != null) {
             for (String photo : photos) {
                 savePhotoUrl(userId, photo);
             }
