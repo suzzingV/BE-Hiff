@@ -2,12 +2,12 @@ package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
-import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
+import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
+import hiff.hiff.behiff.domain.catalog.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPhotoRepository;

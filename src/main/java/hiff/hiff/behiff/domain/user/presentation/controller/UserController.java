@@ -150,21 +150,21 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "User 희망나이 업데이트",
-        description = "User가 희망하는 매칭 상대의 나이를 업데이트합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "User 희망나이 업데이트에 성공하였습니다."
-    )
-    @PatchMapping("/hope-age")
-    public ResponseEntity<UserUpdateResponse> updateHopeAge(@AuthenticationPrincipal User user,
-        @Valid @RequestBody
-        HopeAgeRequest request) {
-        UserUpdateResponse response = userServiceFacade.updateHopeAge(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
+//    @Operation(
+//        summary = "User 희망나이 업데이트",
+//        description = "User가 희망하는 매칭 상대의 나이를 업데이트합니다. 토큰 o"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "User 희망나이 업데이트에 성공하였습니다."
+//    )
+//    @PatchMapping("/hope-age")
+//    public ResponseEntity<UserUpdateResponse> updateHopeAge(@AuthenticationPrincipal User user,
+//        @Valid @RequestBody
+//        HopeAgeRequest request) {
+//        UserUpdateResponse response = userServiceFacade.updateHopeAge(user.getId(), request);
+//        return ResponseEntity.ok(response);
+//    }
 
     @Operation(
         summary = "User 취미 업데이트",
@@ -196,50 +196,50 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "User 희망거리 업데이트",
-        description = "User가 희망하는 매칭 상대의 거리를 업데이트합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "User 희망거리 업데이트에 성공하였습니다."
-    )
-    @PatchMapping("/distance")
-    public ResponseEntity<UserUpdateResponse> updateDistance(@AuthenticationPrincipal User user,
-        @Valid @RequestBody DistanceRequest request) {
-        UserUpdateResponse response = userServiceFacade.updateDistance(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
+//    @Operation(
+//        summary = "User 희망거리 업데이트",
+//        description = "User가 희망하는 매칭 상대의 거리를 업데이트합니다. 토큰 o"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "User 희망거리 업데이트에 성공하였습니다."
+//    )
+//    @PatchMapping("/distance")
+//    public ResponseEntity<UserUpdateResponse> updateDistance(@AuthenticationPrincipal User user,
+//        @Valid @RequestBody DistanceRequest request) {
+//        UserUpdateResponse response = userServiceFacade.updateDistance(user.getId(), request);
+//        return ResponseEntity.ok(response);
+//    }
 
-    @Operation(
-        summary = "User 가중 업데이트",
-        description = "User의 매칭 가중치를 업데이트합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "User 가중치 업데이트에 성공하였습니다."
-    )
-    @PutMapping("/weight-value")
-    public ResponseEntity<UserUpdateResponse> updateWeightValue(@AuthenticationPrincipal User user,
-        @Valid @RequestBody WeightValueRequest request) {
-        UserUpdateResponse response = userServiceFacade.updateWeightValue(user.getId(), request);
-        return ResponseEntity.ok(response);
-    }
+//    @Operation(
+//        summary = "User 가중 업데이트",
+//        description = "User의 매칭 가중치를 업데이트합니다. 토큰 o"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "User 가중치 업데이트에 성공하였습니다."
+//    )
+//    @PutMapping("/weight-value")
+//    public ResponseEntity<UserUpdateResponse> updateWeightValue(@AuthenticationPrincipal User user,
+//        @Valid @RequestBody WeightValueRequest request) {
+//        UserUpdateResponse response = userServiceFacade.updateWeightValue(user.getId(), request);
+//        return ResponseEntity.ok(response);
+//    }
 
-    @Operation(
-        summary = "User 가중치 조회",
-        description = "User의 매칭 가중치를 조회합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "User 가중치 업데이트에 성공하였습니다."
-    )
-    @GetMapping("/weight-value")
-    public ResponseEntity<UserWeightValueResponse> getWeightValue(
-        @AuthenticationPrincipal User user) {
-        UserWeightValueResponse response = userServiceFacade.getWeightValue(user.getId());
-        return ResponseEntity.ok(response);
-    }
+//    @Operation(
+//        summary = "User 가중치 조회",
+//        description = "User의 매칭 가중치를 조회합니다. 토큰 o"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "User 가중치 업데이트에 성공하였습니다."
+//    )
+//    @GetMapping("/weight-value")
+//    public ResponseEntity<UserWeightValueResponse> getWeightValue(
+//        @AuthenticationPrincipal User user) {
+//        UserWeightValueResponse response = userServiceFacade.getWeightValue(user.getId());
+//        return ResponseEntity.ok(response);
+//    }
 
     @Operation(
         summary = "User 위치 업데이트",

@@ -1,9 +1,9 @@
 package hiff.hiff.behiff.global.common.scheduler;
 
-import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
+import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
+import hiff.hiff.behiff.domain.catalog.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.Date;
 import org.springframework.batch.core.Job;

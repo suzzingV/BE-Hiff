@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
-import static hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService.HIFF_MATCHING_PREFIX;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
@@ -15,7 +14,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
-import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
+import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
@@ -52,7 +51,7 @@ public class MatchingService {
     }
 
     protected MatchingInfoDto getNewMatchingInfo(User matcher, User matched,
-        WeightValue matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
+        Weighting matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
         List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
         int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcherHobbies, matchedHobbies);
@@ -86,19 +85,12 @@ public class MatchingService {
             matchedPos.getLon());
     }
 
-    protected void useHeart(User matcher, Integer amount) {
-        if (matcher.getHeart() < amount) {
-            throw new MatchingException(ErrorCode.LACK_OF_HEART);
-        }
-        matcher.subtractHeart(amount);
-    }
-
-    protected boolean isMatchedBefore(Long matcherId, Long matchedId) {
-//        List<Long> matchingHistory = matchingRepository.findByUsers(matcherId, matchedId);
-        Set<String> keys = redisService.keys(HIFF_MATCHING_PREFIX + matcherId + "_" + matchedId);
-        return !keys.isEmpty();
-//        return !matchingHistory.isEmpty();
-    }
+//    protected boolean isMatchedBefore(Long matcherId, Long matchedId) {
+////        List<Long> matchingHistory = matchingRepository.findByUsers(matcherId, matchedId);
+//        Set<String> keys = redisService.keys(HIFF_MATCHING_PREFIX + matcherId + "_" + matchedId);
+//        return !keys.isEmpty();
+////        return !matchingHistory.isEmpty();
+//    }
 
     protected Long getMatchedIdFromKey(String key) {
         StringTokenizer st = new StringTokenizer(key, "_");

@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.global.common.batch.hiff_matching;
 
 import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
-import hiff.hiff.behiff.domain.matching.application.service.HiffMatchingService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
@@ -40,7 +39,7 @@ public class HiffMatchingBatchConfig {
     private final UserRepository userRepository;
     private final HiffMatchingJobExecutionListener hiffMatchingJobExecutionListener;
     private final MatchedStepExecutionListener matchedStepExecutionListener;
-    private final HiffMatchingService hiffMatchingService;
+//    private final HiffMatchingService hiffMatchingService;
     public static PriorityQueue<UserWithMatchCount> matchedQueue = new PriorityQueue<>();
     public static List<User> matchedList = new ArrayList<>();
 
@@ -168,7 +167,7 @@ public class HiffMatchingBatchConfig {
             @Override
             public User process(User matcher) {
                 PriorityQueue<UserWithMatchCount> matchedArr = new PriorityQueue<>(matchedQueue);
-                hiffMatchingService.dailyMatching(matcher, matchedArr);
+//                hiffMatchingService.dailyMatching(matcher, matchedArr);
                 return null;
             }
         };

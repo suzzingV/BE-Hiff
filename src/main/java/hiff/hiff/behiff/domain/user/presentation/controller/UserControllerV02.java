@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.user.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.user.presentation.dto.req.PlanRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BodyTypeRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.BuddyRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.ConflictResolutionRequest;

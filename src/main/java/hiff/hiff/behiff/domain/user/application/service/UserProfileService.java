@@ -1,7 +1,8 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.catalog.infrastructure.MbtiScoreRepository;
-import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
+import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
+import hiff.hiff.behiff.domain.user.domain.strategy.PlanStrategy;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.BodyType;
 import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
@@ -12,9 +13,10 @@ import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Ideology;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
+import hiff.hiff.behiff.domain.plan.domain.enums.Plan;
 import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.GenderCountRepository;
+import hiff.hiff.behiff.domain.catalog.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
@@ -64,31 +66,9 @@ public class UserProfileService {
         user.changeMbti(mbti);
     }
 
-//    public void updateIncome(User user, IncomeRequest request) {
-//        user.changeIncome(request.getIncome());
-//    }
-
-    public void updateEducation(User user, Education education) {
-        user.changeEducation(education);
-    }
-
-    public void updateSchool(User user, String school) {
-        user.changeSchool(school);
-    }
-
     public void updatePhoneNum(Long userId, String phoneNum) {
         User user = userCRUDService.findById(userId);
         user.changePhoneNum(phoneNum);
-    }
-
-    public void updateHopeAge(User user, Integer maxAge, Integer minAge) {
-        user.changeHopeAge(maxAge, minAge);
-    }
-
-    public void updateDistance(User user, Integer maxDistance, Integer minDistance) {
-        checkDistanceRange(maxDistance, minDistance);
-        user.changeMaxDistance(maxDistance);
-        user.changeMinDistance(minDistance);
     }
 
     public void updateSmokingStatus(User user, Boolean isSmoking) {

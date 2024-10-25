@@ -5,10 +5,10 @@ import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
 import hiff.hiff.behiff.domain.user.domain.enums.ConflictResolution;
 import hiff.hiff.behiff.domain.user.domain.enums.ContactFrequency;
 import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
-import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.domain.enums.Ideology;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
+import hiff.hiff.behiff.domain.plan.domain.enums.Plan;
 import hiff.hiff.behiff.domain.user.domain.enums.Religion;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.global.util.DateCalculator;
@@ -63,39 +63,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private Income income;
-
-    @Enumerated(EnumType.STRING)
-    private Education education;
-
-    private String school;
-
     private LocalDate birth;
 
     @Min(0)
     @Max(80)
     private Integer age;
 
-    @Min(19)
-    @Max(50)
-    private Integer hopeMinAge;
-
-    @Min(19)
-    @Max(50)
-    private Integer hopeMaxAge;
-
-    @Min(0)
-    @Max(700)
-    private Integer maxDistance;
-
-    @Min(0)
-    @Max(700)
-    private Integer minDistance;
-
-    @Column(nullable = false)
-    private Integer heart;
 
     private Double evaluatedScore;
 
@@ -138,7 +111,6 @@ public class User implements UserDetails {
     private User(Role role,
         String phoneNum) {
         this.role = role;
-        this.heart = 0;
         this.evaluatedScore = 0.0;
         this.phoneNum = phoneNum;
     }
@@ -161,29 +133,10 @@ public class User implements UserDetails {
         this.mbti = mbti;
     }
 
-    public void changeEducation(Education education) {
-        this.education = education;
-    }
 
-    public void changeSchool(String school) {
-        this.school = school;
-    }
 
     public void changePhoneNum(String phoneNum) {
         this.phoneNum = phoneNum;
-    }
-
-    public void changeHopeAge(Integer maxAge, Integer minAge) {
-        this.hopeMinAge = minAge;
-        this.hopeMaxAge = maxAge;
-    }
-
-    public void changeMaxDistance(Integer maxDistance) {
-        this.maxDistance = maxDistance;
-    }
-
-    public void changeMinDistance(Integer minDistance) {
-        this.minDistance = minDistance;
     }
 
     public void updateEvaluatedScoreTmp(Double score) {
@@ -211,14 +164,6 @@ public class User implements UserDetails {
 
     public void updateAge() {
         this.age = DateCalculator.calculateAge(this.birth);
-    }
-
-    public void addHeart(Integer amount) {
-        this.heart += amount;
-    }
-
-    public void subtractHeart(Integer amount) {
-        this.heart -= amount;
     }
 
     public void changeIsSmoking(Boolean isSmoking) {

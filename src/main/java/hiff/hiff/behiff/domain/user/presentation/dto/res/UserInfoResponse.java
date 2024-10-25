@@ -6,7 +6,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.UserCareer;
 import hiff.hiff.behiff.domain.user.domain.entity.UserGrad;
 import hiff.hiff.behiff.domain.user.domain.entity.UserIncome;
 import hiff.hiff.behiff.domain.user.domain.entity.UserUniversity;
-import hiff.hiff.behiff.domain.user.domain.entity.WeightValue;
+import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
 import hiff.hiff.behiff.domain.user.domain.enums.Education;
 import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
 import java.time.LocalDate;
@@ -96,31 +96,24 @@ public class UserInfoResponse {
 
     public static UserInfoResponse of(User user, List<String> hobbies, String mainPhoto,
         List<String> photos,
-        List<String> lifeStyles, WeightValue weightValue, List<String> fashions,
+        List<String> lifeStyles, Weighting weighting, List<String> fashions,
         List<UserIntroductionDto> introductions, UserCareer userCareer, UserUniversity userUniversity, UserGrad userGrad, UserIncome userIncome) {
         return UserInfoResponse.builder()
             .userId(user.getId())
             .nickname(user.getNickname())
             .birth(user.getBirth())
             .age(user.getAge())
-            .maxDistance(user.getMaxDistance())
-            .minDistance(user.getMinDistance())
             .mainPhoto(mainPhoto)
             .photos(photos)
             .hobbies(hobbies)
             .lifeStyles(lifeStyles)
-            .lifeStyleWeight(weightValue.getLifeStyle())
-            .hobbyWeight(weightValue.getHobby())
-            .appearanceWeight(weightValue.getAppearance())
-            .mbtiWeight(weightValue.getMbti())
+            .lifeStyleWeight(weighting.getLifeStyle())
+            .hobbyWeight(weighting.getHobby())
+            .appearanceWeight(weighting.getAppearance())
+            .mbtiWeight(weighting.getMbti())
             .phoneNum(user.getPhoneNum())
             .gender(user.getGenderText())
             .mbti(user.getMbti())
-            .education(user.getEducation())
-            .school(user.getSchool())
-            .hopeMinAge(user.getHopeMinAge())
-            .hopeMaxAge(user.getHopeMaxAge())
-            .heart(user.getHeart())
             .appearanceScore(user.getEvaluatedScore())
             .isSmoking(user.getIsSmoking())
             .drinking(user.getDrinkingText())

@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.user.domain.entity;
+package hiff.hiff.behiff.domain.weighting.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,8 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,12 +14,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "weight_value_TB",
+@Table(name = "weighting_TB",
     indexes = {
-        @Index(name = "idx_wv_user_id", columnList = "userId")
+        @Index(name = "idx_w_user_id", columnList = "userId")
     })
 @Getter
-public class WeightValue {
+public class Weighting {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,31 +28,18 @@ public class WeightValue {
     @Column(nullable = false)
     private Long userId;
 
-//    @Min(0)
-//    @Max(5)
-//    @Column(nullable = false)
-//    private Integer income;
-
-    @Min(1)
-    @Max(5)
     private Integer appearance;
 
-    @Min(1)
-    @Max(5)
     private Integer hobby;
 
-    @Min(1)
-    @Max(5)
     private Integer lifeStyle;
 
-    @Min(1)
-    @Max(5)
     private Integer mbti;
 
     private Integer total;
 
     @Builder
-    private WeightValue(Long userId) {
+    private Weighting(Long userId) {
         this.userId = userId;
     }
 

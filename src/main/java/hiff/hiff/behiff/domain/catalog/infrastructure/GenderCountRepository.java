@@ -1,6 +1,6 @@
-package hiff.hiff.behiff.domain.user.infrastructure;
+package hiff.hiff.behiff.domain.catalog.infrastructure;
 
-import hiff.hiff.behiff.domain.user.domain.entity.GenderCount;
+import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.user.domain.enums.Gender;
 import org.springframework.data.jpa.repository.JpaRepository;
 
