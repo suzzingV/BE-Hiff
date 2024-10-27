@@ -1,12 +1,5 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.DailyMatchingDetailResponse;
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.HiffMatchingDetailResponse;
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
-import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.global.common.sms.SmsUtil;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package hiff.hiff.behiff.global.common.batch.hiff_matching;
 
 import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.enums.Gender;
+import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.batch.CustomSkipListener;
 import java.util.ArrayList;

@@ -1,8 +1,6 @@
 package hiff.hiff.behiff.global.validation.validator;
 
-import hiff.hiff.behiff.domain.user.domain.enums.BodyType;
-import hiff.hiff.behiff.domain.user.domain.enums.Company;
-import hiff.hiff.behiff.global.validation.annotation.ValidBodyType;
+import hiff.hiff.behiff.domain.profile.domain.enums.Company;
 import hiff.hiff.behiff.global.validation.annotation.ValidCompany;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

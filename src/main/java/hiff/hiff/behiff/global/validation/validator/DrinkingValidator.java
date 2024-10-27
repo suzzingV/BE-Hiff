@@ -1,9 +1,7 @@
 package hiff.hiff.behiff.global.validation.validator;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Drinking;
-import hiff.hiff.behiff.domain.user.domain.enums.Gender;
+import hiff.hiff.behiff.domain.profile.domain.enums.Drinking;
 import hiff.hiff.behiff.global.validation.annotation.ValidDrinking;
-import hiff.hiff.behiff.global.validation.annotation.ValidGender;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

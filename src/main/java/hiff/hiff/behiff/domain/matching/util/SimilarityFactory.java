@@ -3,13 +3,14 @@ package hiff.hiff.behiff.domain.matching.util;
 import static hiff.hiff.behiff.domain.catalog.application.service.CatalogHobbyService.HOBBY_PREFIX;
 import static hiff.hiff.behiff.domain.catalog.application.service.CatalogLifeStyleService.LIFESTYLE_PREFIX;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeIntAvg;
-import static hiff.hiff.behiff.domain.user.application.service.UserProfileService.MBTI_PREFIX;
+import static hiff.hiff.behiff.domain.profile.application.service.UserProfileService.MBTI_PREFIX;
 
+import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
-import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
-import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
-import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserHobby;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserLifeStyle;
+import hiff.hiff.behiff.domain.profile.infrastructure.UserHobbyRepository;
+import hiff.hiff.behiff.domain.profile.infrastructure.UserLifeStyleRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -61,14 +62,14 @@ public class SimilarityFactory {
             matcherLifeStyles.size());
     }
 
-    public int getMbtiSimilarity(User matcher, User matched) {
-        String key = MBTI_PREFIX + matcher.getMbti() + "_" + matched.getMbti();
-
-        int similarity = redisService.getIntValue(key);
-        if (similarity == 0) {
-            key = MBTI_PREFIX + matched.getMbti() + "_" + matcher.getMbti();
-            similarity = redisService.getIntValue(key);
-        }
-        return similarity;
-    }
+//    public int getMbtiSimilarity(User matcher, User matched) {
+//        String key = MBTI_PREFIX + matcher.getMbti() + "_" + matched.getMbti();
+//
+//        int similarity = redisService.getIntValue(key);
+//        if (similarity == 0) {
+//            key = MBTI_PREFIX + matched.getMbti() + "_" + matcher.getMbti();
+//            similarity = redisService.getIntValue(key);
+//        }
+//        return similarity;
+//    }
 }

@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.global.validation.validator;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Education;
+import hiff.hiff.behiff.domain.profile.domain.enums.Education;
 import hiff.hiff.behiff.global.validation.annotation.ValidEducation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

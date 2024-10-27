@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.global.validation.validator;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
+import hiff.hiff.behiff.domain.profile.domain.enums.Mbti;
 import hiff.hiff.behiff.global.validation.annotation.ValidMbti;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -1,8 +1,6 @@
 package hiff.hiff.behiff.global.validation.validator;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
-import hiff.hiff.behiff.domain.user.domain.enums.ConflictResolution;
-import hiff.hiff.behiff.global.validation.annotation.ValidBuddy;
+import hiff.hiff.behiff.domain.profile.domain.enums.ConflictResolution;
 import hiff.hiff.behiff.global.validation.annotation.ValidConflictResolution;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

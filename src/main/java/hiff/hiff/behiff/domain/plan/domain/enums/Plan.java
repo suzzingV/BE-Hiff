@@ -1,10 +1,10 @@
 package hiff.hiff.behiff.domain.plan.domain.enums;
 
-import hiff.hiff.behiff.domain.user.domain.strategy.BasicPlan;
-import hiff.hiff.behiff.domain.user.domain.strategy.EssentialPlan;
-import hiff.hiff.behiff.domain.user.domain.strategy.PlanStrategy;
-import hiff.hiff.behiff.domain.user.domain.strategy.PlusPlan;
-import hiff.hiff.behiff.domain.user.domain.strategy.PrimePlan;
+import hiff.hiff.behiff.domain.plan.domain.strategy.BasicPlan;
+import hiff.hiff.behiff.domain.plan.domain.strategy.EssentialPlan;
+import hiff.hiff.behiff.domain.plan.domain.strategy.PlanStrategy;
+import hiff.hiff.behiff.domain.plan.domain.strategy.PlusPlan;
+import hiff.hiff.behiff.domain.plan.domain.strategy.PrimePlan;
 import java.util.EnumSet;
 import java.util.Set;
 

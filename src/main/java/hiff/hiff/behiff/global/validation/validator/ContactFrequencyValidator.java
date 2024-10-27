@@ -1,8 +1,6 @@
 package hiff.hiff.behiff.global.validation.validator;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
-import hiff.hiff.behiff.domain.user.domain.enums.ContactFrequency;
-import hiff.hiff.behiff.global.validation.annotation.ValidBuddy;
+import hiff.hiff.behiff.domain.profile.domain.enums.ContactFrequency;
 import hiff.hiff.behiff.global.validation.annotation.ValidContactFrequency;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

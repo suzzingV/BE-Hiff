@@ -3,7 +3,7 @@ package hiff.hiff.behiff.domain.matching.presentation.dto.res;
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
 import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.enums.Mbti;
+import hiff.hiff.behiff.domain.profile.domain.enums.Mbti;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,13 +50,13 @@ public class DailyMatchingDetailResponse {
         List<NameWithCommonDto> lifeStyles) {
         return DailyMatchingDetailResponse.builder()
             .matchedId(matched.getId())
-            .nickname(matched.getNickname())
-            .age(matched.getAge())
+//            .nickname(matched.getNickname())
+//            .age(matched.getAge())
             .distance(distance)
             .photos(photos)
             .totalScore(matchingScores.getTotalScoreByMatcher())
-            .myMbti(matcher.getMbti())
-            .matchedMbti(matched.getMbti())
+//            .myMbti(matcher.getMbti())
+//            .matchedMbti(matched.getMbti())
             .mbtiSimilarity(matchingScores.getMbtiSimilarity())
 //            .matchedIncome(matched.getIncome())
 //            .incomeSimilarity(matchingScores.getIncomeSimilarity())

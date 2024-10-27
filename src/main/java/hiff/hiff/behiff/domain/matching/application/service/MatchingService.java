@@ -9,17 +9,16 @@ import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
 import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
-import hiff.hiff.behiff.domain.user.application.service.UserPosService;
+import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
-import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
-import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserHobby;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserLifeStyle;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,19 +52,19 @@ public class MatchingService {
     protected MatchingInfoDto getNewMatchingInfo(User matcher, User matched,
         Weighting matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
         List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
-        int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
+//        int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcherHobbies, matchedHobbies);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcherLifeStyles,
             matchedLifeStyles);
 //        int incomeSimilarity = similarityFactory.getIncomeSimilarity(matcher, matched);
-        Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
-            lifeStyleSimilarity, matched.getEvaluatedScore());
+//        Integer totalScore = computeTotalScoreByMatcher(matcherWV, mbtiSimilarity, hobbySimilarity,
+//            lifeStyleSimilarity, matched.getEvaluatedScore());
         return MatchingInfoDto.builder()
-            .mbtiSimilarity(mbtiSimilarity)
+//            .mbtiSimilarity(mbtiSimilarity)
             .hobbySimilarity(hobbySimilarity)
             .lifeStyleSimilarity(lifeStyleSimilarity)
 //            .incomeSimilarity(incomeSimilarity)
-            .totalScoreByMatcher(totalScore)
+//            .totalScoreByMatcher(totalScore)
             .build();
     }
 

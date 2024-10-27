@@ -4,7 +4,7 @@ import hiff.hiff.behiff.domain.report.domain.entity.Report;
 import hiff.hiff.behiff.domain.report.infrastructure.ReportRepository;
 import hiff.hiff.behiff.domain.report.presentation.dto.req.ReportRequest;
 import hiff.hiff.behiff.domain.report.presentation.dto.res.ReportResponse;
-import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
+import hiff.hiff.behiff.domain.user.application.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReportService {
 
     private final ReportRepository reportRepository;
-    private final UserCRUDService userCRUDService;
+    private final UserService userService;
 
     public ReportResponse report(Long userId, ReportRequest request) {
-        userCRUDService.findById(userId);
+        userService.findById(userId);
 
         Report report = Report.builder()
             .reportedId(request.getReportedId())

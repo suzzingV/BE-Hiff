@@ -1,7 +1,11 @@
 package hiff.hiff.behiff.domain.catalog.application.service;
 
+import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.catalog.presentation.dto.res.QuestionResponse;
 import hiff.hiff.behiff.domain.catalog.presentation.dto.res.TagResponse;
+import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
+import hiff.hiff.behiff.domain.user.exception.UserException;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

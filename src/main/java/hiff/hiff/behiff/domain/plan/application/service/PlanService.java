@@ -4,12 +4,10 @@ import hiff.hiff.behiff.domain.plan.domain.entity.UserPlan;
 import hiff.hiff.behiff.domain.plan.domain.enums.Plan;
 import hiff.hiff.behiff.domain.plan.exception.PlanException;
 import hiff.hiff.behiff.domain.plan.infrastructure.UserPlanRepository;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.strategy.PlanStrategy;
-import hiff.hiff.behiff.domain.user.presentation.dto.req.PlanRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.plan.domain.strategy.PlanStrategy;
+import hiff.hiff.behiff.domain.plan.presentation.dto.req.PlanRequest;
+import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +22,7 @@ public class PlanService {
     private static final int MATCHING_LIMIT = 3;
     private static final int REJECTION_LIMIT = 2;
 
-    public UserUpdateResponse updatePlan(Long userId, PlanRequest request) {
+    public ProfileUpdateResponse updatePlan(Long userId, PlanRequest request) {
         UserPlan userPlan = findByUserId(userId);
         Plan plan = request.getPlan();
         PlanStrategy planStrategy = plan.getPlanStrategy();
@@ -34,7 +32,7 @@ public class PlanService {
         userPlan.updateMatchingCnt(MATCHING_LIMIT);
         userPlan.updateRejectionCnt(REJECTION_LIMIT);
 
-        return UserUpdateResponse.from(userId);
+        return ProfileUpdateResponse.from(userId);
     }
 
     private UserPlan findByUserId(Long userId) {

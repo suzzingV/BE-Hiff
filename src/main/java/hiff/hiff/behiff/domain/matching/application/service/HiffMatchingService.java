@@ -1,44 +1,5 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
-import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
-import static hiff.hiff.behiff.global.common.batch.hiff_matching.HiffMatchingBatchConfig.matchedQueue;
-import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
-import static hiff.hiff.behiff.global.util.DateCalculator.getTomorrowDate;
-
-import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
-import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
-import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
-import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
-import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.HiffMatchingDetailResponse;
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
-import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
-import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
-import hiff.hiff.behiff.domain.user.application.service.UserHobbyService;
-import hiff.hiff.behiff.domain.user.application.service.UserLifeStyleService;
-import hiff.hiff.behiff.domain.user.application.service.UserPhotoService;
-import hiff.hiff.behiff.domain.user.application.service.UserPosService;
-import hiff.hiff.behiff.domain.user.application.service.UserWeightValueService;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
-import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
-import hiff.hiff.behiff.domain.user.domain.entity.UserPos;
-import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
-import hiff.hiff.behiff.domain.user.infrastructure.UserHobbyRepository;
-import hiff.hiff.behiff.domain.user.infrastructure.UserLifeStyleRepository;
-import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
-import hiff.hiff.behiff.global.common.redis.RedisService;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.StringTokenizer;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 //@Service
 //@Transactional
 //@Slf4j

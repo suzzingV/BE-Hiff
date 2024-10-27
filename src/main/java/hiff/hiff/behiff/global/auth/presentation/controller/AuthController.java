@@ -2,7 +2,7 @@ package hiff.hiff.behiff.global.auth.presentation.controller;
 
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
 import hiff.hiff.behiff.global.auth.application.AuthService;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.FcmTokenRequest;
@@ -75,9 +75,9 @@ public class AuthController {
         description = "fcm token 등록에 성공하였습니다."
     )
     @PatchMapping("/fcm-token")
-    public ResponseEntity<UserUpdateResponse> getFcmToken(@AuthenticationPrincipal User user, @Valid @RequestBody
+    public ResponseEntity<ProfileUpdateResponse> getFcmToken(@AuthenticationPrincipal User user, @Valid @RequestBody
         FcmTokenRequest request) {
-        UserUpdateResponse response = authService.updateFcmToken(user.getId(), request);
+        ProfileUpdateResponse response = authService.updateFcmToken(user.getId(), request);
 
         return ResponseEntity.ok(response);
     }
@@ -125,7 +125,7 @@ public class AuthController {
                                          @AuthenticationPrincipal User user) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
-        authService.withdraw(user, accessToken, refreshToken);
+        authService.withdraw(user.getId(), accessToken, refreshToken);
 
         return ResponseEntity.noContent().build();
     }

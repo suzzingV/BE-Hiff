@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.domain.catalog.domain.entity;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Gender;
+import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

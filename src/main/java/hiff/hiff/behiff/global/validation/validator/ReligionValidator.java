@@ -1,8 +1,6 @@
 package hiff.hiff.behiff.global.validation.validator;
 
-import hiff.hiff.behiff.domain.user.domain.enums.Buddy;
-import hiff.hiff.behiff.domain.user.domain.enums.Religion;
-import hiff.hiff.behiff.global.validation.annotation.ValidBuddy;
+import hiff.hiff.behiff.domain.profile.domain.enums.Religion;
 import hiff.hiff.behiff.global.validation.annotation.ValidReligion;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

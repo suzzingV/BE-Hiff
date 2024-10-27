@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
-import hiff.hiff.behiff.domain.user.domain.entity.UserIncome;
 import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.WeightValueRepository;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class UserWeightValueService {
 
     private final WeightValueRepository weightValueRepository;
-    private final UserCRUDService userCRUDService;
 
     public void updateWeightValue(Long userId, Integer appearanceWV, Integer hobbyWV,
         Integer lifeStyleWV, Integer mbtiWV) {

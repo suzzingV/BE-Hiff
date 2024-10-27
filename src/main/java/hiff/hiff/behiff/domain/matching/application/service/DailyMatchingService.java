@@ -1,30 +1,16 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
-import static hiff.hiff.behiff.global.util.DateCalculator.getTodayDate;
-
-import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
-import hiff.hiff.behiff.domain.matching.application.dto.NameWithCommonDto;
-import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.DailyMatchingDetailResponse;
-import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
-import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
-import hiff.hiff.behiff.domain.user.application.service.UserHobbyService;
-import hiff.hiff.behiff.domain.user.application.service.UserLifeStyleService;
-import hiff.hiff.behiff.domain.user.application.service.UserPhotoService;
-import hiff.hiff.behiff.domain.user.application.service.UserPosService;
+import hiff.hiff.behiff.domain.profile.application.service.UserHobbyService;
+import hiff.hiff.behiff.domain.profile.application.service.UserLifeStyleService;
+import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
+import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
+import hiff.hiff.behiff.domain.user.application.service.UserService;
 import hiff.hiff.behiff.domain.user.application.service.UserWeightValueService;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.user.domain.entity.UserHobby;
-import hiff.hiff.behiff.domain.user.domain.entity.UserLifeStyle;
-import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
-import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
-import java.util.List;
-import java.util.StringTokenizer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class DailyMatchingService extends MatchingService {
 
-    private final UserCRUDService userCRUDService;
+    private final UserService userCRUDService;
     private final UserWeightValueService userWeightValueService;
     private final UserRepository userRepository;
     private final RedisService redisService;
@@ -49,12 +35,12 @@ public class DailyMatchingService extends MatchingService {
 
     public DailyMatchingService(UserPosService userPosService, RedisService redisService,
         MatchingRepository matchingRepository, SimilarityFactory similarityFactory,
-        UserCRUDService userCRUDService, UserWeightValueService userWeightValueService,
+        UserService userService, UserWeightValueService userWeightValueService,
         UserRepository userRepository, RedisService redisService1,
         UserHobbyService userHobbyService, UserLifeStyleService userLifeStyleService,
         UserPhotoService userPhotoService) {
         super(userPosService, redisService, matchingRepository, similarityFactory);
-        this.userCRUDService = userCRUDService;
+        this.userCRUDService = userService;
         this.userWeightValueService = userWeightValueService;
         this.userRepository = userRepository;
         this.redisService = redisService1;

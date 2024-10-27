@@ -1,14 +1,17 @@
 package hiff.hiff.behiff.global.auth.application;
 
-import hiff.hiff.behiff.domain.user.application.service.UserCRUDService;
-import hiff.hiff.behiff.domain.user.application.service.UserServiceFacade;
+import hiff.hiff.behiff.domain.profile.application.service.ProfileServiceFacade;
+import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
+import hiff.hiff.behiff.domain.profile.application.service.UserProfileService;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
+import hiff.hiff.behiff.domain.user.application.service.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
-import hiff.hiff.behiff.domain.user.presentation.dto.res.UserUpdateResponse;
+import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
 import hiff.hiff.behiff.global.auth.domain.Token;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
@@ -39,11 +42,13 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final UserServiceFacade userServiceFacade;
+    private final UserService userService;
     private final TokenRepository tokenRepository;
     private final SmsUtil smsUtil;
     private final RedisService redisService;
-    private final UserCRUDService userCRUDService;
+    private final UserProfileService userProfileService;
+    private final ProfileServiceFacade profileServiceFacade;
+    private final UserPosService userPosService;
 
     private static final Duration IDENTIFY_VERIFICATION_DURATION = Duration.ofMinutes(5);
     private static final String IDENTIFY_VERIFICATION_PREFIX = "verify_";
@@ -55,18 +60,19 @@ public class AuthService {
 
         return userRepository.findByPhoneNum(request.getPhoneNum())
             .map(user -> {
-                if(user.getBirth() != null) {
-                    user.updateAge();
+                UserProfile userProfile = userProfileService.findByUserId(user.getId());
+                if(userProfile.getBirth() != null) {
+                    userProfile.updateAge();
                 }
-                userServiceFacade.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                UserInfoResponse userInfo = userServiceFacade.getUserInfo(user.getId());
+                userPosService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+                UserInfoResponse userInfo = userService.getUserInfo(user.getId());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
             })
             .orElseGet(() -> {
-                User newUser = userServiceFacade.registerUser(Role.USER, request.getPhoneNum(),
+                User newUser = userService.registerUser(Role.USER, request.getPhoneNum(),
                     request.getLatitude(), request.getLongitude());
                 generateTokenContainer(newUser.getId());
-                UserInfoResponse userInfo = userServiceFacade.getUserInfo(newUser.getId());
+                UserInfoResponse userInfo = userService.getUserInfo(newUser.getId());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
             });
     }
@@ -84,12 +90,12 @@ public class AuthService {
             .build();
     }
 
-    public UserUpdateResponse updateFcmToken(Long userId, FcmTokenRequest request) {
+    public ProfileUpdateResponse updateFcmToken(Long userId, FcmTokenRequest request) {
         Token token = tokenRepository.findByUserId(userId)
                 .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
         token.updateFcmToken(request.getFcmToken());
 
-        return UserUpdateResponse.from(userId);
+        return ProfileUpdateResponse.from(userId);
     }
 
     private String checkRefreshToken(String refreshToken) {
@@ -122,8 +128,10 @@ public class AuthService {
             .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
     }
 
-    public void withdraw(User user, Optional<String> accessToken, Optional<String> refreshToken) {
-        userCRUDService.deleteUserRecord(user);
+    public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {
+        userService.deleteById(userId);
+        profileServiceFacade.deleteByUserId(userId);
+        tokenRepository.deleteByUserId(userId);
         invalidTokens(accessToken, refreshToken);
     }
 
