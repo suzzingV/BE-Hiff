@@ -1,6 +1,7 @@
 package hiff.hiff.behiff.domain.plan.presentation.controller;
 
 import hiff.hiff.behiff.domain.plan.application.service.PlanService;
+import hiff.hiff.behiff.domain.plan.presentation.dto.res.UserPlanResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.plan.presentation.dto.req.PlanRequest;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
@@ -11,10 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Plan", description = "Plan 관련 API")
 @RestController
@@ -35,6 +33,20 @@ public class PlanControllerV02 {
     @PatchMapping("/me")
     public ResponseEntity<ProfileUpdateResponse> updatePlan(@AuthenticationPrincipal User user, @Valid @RequestBody PlanRequest request) {
         ProfileUpdateResponse response = planService.updatePlan(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "user plan 조회",
+            description = "user 플랜을 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "user plan 조회에 성공하였습니다."
+    )
+    @GetMapping("/me")
+    public ResponseEntity<UserPlanResponse> getUserPlan(@AuthenticationPrincipal User user) {
+        UserPlanResponse response = planService.getUserPlan(user.getId());
         return ResponseEntity.ok(response);
     }
 }

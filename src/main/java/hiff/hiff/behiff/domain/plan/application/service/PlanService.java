@@ -6,6 +6,7 @@ import hiff.hiff.behiff.domain.plan.exception.PlanException;
 import hiff.hiff.behiff.domain.plan.infrastructure.UserPlanRepository;
 import hiff.hiff.behiff.domain.plan.domain.strategy.PlanStrategy;
 import hiff.hiff.behiff.domain.plan.presentation.dto.req.PlanRequest;
+import hiff.hiff.behiff.domain.plan.presentation.dto.res.UserPlanResponse;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +46,10 @@ public class PlanService {
             .userId(userId)
             .build();
         userPlanRepository.save(userPlan);
+    }
+
+    public UserPlanResponse getUserPlan(Long userId) {
+        UserPlan userPlan = findByUserId(userId);
+        return UserPlanResponse.from(userPlan);
     }
 }
