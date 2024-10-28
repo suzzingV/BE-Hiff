@@ -6,8 +6,10 @@ import hiff.hiff.behiff.domain.profile.domain.entity.UserCareer;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserGrad;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserIncome;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserUniversity;
-import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
+
 import java.util.List;
+
+import hiff.hiff.behiff.domain.weighting.domain.entity.UserWeighting;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -38,9 +40,9 @@ public class UserInfoResponse {
     private UserIncome income;
 
     public static UserInfoResponse of(UserProfile userProfile, List<String> hobbies,
-        List<String> photos,
-        List<String> lifeStyles, Weighting weighting, List<String> fashions,
-        List<UserIntroductionDto> introductions, UserCareer userCareer, UserUniversity userUniversity, UserGrad userGrad, UserIncome userIncome) {
+                                      List<String> photos,
+                                      List<String> lifeStyles, UserWeighting weighting, List<String> fashions,
+                                      List<UserIntroductionDto> introductions, UserCareer userCareer, UserUniversity userUniversity, UserGrad userGrad, UserIncome userIncome) {
         return UserInfoResponse.builder()
             .userId(userProfile.getId())
             .userProfile(userProfile)

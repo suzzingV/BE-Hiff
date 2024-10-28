@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.domain.matching.util;
 
-import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
+import hiff.hiff.behiff.domain.weighting.domain.entity.UserWeighting;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -9,8 +9,8 @@ public class Calculator {
 
     private static final double EARTH_RADIUS = 6371.0;
 
-    public static Integer computeTotalScoreByMatcher(Weighting matcherWV, int mbtiSimilarity,
-        int hobbySimilarity, int lifeStyleSimilarity, double matchedEvaluatedScore) {
+    public static Integer computeTotalScoreByMatcher(UserWeighting matcherWV, int mbtiSimilarity,
+                                                     int hobbySimilarity, int lifeStyleSimilarity, double matchedEvaluatedScore) {
         double evaluatedScore = convertEvaluatedScore(matchedEvaluatedScore);
 
         return (int) Math.round(

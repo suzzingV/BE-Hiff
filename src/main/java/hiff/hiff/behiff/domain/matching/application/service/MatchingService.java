@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
-import static hiff.hiff.behiff.domain.matching.util.Calculator.computeTotalScoreByMatcher;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 
 import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
@@ -14,7 +13,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserHobby;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserLifeStyle;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserPos;
-import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
+import hiff.hiff.behiff.domain.weighting.domain.entity.UserWeighting;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
@@ -50,8 +49,8 @@ public class MatchingService {
     }
 
     protected MatchingInfoDto getNewMatchingInfo(User matcher, User matched,
-        Weighting matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
-        List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
+                                                 UserWeighting matcherWV, List<UserHobby> matcherHobbies, List<UserHobby> matchedHobbies,
+                                                 List<UserLifeStyle> matcherLifeStyles, List<UserLifeStyle> matchedLifeStyles) {
 //        int mbtiSimilarity = similarityFactory.getMbtiSimilarity(matcher, matched);
         int hobbySimilarity = similarityFactory.getHobbySimilarity(matcherHobbies, matchedHobbies);
         int lifeStyleSimilarity = similarityFactory.getLifeStyleSimilarity(matcherLifeStyles,

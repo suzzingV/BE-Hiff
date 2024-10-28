@@ -23,7 +23,7 @@ import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
-import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
+import hiff.hiff.behiff.domain.weighting.domain.entity.UserWeighting;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +65,7 @@ public class UserService {
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
         List<String> hobbies = userHobbyService.findNameByUser(userId);
         List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
-        Weighting weightValue = userWeightValueService.findByUserId(userId);
+        UserWeighting weightValue = userWeightValueService.findByUserId(userId);
         List<String> fashions = userFashionService.findNameByUser(userId);
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(
             userId);

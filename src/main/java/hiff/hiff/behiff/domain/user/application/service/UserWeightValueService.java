@@ -1,8 +1,8 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
-import hiff.hiff.behiff.domain.weighting.domain.entity.Weighting;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.WeightValueRepository;
+import hiff.hiff.behiff.domain.weighting.domain.entity.UserWeighting;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,22 +17,22 @@ public class UserWeightValueService {
 
     public void updateWeightValue(Long userId, Integer appearanceWV, Integer hobbyWV,
         Integer lifeStyleWV, Integer mbtiWV) {
-        Weighting weighting = weightValueRepository.findByUserId(userId)
+        UserWeighting weighting = weightValueRepository.findByUserId(userId)
             .orElseThrow(() -> new UserException(ErrorCode.WEIGHT_VALUE_NOT_FOUND));
 //        checkIncomePrivate(userId, weightValue);
         weighting.changeWeightValue(appearanceWV, hobbyWV, lifeStyleWV, mbtiWV);
     }
 
-    public Weighting createWeightValue(Long userId) {
-        Weighting weighting = Weighting.builder()
+    public UserWeighting createWeightValue(Long userId) {
+        UserWeighting weighting = UserWeighting.builder()
             .userId(userId)
             .build();
         return weightValueRepository.save(weighting);
     }
 
-    public Weighting findByUserId(Long userId) {
+    public UserWeighting findByUserId(Long userId) {
         return weightValueRepository.findByUserId(userId)
-            .orElse(Weighting.builder().build());
+            .orElse(UserWeighting.builder().build());
     }
 
 //    private void checkIncomePrivate(Long userId, WeightValue weightValue) {
