@@ -1,6 +1,6 @@
 package hiff.hiff.behiff.domain.criteria.presentation.dto.res;
 
-import hiff.hiff.behiff.domain.criteria.domain.enums.Criteria;
+import hiff.hiff.behiff.domain.criteria.domain.enums.Filter;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,10 +10,10 @@ public class CriteriaResponse {
     private String name;
     private Integer point;
 
-    public static CriteriaResponse from(Criteria criteria) {
+    public static CriteriaResponse from(Filter filter) {
         return CriteriaResponse.builder()
-                .name(criteria.getName())
-                .point(criteria.getPoint())
+                .name(filter.getName())
+                .point(filter.getPoint())
                 .build();
     }
 }

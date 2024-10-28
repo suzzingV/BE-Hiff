@@ -7,10 +7,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 @Getter
-public enum Criteria {
-    HOBBY("취미", 0),
-    LIFE_STYLE("라이프스타일", 0),
-    PERSONALITY("성격", 0),
+public enum Filter {
     HEIGHT("키", 3),
     BODY_TYPE("체형", 7),
     SMOKING("흡연", 1),
@@ -21,9 +18,9 @@ public enum Criteria {
 
     private final Integer point;
     private final String name;
-    public static final Set<Criteria> ALL_VALUES = Collections.unmodifiableSet(EnumSet.allOf(Criteria.class));
+    public static final Set<Filter> ALL_VALUES = Collections.unmodifiableSet(EnumSet.allOf(Filter.class));
 
-    Criteria(String name, Integer point) {
+    Filter(String name, Integer point) {
         this.point = point;
         this.name = name;
     }
