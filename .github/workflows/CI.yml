@@ -42,7 +42,7 @@ jobs:
         id: deploy-prod
         with:
           host: ${{ secrets.HOST_PROD }}
-          username: dh5277
+          username: suzzingv
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
