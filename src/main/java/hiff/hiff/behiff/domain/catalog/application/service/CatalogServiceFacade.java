@@ -29,6 +29,7 @@ public class CatalogServiceFacade {
             .stream().map(hobby ->
                 TagResponse.builder()
                     .name(hobby.getName())
+                        .id(hobby.getId())
                     .build())
             .toList();
     }
@@ -38,6 +39,7 @@ public class CatalogServiceFacade {
         return catalogLifeStyleService.getAllLifeStyles()
             .stream().map(lifeStyle ->
                 TagResponse.builder()
+                        .id(lifeStyle.getId())
                     .name(lifeStyle.getName())
                     .build())
             .toList();
@@ -58,6 +60,7 @@ public class CatalogServiceFacade {
         return catalogFieldService.getAllFields()
             .stream().map(career ->
                 TagResponse.builder()
+                        .id(career.getId())
                     .name(career.getName())
                     .build())
             .toList();
@@ -68,6 +71,7 @@ public class CatalogServiceFacade {
         return catalogSchoolService.getAllFields()
             .stream().map(university ->
                 TagResponse.builder()
+                        .id(university.getId())
                     .name(university.getName())
                     .build())
             .toList();
@@ -77,6 +81,7 @@ public class CatalogServiceFacade {
         return catalogSchoolService.getAllGrads()
             .stream().map(grad ->
                 TagResponse.builder()
+                        .id(grad.getId())
                     .name(grad.getName())
                     .build())
             .toList();
