@@ -62,17 +62,28 @@ public class UserService {
 
     public UserInfoResponse getUserInfo(Long userId) {
         UserProfile userProfile = userProfileService.findByUserId(userId);
+        log.info("profile1");
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
+        log.info("profile2");
         List<String> hobbies = userHobbyService.findNameByUser(userId);
+        log.info("profile3");
         List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
+        log.info("profile4");
         UserWeighting weightValue = userWeightValueService.findByUserId(userId);
+        log.info("profile5");
         List<String> fashions = userFashionService.findNameByUser(userId);
+        log.info("profile6");
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(
             userId);
+        log.info("profile7");
         UserCareer userCareer = userCareerService.findByUserId(userId);
+        log.info("profile8");
         UserUniversity userUniversity = userSchoolService.findByUniversityUserId(userId);
+        log.info("profile9");
         UserGrad userGrad = userSchoolService.findByGradUserId(userId);
+        log.info("profile10");
         UserIncome userIncome = userIncomeService.findByUserId(userId);
+        log.info("profile11");
 
         return UserInfoResponse.of(userProfile, hobbies, photos, lifeStyles, weightValue,
             fashions, introductions, userCareer, userUniversity, userGrad, userIncome);
