@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v0/auth")
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
@@ -108,7 +110,9 @@ public class AuthController {
     @PatchMapping("/verification")
     public ResponseEntity<LoginResponse> sendVerificationCode(@Valid @RequestBody LoginRequest request) {
         authService.checkCode(request);
+        log.info("체크 완료");
         LoginResponse response = authService.login(request);
+        log.info("완료");
         return ResponseEntity.ok(response);
     }
 
