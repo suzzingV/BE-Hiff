@@ -61,15 +61,11 @@ public class AuthService {
         return userRepository.findByPhoneNum(request.getPhoneNum())
             .map(user -> {
                 UserProfile userProfile = userProfileService.findByUserId(user.getId());
-                log.info("여기1");
                 if(userProfile.getBirth() != null) {
                     userProfile.updateAge();
                 }
-                log.info("여기2");
                 userPosService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                log.info("여기3");
                 UserInfoResponse userInfo = userService.getUserInfo(user.getId());
-                log.info("여기4");
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
             })
             .orElseGet(() -> {

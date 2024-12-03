@@ -110,9 +110,7 @@ public class AuthController {
     @PatchMapping("/verification")
     public ResponseEntity<LoginResponse> sendVerificationCode(@Valid @RequestBody LoginRequest request) {
         authService.checkCode(request);
-        log.info("체크 완료");
         LoginResponse response = authService.login(request);
-        log.info("완료");
         return ResponseEntity.ok(response);
     }
 
