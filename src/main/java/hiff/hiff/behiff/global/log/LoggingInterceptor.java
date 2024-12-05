@@ -14,7 +14,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
             Exception {
-        logger.info("request: {} {}", request.getMethod(), request.getRequestURI());
+        String clientIp = getClientIp(request);
+        logger.info("client: {}, request: {} {}", clientIp, request.getMethod(), request.getRequestURI());
         return true;
     }
 
@@ -22,5 +23,13 @@ public class LoggingInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) throws Exception {
         logger.info("response: {}", response.getStatus());
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 }
