@@ -35,12 +35,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Profile", description = "Profile 관련 API")
 @RestController
@@ -240,10 +235,10 @@ public class ProfileControllerV02 {
         responseCode = "200",
         description = "gcs signed URL 조회에 성공하였습니다."
     )
-    @GetMapping("/signed-url")
+    @GetMapping("/signed-url/{folder}/{file}")
     public ResponseEntity<SignedUrlResponse> getSignedUrl(@AuthenticationPrincipal User user,
-        @RequestBody @Valid SignedUrlRequest request) {
-        SignedUrlResponse response = profileServiceFacade.generateSingedUrl(request);
+                                                          @PathVariable String folder, @PathVariable String file) {
+        SignedUrlResponse response = profileServiceFacade.generateSingedUrl(folder, file);
         return ResponseEntity.ok(response);
     }
 

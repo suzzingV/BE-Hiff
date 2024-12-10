@@ -8,7 +8,5 @@ import lombok.Getter;
 @Builder
 public class SignedUrlResponse {
 
-    private String mainSignedUrl;
-
-    private List<String> signedUrls;
+    private String signedUrl;
 }

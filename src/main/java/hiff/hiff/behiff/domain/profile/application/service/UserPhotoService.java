@@ -74,15 +74,17 @@ public class UserPhotoService {
         userPhotoRepository.save(userPhoto);
     }
 
-    public SignedUrlResponse generateSingedUrl(String mainPhotoName, List<String> photoNames) {
-        String mainSignedUrl = gcsService.generateSignedUrl(MAIN_PHOTO_FOLDER_NAME, mainPhotoName);
-        List<String> signedUrls = photoNames.stream().map(photoName -> {
-            return gcsService.generateSignedUrl(PHOTOS_FOLDER_NAME, photoName);
-        }).toList();
+    public SignedUrlResponse generateSingedUrl(String folder, String file) {
+        String name = "";
+        if(folder.equals("main")) {
+            name = MAIN_PHOTO_FOLDER_NAME;
+        } else if(folder.equals("sub")) {
+            name = PHOTOS_FOLDER_NAME;
+        }
+        String signedUrl = gcsService.generateSignedUrl(name, file);
 
         return SignedUrlResponse.builder()
-            .mainSignedUrl(mainSignedUrl)
-            .signedUrls(signedUrls)
+            .signedUrl(signedUrl)
             .build();
     }
 

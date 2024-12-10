@@ -171,9 +171,8 @@ public class ProfileServiceFacade {
         return ProfileUpdateResponse.from(userId);
     }
 
-    public SignedUrlResponse generateSingedUrl(SignedUrlRequest request) {
-        return userPhotoService.generateSingedUrl(request.getMainPhotoName(),
-            request.getPhotoNames());
+    public SignedUrlResponse generateSingedUrl(String folder, String file) {
+        return userPhotoService.generateSingedUrl(folder, file);
     }
 
     public ProfileUpdateResponse createUniversity(Long userId, UserSchoolRequest request) {
