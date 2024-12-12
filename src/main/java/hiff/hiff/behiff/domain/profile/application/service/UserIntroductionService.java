@@ -22,10 +22,12 @@ public class UserIntroductionService {
     private final CatalogIntroductionService catalogIntroductionService;
 
     public void updateIntroduction(Long userId, Long questionId, String content) {
-        UserIntroduction userIntroduction = userIntroductionRepository.findByUserIdAndQuestionId(
-                userId, questionId)
-            .orElseThrow(() -> new UserException(ErrorCode.USER_INTRODUCTION_NOT_FOUND));
-        userIntroduction.changeContent(content);
+        UserIntroduction userIntroduction = UserIntroduction.builder()
+                .userId(userId)
+                .questionId(questionId)
+                .content(content)
+                .build();
+        userIntroductionRepository.save(userIntroduction);
     }
 
     public List<UserIntroductionDto> findIntroductionByUserId(Long userId) {
