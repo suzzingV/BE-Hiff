@@ -12,6 +12,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static hiff.hiff.behiff.domain.profile.application.service.VerificationPhotoService.VERIFICATION_PHOTO_FOLDER;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -80,6 +82,8 @@ public class UserPhotoService {
             name = MAIN_PHOTO_FOLDER_NAME;
         } else if(folder.equals("sub")) {
             name = PHOTOS_FOLDER_NAME;
+        } else if(folder.equals("verification")) {
+            name = VERIFICATION_PHOTO_FOLDER;
         }
         String signedUrl = gcsService.generateSignedUrl(name, file);
 

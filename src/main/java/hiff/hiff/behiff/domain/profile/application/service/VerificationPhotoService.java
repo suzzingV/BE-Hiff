@@ -1,22 +1,14 @@
 package hiff.hiff.behiff.domain.profile.application.service;
 
-import hiff.hiff.behiff.domain.profile.domain.entity.UserPhoto;
-import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.domain.entity.VerificationPhoto;
 import hiff.hiff.behiff.domain.profile.domain.enums.VerificationStatus;
 import hiff.hiff.behiff.domain.profile.exception.ProfileException;
-import hiff.hiff.behiff.domain.profile.infrastructure.UserPhotoRepository;
 import hiff.hiff.behiff.domain.profile.infrastructure.VerificationPhotoRepository;
-import hiff.hiff.behiff.domain.profile.presentation.dto.res.SignedUrlResponse;
-import hiff.hiff.behiff.domain.profile.presentation.dto.res.VerificationPhotoResponse;
 import hiff.hiff.behiff.global.common.gcs.GcsService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +18,10 @@ public class VerificationPhotoService {
     private final VerificationPhotoRepository verificationPhotoRepository;
     private final GcsService gcsService;
 
-    public static final String VERFICATION_PHOTO_FOLDER = "verification_photo";
+    public static final String VERIFICATION_PHOTO_FOLDER = "verification_photo";
 
     public void registerVerificationPhoto(Long userId, String photoUrl) {
+        deletePhoto(userId);
         VerificationPhoto verificationPhoto = VerificationPhoto.builder()
                 .photoUrl(photoUrl)
                 .userId(userId)
@@ -43,8 +36,11 @@ public class VerificationPhotoService {
     }
 
     public void deletePhoto(Long userId) {
+        if(verificationPhotoRepository.findByUserId(userId).isEmpty()) {
+            return;
+        }
         VerificationPhoto verificationPhoto = findByUserId(userId);
-        gcsService.deleteImage(verificationPhoto.getPhotoUrl(), VERFICATION_PHOTO_FOLDER);
+        gcsService.deleteImage(verificationPhoto.getPhotoUrl(), VERIFICATION_PHOTO_FOLDER);
         verificationPhotoRepository.delete(verificationPhoto);
     }
 
