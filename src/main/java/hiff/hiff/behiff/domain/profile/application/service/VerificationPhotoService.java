@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,15 +38,23 @@ public class VerificationPhotoService {
     }
 
     public String getPhoto(Long userId) {
-        VerificationPhoto verificationPhoto = verificationPhotoRepository.findByUserId(userId)
-                .orElseThrow(() -> new ProfileException(ErrorCode.VERIFICATION_PHOTO_NOT_FOUND));
+        VerificationPhoto verificationPhoto = findByUserId(userId);
         return verificationPhoto.getPhotoUrl();
     }
 
     public void deletePhoto(Long userId) {
-        VerificationPhoto verificationPhoto = verificationPhotoRepository.findByUserId(userId)
-                .orElseThrow(() -> new ProfileException(ErrorCode.VERIFICATION_PHOTO_NOT_FOUND));
+        VerificationPhoto verificationPhoto = findByUserId(userId);
         gcsService.deleteImage(verificationPhoto.getPhotoUrl(), VERFICATION_PHOTO_FOLDER);
         verificationPhotoRepository.delete(verificationPhoto);
+    }
+
+    private VerificationPhoto findByUserId(Long userId) {
+        return verificationPhotoRepository.findByUserId(userId)
+                .orElseThrow(() -> new ProfileException(ErrorCode.VERIFICATION_PHOTO_NOT_FOUND));
+    }
+
+    public VerificationStatus getStatus(Long userId) {
+        VerificationPhoto verificationPhoto = findByUserId(userId);
+        return verificationPhoto.getStatus();
     }
 }

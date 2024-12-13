@@ -4,9 +4,11 @@ import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.catalog.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
+import hiff.hiff.behiff.domain.profile.domain.enums.VerificationStatus;
 import hiff.hiff.behiff.domain.profile.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.SignedUrlResponse;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
+import hiff.hiff.behiff.domain.profile.presentation.dto.res.VerificationStatusResponse;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -92,6 +94,13 @@ public class ProfileServiceFacade {
     public ProfileUpdateResponse updateVerificationPhoto(Long userId, VerificationPhotoRequest request) {
         verificationPhotoService.registerVerificationPhoto(userId, request.getVerificationPhoto());
         return ProfileUpdateResponse.from(userId);
+    }
+
+    public VerificationStatusResponse getVerificationStatus(Long userId) {
+        VerificationStatus status = verificationPhotoService.getStatus(userId);
+        return VerificationStatusResponse.builder()
+                .status(status)
+                .build();
     }
 
     private void subtractGenderCount(Gender gender) {

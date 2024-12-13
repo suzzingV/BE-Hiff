@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.profile.presentation.controller;
 
 import hiff.hiff.behiff.domain.profile.application.service.ProfileServiceFacade;
 import hiff.hiff.behiff.domain.profile.presentation.dto.req.*;
+import hiff.hiff.behiff.domain.profile.presentation.dto.res.VerificationStatusResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.SignedUrlResponse;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
@@ -169,10 +170,24 @@ public class ProfileControllerV02 {
             responseCode = "200",
             description = "User 인증사진 업데이트에 성공하였습니다."
     )
-    @PatchMapping("/verification-photo")
+    @PatchMapping("/verification/photo")
     public ResponseEntity<ProfileUpdateResponse> updateVerficationPhoto(@AuthenticationPrincipal User user,
                                                            @Valid @RequestBody VerificationPhotoRequest request) {
         ProfileUpdateResponse response = profileServiceFacade.updateVerificationPhoto(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "User 사진 인증 상태 확인",
+            description = "User 사진 인증 상태를 확인합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "User 사진 인증 상태 확인에 성공하였습니다."
+    )
+    @GetMapping("/verification/photo/status")
+    public ResponseEntity<VerificationStatusResponse> getVerificationStatus(@AuthenticationPrincipal User user) {
+        VerificationStatusResponse response = profileServiceFacade.getVerificationStatus(user.getId());
         return ResponseEntity.ok(response);
     }
 }
