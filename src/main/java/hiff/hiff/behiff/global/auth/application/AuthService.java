@@ -117,6 +117,7 @@ public class AuthService {
     }
 
     public void checkCode(LoginRequest request) {
+        log.info("인증코드 확인: " + request.getCode());
         String savedPhoneNum = redisService.getStrValue(IDENTIFY_VERIFICATION_PREFIX + request.getCode());
         if (!(request.getPhoneNum()).equals(savedPhoneNum)) {
             throw new UserException(ErrorCode.VERIFICATION_CODE_INCORRECT);
