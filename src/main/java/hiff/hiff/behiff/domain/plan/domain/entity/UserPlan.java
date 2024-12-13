@@ -22,15 +22,10 @@ public class UserPlan {
 
     private Integer coupon;
 
-    private Boolean isMembership;
-
-    private LocalDateTime membershipStartDate;
-
     @Builder
     private UserPlan(Long userId) {
         this.userId = userId;
         this.coupon = 0;
-        this.isMembership = false;
     }
 
     public void addCoupon(int amount) {
@@ -39,15 +34,5 @@ public class UserPlan {
 
     public void subtractCoupon() {
         this.coupon --;
-    }
-
-    public void joinMembership() {
-        this.isMembership = true;
-        this.membershipStartDate = LocalDateTime.now();
-    }
-
-    public void cancelMembership() {
-        this.isMembership = false;
-        this.membershipStartDate = null;
     }
 }

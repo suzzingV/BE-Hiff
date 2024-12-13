@@ -4,10 +4,16 @@ import hiff.hiff.behiff.domain.plan.domain.entity.UserPlan;
 import hiff.hiff.behiff.domain.plan.exception.PlanException;
 import hiff.hiff.behiff.domain.plan.infrastructure.UserPlanRepository;
 import hiff.hiff.behiff.domain.plan.presentation.dto.res.CouponResponse;
+import hiff.hiff.behiff.domain.plan.presentation.dto.res.PlanUpdateResponse;
+import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+
+import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class PlanService {
 
     private final UserPlanRepository userPlanRepository;
+    private final RedisService redisService;
+
+    private static final String MEMBERSHIP_PREFIX = "membership_";
     private static final int UNIT_AMOUNT = 1;
+    private static final Duration MEMBERSHIP_DURATION = Duration.ofDays(7);
 
     public CouponResponse purchaseUnit(Long userId) {
         UserPlan userPlan = findByUserId(userId);
@@ -38,5 +48,13 @@ public class PlanService {
     public CouponResponse getUserPlan(Long userId) {
         UserPlan userPlan = findByUserId(userId);
         return CouponResponse.from(userPlan);
+    }
+
+    public PlanUpdateResponse purchaseMembership(Long userId) {
+        if(!redisService.getStrValue(MEMBERSHIP_PREFIX + userId).equals(NOT_EXIST)) {
+            throw new PlanException(ErrorCode.MEMBERSHIP_ALREADY);
+        }
+        redisService.setValue(MEMBERSHIP_PREFIX + userId, null, MEMBERSHIP_DURATION);
+        return PlanUpdateResponse.of(userId);
     }
 }

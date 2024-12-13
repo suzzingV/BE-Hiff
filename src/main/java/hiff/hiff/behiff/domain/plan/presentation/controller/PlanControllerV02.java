@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.plan.presentation.controller;
 
 import hiff.hiff.behiff.domain.plan.application.service.PlanService;
 import hiff.hiff.behiff.domain.plan.presentation.dto.res.CouponResponse;
+import hiff.hiff.behiff.domain.plan.presentation.dto.res.PlanUpdateResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +32,20 @@ public class PlanControllerV02 {
     @PatchMapping("/purchase/unit")
     public ResponseEntity<CouponResponse> purchaseUnit(@AuthenticationPrincipal User user) {
         CouponResponse response = planService.purchaseUnit(user.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "멤버십 구매",
+            description = "멤버십을 구매합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "멤버십 구매에 성공하였습니다."
+    )
+    @PatchMapping("/purchase/membership")
+    public ResponseEntity<PlanUpdateResponse> purchaseMembership(@AuthenticationPrincipal User user) {
+        PlanUpdateResponse response = planService.purchaseMembership(user.getId());
         return ResponseEntity.ok(response);
     }
 
