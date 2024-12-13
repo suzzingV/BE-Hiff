@@ -1,5 +1,6 @@
-package hiff.hiff.behiff.global.auth.domain;
+package hiff.hiff.behiff.global.auth.domain.entity;
 
+import hiff.hiff.behiff.global.auth.domain.enums.OS;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "token_TB")
-public class Token {
+@Table(name = "device_TB")
+public class Device {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,13 +25,20 @@ public class Token {
 
     private String fcmToken;
 
+    private OS os;
+
     @Builder
-    private Token(Long userId, String fcmToken) {
+    private Device(Long userId, String fcmToken, OS os) {
         this.userId = userId;
         this.fcmToken = fcmToken;
+        this.os = os;
     }
 
     public void updateFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
+    }
+
+    public void updateOs(OS os) {
+        this.os = os;
     }
 }

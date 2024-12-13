@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.global.auth.presentation.dto.req;
 
+import hiff.hiff.behiff.global.auth.domain.enums.OS;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -27,4 +28,6 @@ public class LoginRequest {
 
     @NotNull
     private Double longitude;
+
+    private OS os;
 }

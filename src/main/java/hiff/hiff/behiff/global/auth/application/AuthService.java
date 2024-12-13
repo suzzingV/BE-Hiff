@@ -12,9 +12,10 @@ import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
-import hiff.hiff.behiff.global.auth.domain.Token;
+import hiff.hiff.behiff.global.auth.domain.entity.Device;
+import hiff.hiff.behiff.global.auth.domain.enums.OS;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
-import hiff.hiff.behiff.global.auth.infrastructure.TokenRepository;
+import hiff.hiff.behiff.global.auth.infrastructure.DeviceRepository;
 import hiff.hiff.behiff.global.auth.jwt.service.JwtService;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.FcmTokenRequest;
 import hiff.hiff.behiff.global.auth.presentation.dto.req.LoginRequest;
@@ -43,7 +44,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final UserService userService;
-    private final TokenRepository tokenRepository;
+    private final DeviceRepository deviceRepository;
     private final SmsUtil smsUtil;
     private final RedisService redisService;
     private final UserProfileService userProfileService;
@@ -66,12 +67,13 @@ public class AuthService {
                 }
                 userPosService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
                 UserInfoResponse userInfo = userService.getUserInfo(user.getId());
+                updateOs(user.getId(), request.getOs());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
             })
             .orElseGet(() -> {
                 User newUser = userService.registerUser(Role.USER, request.getPhoneNum(),
                     request.getLatitude(), request.getLongitude());
-                generateTokenContainer(newUser.getId());
+                registerDeviceInfo(newUser.getId(), request.getOs());
                 UserInfoResponse userInfo = userService.getUserInfo(newUser.getId());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
             });
@@ -91,11 +93,17 @@ public class AuthService {
     }
 
     public ProfileUpdateResponse updateFcmToken(Long userId, FcmTokenRequest request) {
-        Token token = tokenRepository.findByUserId(userId)
-                .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
-        token.updateFcmToken(request.getFcmToken());
+        Device device = deviceRepository.findByUserId(userId)
+                .orElseThrow(() -> new AuthException(ErrorCode.DEVICE_NOT_FOUND));
+        device.updateFcmToken(request.getFcmToken());
 
         return ProfileUpdateResponse.from(userId);
+    }
+
+    private void updateOs(Long userId, OS os) {
+        Device device = deviceRepository.findByUserId(userId)
+                .orElseThrow(() -> new AuthException(ErrorCode.DEVICE_NOT_FOUND));
+        device.updateOs(os);
     }
 
     private String checkRefreshToken(String refreshToken) {
@@ -117,22 +125,21 @@ public class AuthService {
     }
 
     public void checkCode(LoginRequest request) {
-        log.info("인증코드 확인: " + request.getCode());
         String savedPhoneNum = redisService.getStrValue(IDENTIFY_VERIFICATION_PREFIX + request.getCode());
         if (!(request.getPhoneNum()).equals(savedPhoneNum)) {
             throw new UserException(ErrorCode.VERIFICATION_CODE_INCORRECT);
         }
     }
 
-    public Token findTokenByUserId(Long userId) {
-        return tokenRepository.findByUserId(userId)
-            .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
+    public Device findTokenByUserId(Long userId) {
+        return deviceRepository.findByUserId(userId)
+            .orElseThrow(() -> new AuthException(ErrorCode.DEVICE_NOT_FOUND));
     }
 
     public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {
         userService.deleteById(userId);
         profileServiceFacade.deleteByUserId(userId);
-        tokenRepository.deleteByUserId(userId);
+        deviceRepository.deleteByUserId(userId);
         invalidTokens(accessToken, refreshToken);
     }
 
@@ -148,10 +155,11 @@ public class AuthService {
         jwtService.invalidAccessToken(accessToken);
     }
 
-    private void generateTokenContainer(Long userId) {
-        Token token = Token.builder()
+    private void registerDeviceInfo(Long userId, OS os) {
+        Device device = Device.builder()
                 .userId(userId)
+                .os(os)
                 .build();
-        tokenRepository.save(token);
+        deviceRepository.save(device);
     }
 }

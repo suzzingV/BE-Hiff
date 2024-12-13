@@ -1,19 +1,5 @@
 package hiff.hiff.behiff.domain.chat.application;
 
-import hiff.hiff.behiff.domain.chat.domain.ChatHistory;
-import hiff.hiff.behiff.domain.chat.exception.ChatException;
-import hiff.hiff.behiff.domain.chat.infrastructure.ChatHistoryRepository;
-import hiff.hiff.behiff.domain.chat.presentation.dto.req.ChatAcceptanceRequest;
-import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposalResponse;
-import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposedResponse;
-import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposerResponse;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.global.auth.application.AuthService;
-import hiff.hiff.behiff.global.auth.domain.Token;
-import hiff.hiff.behiff.global.common.fcm.FcmUtils;
-import hiff.hiff.behiff.global.common.sms.SmsUtil;
-import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
