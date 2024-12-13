@@ -1,6 +1,5 @@
 package hiff.hiff.behiff.domain.matching.util;
 
-import hiff.hiff.behiff.domain.weighting.domain.entity.UserWeighting;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -9,15 +8,15 @@ public class Calculator {
 
     private static final double EARTH_RADIUS = 6371.0;
 
-    public static Integer computeTotalScoreByMatcher(UserWeighting matcherWV, int mbtiSimilarity,
-                                                     int hobbySimilarity, int lifeStyleSimilarity, double matchedEvaluatedScore) {
-        double evaluatedScore = convertEvaluatedScore(matchedEvaluatedScore);
-
-        return (int) Math.round(
-            (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity
-                + matcherWV.getLifeStyle() * lifeStyleSimilarity
-                + matcherWV.getAppearance() * evaluatedScore) / matcherWV.getTotal());
-    }
+//    public static Integer computeTotalScoreByMatcher(UserWeighting matcherWV, int mbtiSimilarity,
+//                                                     int hobbySimilarity, int lifeStyleSimilarity, double matchedEvaluatedScore) {
+//        double evaluatedScore = convertEvaluatedScore(matchedEvaluatedScore);
+//
+//        return (int) Math.round(
+//            (matcherWV.getMbti() * mbtiSimilarity + matcherWV.getHobby() * hobbySimilarity
+//                + matcherWV.getLifeStyle() * lifeStyleSimilarity
+//                + matcherWV.getAppearance() * evaluatedScore) / matcherWV.getTotal());
+//    }
 
     public static int computeIntAvg(int sum, int count) {
         return count == 0 ? 0 : (int) Math.round((double) sum / count);

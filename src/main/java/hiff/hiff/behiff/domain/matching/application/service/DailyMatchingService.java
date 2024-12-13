@@ -5,7 +5,6 @@ import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
 import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
 import hiff.hiff.behiff.domain.user.application.service.UserService;
-import hiff.hiff.behiff.domain.user.application.service.UserWeightValueService;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import java.time.Duration;

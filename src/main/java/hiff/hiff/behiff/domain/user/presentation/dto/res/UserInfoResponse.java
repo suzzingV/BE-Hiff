@@ -5,7 +5,6 @@ import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
 
 import java.util.List;
 
-import hiff.hiff.behiff.domain.weighting.domain.entity.UserWeighting;
 import lombok.Builder;
 import lombok.Getter;
 

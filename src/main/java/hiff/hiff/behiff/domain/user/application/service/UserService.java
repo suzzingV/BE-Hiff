@@ -13,7 +13,6 @@ import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
-import hiff.hiff.behiff.domain.weighting.domain.entity.UserWeighting;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Slf4j
 public class UserService {
-    private final UserWeightValueService userWeightValueService;
     private final UserPhotoService userPhotoService;
     private final UserPosService userPosService;
     private final UserIntroductionService userIntroductionService;
