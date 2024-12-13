@@ -1,21 +1,18 @@
 package hiff.hiff.behiff;
 
-import hiff.hiff.behiff.domain.profile.application.service.UserHobbyService;
-import hiff.hiff.behiff.domain.profile.application.service.UserLifeStyleService;
 import hiff.hiff.behiff.domain.profile.application.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
 @RequiredArgsConstructor
+@ServletComponentScan
 public class BeHiffApplication {
 
-    //캐싱
-    private final UserHobbyService userHobbyService;
-    private final UserLifeStyleService userLifeStyleService;
     private final UserProfileService userProfileService;
 
     public static void main(String[] args) {

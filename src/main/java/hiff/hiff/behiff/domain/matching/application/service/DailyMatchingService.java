@@ -2,8 +2,6 @@ package hiff.hiff.behiff.domain.matching.application.service;
 
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
-import hiff.hiff.behiff.domain.profile.application.service.UserHobbyService;
-import hiff.hiff.behiff.domain.profile.application.service.UserLifeStyleService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
 import hiff.hiff.behiff.domain.user.application.service.UserService;
@@ -20,34 +18,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class DailyMatchingService extends MatchingService {
 
-    private final UserService userCRUDService;
-    private final UserWeightValueService userWeightValueService;
-    private final UserRepository userRepository;
-    private final RedisService redisService;
-    private final UserHobbyService userHobbyService;
-    private final UserLifeStyleService userLifeStyleService;
-    private final UserPhotoService userPhotoService;
+//    private final UserService userCRUDService;
+//    private final UserWeightValueService userWeightValueService;
+//    private final UserRepository userRepository;
+//    private final RedisService redisService;
+//    private final UserPhotoService userPhotoService;
 
     private static final Integer DAILY_MATCHING_HEART = 1;
     public static final Duration MATCHING_DURATION = Duration.ofDays(1);
     public static final String DAILY_MATCHING_PREFIX = "daily_";
     public static final String PAID_DAILY_MATCHING_PREFIX = "paidDaily_";
 
-    public DailyMatchingService(UserPosService userPosService, RedisService redisService,
-        MatchingRepository matchingRepository, SimilarityFactory similarityFactory,
-        UserService userService, UserWeightValueService userWeightValueService,
-        UserRepository userRepository, RedisService redisService1,
-        UserHobbyService userHobbyService, UserLifeStyleService userLifeStyleService,
-        UserPhotoService userPhotoService) {
-        super(userPosService, redisService, matchingRepository, similarityFactory);
-        this.userCRUDService = userService;
-        this.userWeightValueService = userWeightValueService;
-        this.userRepository = userRepository;
-        this.redisService = redisService1;
-        this.userHobbyService = userHobbyService;
-        this.userLifeStyleService = userLifeStyleService;
-        this.userPhotoService = userPhotoService;
-    }
+//    public DailyMatchingService(UserPosService userPosService, RedisService redisService,
+//        MatchingRepository matchingRepository, SimilarityFactory similarityFactory,
+//        UserService userService, UserWeightValueService userWeightValueService,
+//        UserRepository userRepository, RedisService redisService1,
+//        UserHobbyService userHobbyService, UserLifeStyleService userLifeStyleService,
+//        UserPhotoService userPhotoService) {
+//        super(userPosService, redisService, matchingRepository, similarityFactory);
+//        this.userCRUDService = userService;
+//        this.userWeightValueService = userWeightValueService;
+//        this.userRepository = userRepository;
+//        this.redisService = redisService1;
+//        this.userHobbyService = userHobbyService;
+//        this.userLifeStyleService = userLifeStyleService;
+//        this.userPhotoService = userPhotoService;
+//    }
 //
 //    // TODO: 남은 시간
 //    // TODO: 외모 점수 없을 때

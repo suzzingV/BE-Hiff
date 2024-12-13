@@ -1,14 +1,6 @@
 package hiff.hiff.behiff.domain.profile.domain.entity;
 
-import hiff.hiff.behiff.domain.profile.domain.enums.BodyType;
-import hiff.hiff.behiff.domain.profile.domain.enums.Buddy;
-import hiff.hiff.behiff.domain.profile.domain.enums.ConflictResolution;
-import hiff.hiff.behiff.domain.profile.domain.enums.ContactFrequency;
-import hiff.hiff.behiff.domain.profile.domain.enums.Drinking;
-import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
-import hiff.hiff.behiff.domain.profile.domain.enums.Ideology;
-import hiff.hiff.behiff.domain.profile.domain.enums.Mbti;
-import hiff.hiff.behiff.domain.profile.domain.enums.Religion;
+import hiff.hiff.behiff.domain.profile.domain.enums.*;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.global.util.DateCalculator;
 import jakarta.persistence.Column;
@@ -60,33 +52,6 @@ public class UserProfile {
 
     private String mainPhoto;
 
-    private Boolean isSmoking;
-
-    @Enumerated(EnumType.STRING)
-    private Drinking drinking;
-
-    @Enumerated(EnumType.STRING)
-    private Buddy buddy;
-
-    @Enumerated(EnumType.STRING)
-    private Religion religion;
-
-    @Enumerated(EnumType.STRING)
-    private Ideology ideology;
-
-    @Enumerated(EnumType.STRING)
-    private ContactFrequency contactFrequency;
-
-    @Enumerated(EnumType.STRING)
-    private ConflictResolution conflictResolution;
-
-    @Min(0)
-    @Max(300)
-    private Integer height;
-
-    @Enumerated(EnumType.STRING)
-    private BodyType bodyType;
-
     @Builder
     private UserProfile(Long userId) {
         this.userId = userId;
@@ -120,91 +85,6 @@ public class UserProfile {
 
     public void updateAge() {
         this.age = DateCalculator.calculateAge(this.birth);
-    }
-
-    public void changeIsSmoking(Boolean isSmoking) {
-        this.isSmoking = isSmoking;
-    }
-
-    public void changeDrinking(Drinking drinking) {
-        this.drinking = drinking;
-    }
-
-    public void changeBuddy(Buddy buddy) {
-        this.buddy = buddy;
-    }
-
-    public void changeReligion(Religion religion) {
-        this.religion = religion;
-    }
-
-    public void changeIdeology(Ideology ideology) {
-        this.ideology = ideology;
-    }
-
-    public void changeContactFrequency(ContactFrequency contactFrequency) {
-        this.contactFrequency = contactFrequency;
-    }
-
-    public void changeConflictResolution(ConflictResolution conflictResolution) {
-        this.conflictResolution = conflictResolution;
-    }
-
-    public void changeHeight(Integer height) {
-        this.height = height;
-    }
-
-    public void changeBodyType(BodyType bodyType) {
-        this.bodyType = bodyType;
-    }
-
-    public String getDrinkingText() {
-        if (this.drinking == null) {
-            return null;
-        }
-        return this.drinking.getText();
-    }
-
-    public String getBuddyText() {
-        if (this.buddy == null) {
-            return null;
-        }
-        return this.buddy.getText();
-    }
-
-    public String getReligionText() {
-        if (this.religion == null) {
-            return null;
-        }
-        return this.religion.getText();
-    }
-
-    public String getIdeologyText() {
-        if (this.ideology == null) {
-            return null;
-        }
-        return this.ideology.getText();
-    }
-
-    public String getContactFrequencyText() {
-        if (this.contactFrequency == null) {
-            return null;
-        }
-        return this.contactFrequency.getText();
-    }
-
-    public String getConflictResolutionText() {
-        if (this.conflictResolution == null) {
-            return null;
-        }
-        return this.conflictResolution.getText();
-    }
-
-    public String getBodyTypeText() {
-        if (this.bodyType == null) {
-            return null;
-        }
-        return this.bodyType.getText();
     }
 
     public String getGenderText() {

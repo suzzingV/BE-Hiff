@@ -4,18 +4,10 @@ import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.catalog.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.catalog.infrastructure.MbtiScoreRepository;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
+import hiff.hiff.behiff.domain.profile.domain.enums.*;
 import hiff.hiff.behiff.domain.profile.exception.ProfileException;
 import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.profile.domain.enums.BodyType;
-import hiff.hiff.behiff.domain.profile.domain.enums.Buddy;
-import hiff.hiff.behiff.domain.profile.domain.enums.ConflictResolution;
-import hiff.hiff.behiff.domain.profile.domain.enums.ContactFrequency;
-import hiff.hiff.behiff.domain.profile.domain.enums.Drinking;
-import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
-import hiff.hiff.behiff.domain.profile.domain.enums.Ideology;
-import hiff.hiff.behiff.domain.profile.domain.enums.Mbti;
-import hiff.hiff.behiff.domain.profile.domain.enums.Religion;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
@@ -36,7 +28,6 @@ public class UserProfileService {
     private final RedisService redisService;
     private final UserProfileRepository userProfileRepository;
 
-    //    public static final String INCOME_PREFIX = "income_";
     public static final String MBTI_PREFIX = "mbti_";
 
     public void updateNickname(UserProfile userProfile, String nickname) {
@@ -63,18 +54,6 @@ public class UserProfileService {
         userProfile.changeMbti(mbti);
     }
 
-    public void updateSmokingStatus(UserProfile userProfile, Boolean isSmoking) {
-        userProfile.changeIsSmoking(isSmoking);
-    }
-
-    public void updateDrinkingStatus(UserProfile userProfile, Drinking drinking) {
-        userProfile.changeDrinking(drinking);
-    }
-
-    public void updateBuddy(UserProfile userProfile, Buddy buddy) {
-        userProfile.changeBuddy(buddy);
-    }
-
     public void cacheMbtiSimilarity() {
         mbtiScoreRepository.findAll()
             .forEach(mbtiScore -> {
@@ -91,40 +70,6 @@ public class UserProfileService {
             .ifPresent(user -> {
                 throw new ProfileException(ErrorCode.NICKNAME_ALREADY_EXISTS);
             });
-    }
-
-    private static void checkDistanceRange(Integer maxDistance, Integer minDistance) {
-        if (minDistance > maxDistance) {
-            throw new UserException(ErrorCode.DISTANCE_RANGE_REVERSE);
-        }
-    }
-
-    public Double getEvaluatedScore(UserProfile userProfile) {
-        return userProfile.getEvaluatedScore();
-    }
-
-    public void updateReligion(UserProfile userProfile, Religion religion) {
-        userProfile.changeReligion(religion);
-    }
-
-    public void updateIdeology(UserProfile userProfile, Ideology ideology) {
-        userProfile.changeIdeology(ideology);
-    }
-
-    public void updateContactFrequency(UserProfile userProfile, ContactFrequency contactFrequency) {
-        userProfile.changeContactFrequency(contactFrequency);
-    }
-
-    public void updateConflictResolution(UserProfile userProfile, ConflictResolution conflictResolution) {
-        userProfile.changeConflictResolution(conflictResolution);
-    }
-
-    public void updateHeight(UserProfile userProfile, Integer height) {
-        userProfile.changeHeight(height);
-    }
-
-    public void updateBodyType(UserProfile userProfile, BodyType bodyType) {
-        userProfile.changeBodyType(bodyType);
     }
 
     public UserProfile findByUserId(Long userId) {
