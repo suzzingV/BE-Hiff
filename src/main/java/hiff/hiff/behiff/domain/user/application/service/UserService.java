@@ -1,24 +1,14 @@
 package hiff.hiff.behiff.domain.user.application.service;
 
 import hiff.hiff.behiff.domain.plan.application.service.PlanService;
-import hiff.hiff.behiff.domain.profile.application.service.UserCareerService;
-import hiff.hiff.behiff.domain.profile.application.service.UserFashionService;
-import hiff.hiff.behiff.domain.profile.application.service.UserHobbyService;
-import hiff.hiff.behiff.domain.profile.application.service.UserIncomeService;
 import hiff.hiff.behiff.domain.profile.application.service.UserIntroductionService;
-import hiff.hiff.behiff.domain.profile.application.service.UserLifeStyleService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
 import hiff.hiff.behiff.domain.profile.application.service.UserProfileService;
-import hiff.hiff.behiff.domain.profile.application.service.UserSchoolService;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
-import hiff.hiff.behiff.domain.profile.domain.entity.UserCareer;
-import hiff.hiff.behiff.domain.profile.domain.entity.UserGrad;
-import hiff.hiff.behiff.domain.profile.domain.entity.UserIncome;
-import hiff.hiff.behiff.domain.profile.domain.entity.UserUniversity;
 import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
@@ -36,17 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Slf4j
 public class UserService {
-
-    private final UserHobbyService userHobbyService;
-    private final UserLifeStyleService userLifeStyleService;
-    private final UserCareerService userCareerService;
     private final UserWeightValueService userWeightValueService;
     private final UserPhotoService userPhotoService;
     private final UserPosService userPosService;
-    private final UserFashionService userFashionService;
     private final UserIntroductionService userIntroductionService;
-    private final UserSchoolService userSchoolService;
-    private final UserIncomeService userIncomeService;
     private final PlanService planService;
     private final UserProfileService userProfileService;
     private final UserRepository userRepository;
@@ -63,19 +46,18 @@ public class UserService {
     public UserInfoResponse getUserInfo(Long userId) {
         UserProfile userProfile = userProfileService.findByUserId(userId);
         List<String> photos = userPhotoService.getPhotosOfUser(userId);
-        List<String> hobbies = userHobbyService.findNameByUser(userId);
-        List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
-        UserWeighting weightValue = userWeightValueService.findByUserId(userId);
-        List<String> fashions = userFashionService.findNameByUser(userId);
+//        List<String> hobbies = userHobbyService.findNameByUser(userId);
+//        List<String> lifeStyles = userLifeStyleService.findNamesByUser(userId);
+//        UserWeighting weightValue = userWeightValueService.findByUserId(userId);
+//        List<String> fashions = userFashionService.findNameByUser(userId);
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(
             userId);
-        UserCareer userCareer = userCareerService.findByUserId(userId);
-        UserUniversity userUniversity = userSchoolService.findByUniversityUserId(userId);
-        UserGrad userGrad = userSchoolService.findByGradUserId(userId);
-        UserIncome userIncome = userIncomeService.findByUserId(userId);
+//        UserCareer userCareer = userCareerService.findByUserId(userId);
+//        UserUniversity userUniversity = userSchoolService.findByUniversityUserId(userId);
+//        UserGrad userGrad = userSchoolService.findByGradUserId(userId);
+//        UserIncome userIncome = userIncomeService.findByUserId(userId);
 
-        return UserInfoResponse.of(userProfile, hobbies, photos, lifeStyles, weightValue,
-            fashions, introductions, userCareer, userUniversity, userGrad, userIncome);
+        return UserInfoResponse.of(userProfile, photos, introductions);
     }
 
     public void deleteById(Long userId) {
