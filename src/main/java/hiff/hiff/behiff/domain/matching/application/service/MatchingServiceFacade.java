@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.DailyMatchingDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class MatchingServiceFacade {
 
-//    private final DailyMatchingService dailyMatchingService;
+    private final DailyMatchingService dailyMatchingService;
 //
 //    private final UserCRUDService userCRUDService;
 //    private final SmsUtil smsUtil;
-//
+
 //    public List<MatchingSimpleResponse> getDailyMatching(Long userId) {
 //        return dailyMatchingService.getMatchings(userId);
 //    }
@@ -39,7 +40,7 @@ public class MatchingServiceFacade {
 //    public HiffMatchingDetailResponse getHiffMatchingDetails(Long matcherId, Long matchedId) {
 //        return hiffMatchingService.getMatchingDetails(matcherId, matchedId);
 //    }
-//
+
 //    public void matchUnmatched() {
 //        userCRUDService.findAll()
 //            .forEach(user -> {

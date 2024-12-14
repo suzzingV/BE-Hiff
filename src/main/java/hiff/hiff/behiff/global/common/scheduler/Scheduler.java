@@ -1,10 +1,5 @@
 package hiff.hiff.behiff.global.common.scheduler;
 
-import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
-import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
-import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.catalog.infrastructure.GenderCountRepository;
-import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.Date;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -23,19 +18,15 @@ public class Scheduler {
 
     private final JobLauncher jobLauncher;
     private final Job dailyMatchingInitJob;
-    private final Job hiffMatchingByMaleJob;
-    private final Job hiffMatchingByFemaleJob;
-    private final GenderCountRepository genderCountRepository;
+    private final Job randomMatcingJob;
+//    private final GenderCountRepository genderCountRepository;
 
     public Scheduler(@Qualifier("dailyMatchingInitJob") Job dailyMatchingInitJob,
-        @Qualifier("hiffMatchingByMaleJob") Job hiffMatchingByMaleJob,
-        @Qualifier("hiffMatchingByFemaleJob") Job hiffMatchingByFemaleJob, JobLauncher jobLauncher,
-        GenderCountRepository genderCountRepository) {
-        this.hiffMatchingByMaleJob = hiffMatchingByMaleJob;
-        this.hiffMatchingByFemaleJob = hiffMatchingByFemaleJob;
+        @Qualifier("randomMatchingJob") Job randomMatchingJob, JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
         this.dailyMatchingInitJob = dailyMatchingInitJob;
-        this.genderCountRepository = genderCountRepository;
+//        this.genderCountRepository = genderCountRepository;
+        this.randomMatcingJob = randomMatchingJob;
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
@@ -47,29 +38,31 @@ public class Scheduler {
         jobLauncher.run(dailyMatchingInitJob, jobParameters);
     }
 
-    @Scheduled(cron = "0 43 2 * * ?")
-    public void freeHiffMatching()
+    @Scheduled(cron = "0 0 */3 * * ?")
+    public void randomMatching()
         throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters jobParameters = new JobParametersBuilder()
             .addDate("currentTime", new Date())
             .toJobParameters();
-        runHiffMatchingJob(jobParameters);
+        runRandomMatchingJob(jobParameters);
     }
 
-    public void runHiffMatchingJob(JobParameters jobParameters)
+    public void runRandomMatchingJob(JobParameters jobParameters)
         throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-        int maleCount = getGenderCount(Gender.MALE);
-        int femaleCount = getGenderCount(Gender.FEMALE);
-        if (maleCount > femaleCount) {
-            jobLauncher.run(hiffMatchingByMaleJob, jobParameters);
-        } else {
-            jobLauncher.run(hiffMatchingByFemaleJob, jobParameters);
-        }
+//        int maleCount = getGenderCount(Gender.MALE);
+//        int femaleCount = getGenderCount(Gender.FEMALE);
+//        if (maleCount > femaleCount) {
+//            jobLauncher.run(hiffMatchingByMaleJob, jobParameters);
+//        } else {
+//            jobLauncher.run(hiffMatchingByFemaleJob, jobParameters);
+//        }
+
+        jobLauncher.run(randomMatcingJob, jobParameters);
     }
 
-    private int getGenderCount(Gender gender) {
-        GenderCount genderCount = genderCountRepository.findById(gender)
-            .orElseThrow(() -> new UserException(ErrorCode.GENDER_COUNT_NOT_FOUND));
-        return genderCount.getCount();
-    }
+//    private int getGenderCount(Gender gender) {
+//        GenderCount genderCount = genderCountRepository.findById(gender)
+//            .orElseThrow(() -> new UserException(ErrorCode.GENDER_COUNT_NOT_FOUND));
+//        return genderCount.getCount();
+//    }
 }

@@ -2,7 +2,8 @@ package hiff.hiff.behiff.domain.profile.infrastructure;
 
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.profile.domain.enums.LookScore;
+
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -21,9 +22,10 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
                                 WHERE m.matchedId = u.id AND m.matcherId = :matcherId)
         AND u.id != :matcherId
         AND u.gender != :gender
-        ORDER BY RAND() LIMIT 5
+        AND u.lookScore = :lookScore
+        ORDER BY RAND() LIMIT 1
         """)
-    List<UserProfile> getDailyMatched(Long matcherId, Gender gender);
+    List<UserProfile> getRandomMatched(Long matcherId, Gender gender, LookScore lookScore);
 
     @Query("""
         SELECT u FROM UserProfile u
@@ -36,15 +38,17 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
 
     Page<UserProfile> findByGender(Gender gender, Pageable pageable);
 
-    @Query("""
-                SELECT u FROM UserProfile u
-                WHERE u.evaluatedScore = :score
-        """)
-    List<UserProfile> findUsersWithoutAppearanceScore(Double score);
+//    @Query("""
+//                SELECT u FROM UserProfile u
+//                WHERE u.evaluatedScore = :score
+//        """)
+//    List<UserProfile> findUsersWithoutAppearanceScore(Double score);
 
     @Query("SELECT p FROM UserProfile p WHERE p.userId = :userId")
     Optional<UserProfile> findByUserId(Long userId);
 
 
     void deleteByUserId(Long userId);
+
+    List<UserProfile> findAll();
 }

@@ -1,6 +1,9 @@
 package hiff.hiff.behiff.global.common.batch.hiff_matching;
 
 import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
+import hiff.hiff.behiff.domain.matching.application.service.DailyMatchingService;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
+import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
@@ -40,114 +43,149 @@ public class HiffMatchingBatchConfig {
     private final HiffMatchingJobExecutionListener hiffMatchingJobExecutionListener;
     private final MatchedStepExecutionListener matchedStepExecutionListener;
 //    private final HiffMatchingService hiffMatchingService;
+    private final UserProfileRepository userProfileRepository;
+    private final DailyMatchingService dailyMatchingService;
     public static PriorityQueue<UserWithMatchCount> matchedQueue = new PriorityQueue<>();
     public static List<User> matchedList = new ArrayList<>();
 
-    @Bean
-    public Job hiffMatchingByMaleJob() {
-        return new JobBuilder("hiffMatchingByMaleJob", jobRepository)
-            .listener(hiffMatchingJobExecutionListener)
-            .start(getFemaleStep())
-            .next(matchingByMaleStep())
-            .build();
-    }
+//    @Bean
+//    public Job hiffMatchingByMaleJob() {
+//        return new JobBuilder("hiffMatchingByMaleJob", jobRepository)
+//            .listener(hiffMatchingJobExecutionListener)
+////            .start(getFemaleStep())
+//            .start(matchingByMaleStep())
+//            .build();
+//    }
 
     @Bean
-    public Job hiffMatchingByFemaleJob() {
-        return new JobBuilder("hiffMatchingByFemaleJob", jobRepository)
-            .listener(hiffMatchingJobExecutionListener)
-            .start(getMaleStep())
-            .next(matchingByFemaleStep())
-            .build();
+    public Job randomMatchingJob() {
+        return new JobBuilder("randomMatchingJob", jobRepository)
+                .listener(hiffMatchingJobExecutionListener)
+                .start(randomMatchingStep())
+                .build();
     }
 
-    @Bean
-    public Step getMaleStep() {
-        return new StepBuilder("getMaleStep", jobRepository)
-            .<User, Future<User>>chunk(5000, transactionManager)
-            .reader(maleReader())
-            .processor(matchedAsyncItemProcessor())
-            .writer(matchedAsyncItemWriter()) // 비동기로 실행하기 위한 TaskExecutor 설정
-            .listener(matchedStepExecutionListener)
-            .faultTolerant()
-            .skip(Exception.class)
-            .listener(customSkipListener)
-            .retry(Exception.class)
-            .retryLimit(3)
-            .build();
-    }
+//    @Bean
+//    public Job hiffMatchingByFemaleJob() {
+//        return new JobBuilder("hiffMatchingByFemaleJob", jobRepository)
+//            .listener(hiffMatchingJobExecutionListener)
+////            .start(getMaleStep())
+//            .start(matchingByFemaleStep())
+//            .build();
+//    }
+
+//    @Bean
+//    public Step getMaleStep() {
+//        return new StepBuilder("getMaleStep", jobRepository)
+//            .<User, Future<User>>chunk(5000, transactionManager)
+//            .reader(maleReader())
+//            .processor(matchedAsyncItemProcessor())
+//            .writer(matchedAsyncItemWriter()) // 비동기로 실행하기 위한 TaskExecutor 설정
+//            .listener(matchedStepExecutionListener)
+//            .faultTolerant()
+//            .skip(Exception.class)
+//            .listener(customSkipListener)
+//            .retry(Exception.class)
+//            .retryLimit(3)
+//            .build();
+//    }
+
+//    @Bean
+//    public Step getFemaleStep() {
+//        return new StepBuilder("getFemaleStep", jobRepository)
+//            .<User, Future<User>>chunk(5000, transactionManager)
+//            .reader(femaleReader())
+//            .processor(matchedAsyncItemProcessor())
+//            .writer(matchedAsyncItemWriter()) // 비동기로 실행하기 위한 TaskExecutor 설정
+//            .listener(matchedStepExecutionListener)
+//            .faultTolerant()
+//            .skip(Exception.class)
+//            .listener(customSkipListener)
+//            .retry(Exception.class)
+//            .retryLimit(3)
+//            .build();
+//    }
+
+//    @Bean
+//    public Step matchingByMaleStep() {
+//        return new StepBuilder("matchingByMaleStep", jobRepository)
+//            .<UserProfile, Future<UserProfile>>chunk(5000, transactionManager)
+//            .reader(userProfileReader())
+//            .processor(matcherAsyncItemProcessor())
+//            .writer(matcherAsyncItemWriter())
+//            .faultTolerant()
+//            .skip(Exception.class)
+//            .listener(customSkipListener)
+//            .retry(Exception.class)
+//            .retryLimit(3)
+//            .build();
+//    }
 
     @Bean
-    public Step getFemaleStep() {
-        return new StepBuilder("getFemaleStep", jobRepository)
-            .<User, Future<User>>chunk(5000, transactionManager)
-            .reader(femaleReader())
-            .processor(matchedAsyncItemProcessor())
-            .writer(matchedAsyncItemWriter()) // 비동기로 실행하기 위한 TaskExecutor 설정
-            .listener(matchedStepExecutionListener)
-            .faultTolerant()
-            .skip(Exception.class)
-            .listener(customSkipListener)
-            .retry(Exception.class)
-            .retryLimit(3)
-            .build();
+    public Step randomMatchingStep() {
+        return new StepBuilder("randomMatchingStep", jobRepository)
+                .<UserProfile, Future<UserProfile>>chunk(5000, transactionManager)
+                .reader(userProfileReader())
+                .processor(matcherAsyncItemProcessor())
+                .writer(matcherAsyncItemWriter())
+                .faultTolerant()
+                .skip(Exception.class)
+                .listener(customSkipListener)
+                .retry(Exception.class)
+                .retryLimit(3)
+                .build();
     }
 
-    @Bean
-    public Step matchingByMaleStep() {
-        return new StepBuilder("matchingByMaleStep", jobRepository)
-            .<User, Future<User>>chunk(5000, transactionManager)
-            .reader(maleReader())
-            .processor(matcherAsyncItemProcessor())
-            .writer(matcherAsyncItemWriter())
-            .faultTolerant()
-            .skip(Exception.class)
-            .listener(customSkipListener)
-            .retry(Exception.class)
-            .retryLimit(3)
-            .build();
-    }
+//    @Bean
+//    public Step matchingByFemaleStep() {
+//        return new StepBuilder("matchingByFemaleStep", jobRepository)
+//            .<User, Future<User>>chunk(5000, transactionManager)
+//            .reader(femaleReader())
+//            .processor(matcherAsyncItemProcessor())
+//            .writer(matcherAsyncItemWriter())
+//            .faultTolerant()
+//            .skip(Exception.class)
+//            .listener(customSkipListener)
+//            .retry(Exception.class)
+//            .retryLimit(3)
+//            .build();
+//    }
+
+//    @Bean
+//    public RepositoryItemReader<UserProfile> maleReader() {
+//        RepositoryItemReader<UserProfile> reader = new RepositoryItemReader<>();
+//        reader.setRepository(userProfileRepository);
+//        reader.setMethodName("findByGender");
+//        reader.setArguments(Collections.singletonList(Gender.MALE));
+//        reader.setPageSize(5000);
+//        reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
+//        return reader;
+//    }
 
     @Bean
-    public Step matchingByFemaleStep() {
-        return new StepBuilder("matchingByFemaleStep", jobRepository)
-            .<User, Future<User>>chunk(5000, transactionManager)
-            .reader(femaleReader())
-            .processor(matcherAsyncItemProcessor())
-            .writer(matcherAsyncItemWriter())
-            .faultTolerant()
-            .skip(Exception.class)
-            .listener(customSkipListener)
-            .retry(Exception.class)
-            .retryLimit(3)
-            .build();
-    }
-
-    @Bean
-    public RepositoryItemReader<User> maleReader() {
-        RepositoryItemReader<User> reader = new RepositoryItemReader<>();
-        reader.setRepository(userRepository);
-        reader.setMethodName("findByGender");
-        reader.setArguments(Collections.singletonList(Gender.MALE));
+    public RepositoryItemReader<UserProfile> userProfileReader() {
+        RepositoryItemReader<UserProfile> reader = new RepositoryItemReader<>();
+        reader.setRepository(userProfileRepository);
+        reader.setMethodName("findAll");
         reader.setPageSize(5000);
         reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
         return reader;
     }
 
-    @Bean
-    public RepositoryItemReader<User> femaleReader() {
-        RepositoryItemReader<User> reader = new RepositoryItemReader<>();
-        reader.setRepository(userRepository);
-        reader.setMethodName("findByGender");
-        reader.setArguments(Collections.singletonList(Gender.FEMALE));
-        reader.setPageSize(5000);  // 페이지당 읽을 데이터 개수
-        reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
-        return reader;
-    }
+//    @Bean
+//    public RepositoryItemReader<User> femaleReader() {
+//        RepositoryItemReader<User> reader = new RepositoryItemReader<>();
+//        reader.setRepository(userRepository);
+//        reader.setMethodName("findByGender");
+//        reader.setArguments(Collections.singletonList(Gender.FEMALE));
+//        reader.setPageSize(5000);  // 페이지당 읽을 데이터 개수
+//        reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
+//        return reader;
+//    }
 
     @Bean
-    public AsyncItemProcessor<User, User> matcherAsyncItemProcessor() {
-        AsyncItemProcessor<User, User> asyncItemProcessor = new AsyncItemProcessor<>();
+    public AsyncItemProcessor<UserProfile, UserProfile> matcherAsyncItemProcessor() {
+        AsyncItemProcessor<UserProfile, UserProfile> asyncItemProcessor = new AsyncItemProcessor<>();
         asyncItemProcessor.setTaskExecutor(taskExecutor()); // 스레드풀 지정
         asyncItemProcessor.setDelegate(matcherItemProcessor());
         return asyncItemProcessor;
@@ -162,12 +200,13 @@ public class HiffMatchingBatchConfig {
     }
 
     @Bean
-    public ItemProcessor<User, User> matcherItemProcessor() {
-        return new ItemProcessor<User, User>() {
+    public ItemProcessor<UserProfile, UserProfile> matcherItemProcessor() {
+        return new ItemProcessor<UserProfile, UserProfile>() {
             @Override
-            public User process(User matcher) {
-                PriorityQueue<UserWithMatchCount> matchedArr = new PriorityQueue<>(matchedQueue);
+            public UserProfile process(UserProfile matcher) {
+//                PriorityQueue<UserWithMatchCount> matchedArr = new PriorityQueue<>(matchedQueue);
 //                hiffMatchingService.dailyMatching(matcher, matchedArr);
+                dailyMatchingService.performMatching(matcher);
                 return null;
             }
         };
@@ -182,8 +221,8 @@ public class HiffMatchingBatchConfig {
     }
 
     @Bean
-    public AsyncItemWriter<User> matcherAsyncItemWriter() {
-        AsyncItemWriter<User> writer = new AsyncItemWriter<>();
+    public AsyncItemWriter<UserProfile> matcherAsyncItemWriter() {
+        AsyncItemWriter<UserProfile> writer = new AsyncItemWriter<>();
         writer.setDelegate(matcherWriter());
         return writer;
     }
@@ -196,10 +235,10 @@ public class HiffMatchingBatchConfig {
     }
 
     @Bean
-    public ItemWriter<User> matcherWriter() {
-        return new ItemWriter<User>() {
+    public ItemWriter<UserProfile> matcherWriter() {
+        return new ItemWriter<UserProfile>() {
             @Override
-            public void write(Chunk<? extends User> chunk) throws Exception {
+            public void write(Chunk<? extends UserProfile> chunk) throws Exception {
             }
         };
     }

@@ -1,9 +1,11 @@
 package hiff.hiff.behiff.global.common.batch.matching_init;
 
-import static hiff.hiff.behiff.domain.matching.application.service.DailyMatchingService.DAILY_MATCHING_PREFIX;
+import static hiff.hiff.behiff.domain.matching.application.service.DailyMatchingService.MATCHING_PREFIX;
 
 import hiff.hiff.behiff.global.common.batch.CustomSkipListener;
+import hiff.hiff.behiff.global.util.DateCalculator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -18,6 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class MatchingInitBatchConfig {
 
     private final CustomSkipListener customSkipListener;
@@ -57,7 +60,8 @@ public class MatchingInitBatchConfig {
 
     @Bean
     public CustomRedisItemReader<String, String> redisItemReader() {
-        ScanOptions scanOptions = ScanOptions.scanOptions().match(DAILY_MATCHING_PREFIX + "*")
+        String yesterdayDate = DateCalculator.getYesterdayDate();
+        ScanOptions scanOptions = ScanOptions.scanOptions().match(MATCHING_PREFIX + yesterdayDate + "*")
             .count(1000).build();
         return new CustomRedisItemReader<>(redisTemplate, scanOptions);
     }

@@ -1,7 +1,6 @@
 package hiff.hiff.behiff.domain.profile.domain.entity;
 
 import hiff.hiff.behiff.domain.profile.domain.enums.*;
-import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.global.util.DateCalculator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,8 +46,8 @@ public class UserProfile {
     @Max(80)
     private Integer age;
 
-
-    private Double evaluatedScore;
+    @Enumerated(EnumType.STRING)
+    private LookScore lookScore;
 
     private String mainPhoto;
 
@@ -75,8 +74,8 @@ public class UserProfile {
         this.mbti = mbti;
     }
 
-    public void updateEvaluatedScoreTmp(Double score) {
-        this.evaluatedScore = score;
+    public void updateapperanceScore(LookScore lookScore) {
+        this.lookScore = lookScore;
     }
 
     public void updateMainPhoto(String photoUrl) {

@@ -21,7 +21,23 @@ public class BatchController {
     @GetMapping("/gender")
     public ResponseEntity<Void> getUserByGender()
         throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-        scheduler.freeHiffMatching();
+        scheduler.randomMatching();
+        return ResponseEntity.ok().build();
+
+    }
+
+    @GetMapping("/matching/random")
+    public ResponseEntity<Void> performRandomMatching()
+            throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        scheduler.randomMatching();
+        return ResponseEntity.ok().build();
+
+    }
+
+    @GetMapping("/init")
+    public ResponseEntity<Void> initMatching()
+            throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        scheduler.initMatchingData();
         return ResponseEntity.ok().build();
 
     }

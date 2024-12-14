@@ -1,5 +1,8 @@
-package hiff.hiff.behiff.domain.matching.application.service;
-
+//package hiff.hiff.behiff.domain.matching.application.service;
+//
+//import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+//import org.springframework.stereotype.Service;
+//
 //@Service
 //@Transactional
 //@Slf4j
@@ -137,7 +140,7 @@ package hiff.hiff.behiff.domain.matching.application.service;
 //            matchingInfoDto, hobbies, lifeStyles, isPropose, isProposed);
 //    }
 //
-//    public void dailyMatching(User matcher, PriorityQueue<UserWithMatchCount> matchedArr) {
+//    public void voiddailyMatching(User matcher, PriorityQueue<UserWithMatchCount> matchedArr) {
 //        UserPos matcherPos = userPosService.findPosByUserId(matcher.getId());
 //        Weighting matcherWV = userWeightValueService.findByUserId(matcher.getId());
 //        List<UserHobby> matcherHobbies = userHobbyRepository.findByUserId(matcher.getId());
