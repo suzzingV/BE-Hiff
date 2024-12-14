@@ -2,24 +2,23 @@ package hiff.hiff.behiff.domain.profile.application.service;
 
 import hiff.hiff.behiff.domain.catalog.application.service.CatalogIntroductionService;
 import hiff.hiff.behiff.domain.catalog.domain.entity.Question;
-import hiff.hiff.behiff.domain.catalog.infrastructure.QuestionRepository;
 import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserIntroduction;
 import hiff.hiff.behiff.domain.profile.exception.ProfileException;
-import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.profile.infrastructure.UserIntroductionRepository;
 import hiff.hiff.behiff.domain.profile.presentation.dto.req.UserQuestionRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserIntroductionService {
 
     private final UserIntroductionRepository userIntroductionRepository;
@@ -27,7 +26,7 @@ public class UserIntroductionService {
 
     public void updateIntroduction(Long userId, Long questionId, String content) {
         Question question = catalogIntroductionService.findQuestionById(questionId);
-        UserIntroduction userIntroduction = findUserIdAndQuestionId(userId, questionId);
+        UserIntroduction userIntroduction = findByUserIdAndQuestionId(userId, questionId);
         userIntroduction.updateQuestion(question.getQuestion());
         userIntroduction.updateContent(content);
     }
@@ -79,7 +78,8 @@ public class UserIntroductionService {
             });
     }
 
-    private UserIntroduction findUserIdAndQuestionId(Long userId, Long questionId) {
+    private UserIntroduction findByUserIdAndQuestionId(Long userId, Long questionId) {
+        log.info("id; " + userId + " " + questionId);
         return userIntroductionRepository.findByUserIdAndQuestionId(userId, questionId)
                 .orElseThrow(() -> new ProfileException(ErrorCode.USER_INTRODUCTION_NOT_FOUND));
     }
