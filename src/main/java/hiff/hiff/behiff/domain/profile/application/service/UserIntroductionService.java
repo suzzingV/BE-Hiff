@@ -79,7 +79,6 @@ public class UserIntroductionService {
     }
 
     private UserIntroduction findByUserIdAndQuestionId(Long userId, Long questionId) {
-        log.info("id; " + userId + " " + questionId);
         return userIntroductionRepository.findByUserIdAndQuestionId(userId, questionId)
                 .orElseThrow(() -> new ProfileException(ErrorCode.USER_INTRODUCTION_NOT_FOUND));
     }
