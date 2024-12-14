@@ -14,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import static hiff.hiff.behiff.global.util.DateCalculator.TODAY_DATE;
 import static hiff.hiff.behiff.global.util.DateCalculator.getMatchingDate;
@@ -48,10 +50,11 @@ public class DailyMatchingService extends MatchingService {
     public List<MatchingSimpleResponse> getMatchings(Long userId) {
         return redisService.scanKeysWithPrefix(
             MATCHING_PREFIX + TODAY_DATE + "??_" + userId)
-                .stream().map(key -> {
+                .stream()
+                .filter(key -> isValidMatchingData(key))
+                .map(key -> {
                     Long matchedId = redisService.getLongValue(key);
                     UserProfile matched = userProfileService.findByUserId(matchedId);
-
                     return MatchingSimpleResponse.builder()
                             .age(matched.getAge())
                             .userId(matchedId)
@@ -158,5 +161,15 @@ public class DailyMatchingService extends MatchingService {
         String key = prefix + "_" + matcher.getUserId();
         Long value = matched.getUserId();
         redisService.setValue(key, value);
+    }
+
+    private boolean isValidMatchingData(String key) {
+        StringTokenizer st = new StringTokenizer(key);
+        st.nextToken();
+        String date = st.nextToken();
+        int hour = Integer.parseInt(date.substring(date.length() - 2));
+        int currentHour = LocalDateTime.now().getHour();
+
+        return hour <= currentHour;
     }
 }
