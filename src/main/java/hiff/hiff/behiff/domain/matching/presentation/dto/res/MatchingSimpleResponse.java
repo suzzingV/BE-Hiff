@@ -13,9 +13,7 @@ public class MatchingSimpleResponse {
 
     private Integer age;
 
-    private Integer matcherTotalScore;
-
-    private Double distance;
+    private String location;
 
     private String mainPhoto;
 }

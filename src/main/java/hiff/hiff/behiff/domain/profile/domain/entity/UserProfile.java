@@ -51,6 +51,8 @@ public class UserProfile {
 
     private String mainPhoto;
 
+    private String location;
+
     @Builder
     private UserProfile(Long userId) {
         this.userId = userId;

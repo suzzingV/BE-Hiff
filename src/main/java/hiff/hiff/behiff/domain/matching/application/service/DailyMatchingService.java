@@ -1,8 +1,12 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
+import hiff.hiff.behiff.domain.matching.application.dto.MatchingDataDto;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
+import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
+import hiff.hiff.behiff.domain.profile.application.service.UserProfileService;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
@@ -10,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static hiff.hiff.behiff.global.util.DateCalculator.TODAY_DATE;
 import static hiff.hiff.behiff.global.util.DateCalculator.getMatchingDate;
 
 @Service
@@ -20,42 +27,48 @@ public class DailyMatchingService extends MatchingService {
 //    private final UserService userCRUDService;
 //    private final UserRepository userRepository;
     private final RedisService redisService;
-//    private final UserPhotoService userPhotoService;
+    private final UserPhotoService userPhotoService;
     private final UserProfileRepository userProfileRepository;
+    private final UserProfileService userProfileService;
 
 //    public static final Duration MATCHING_DURATION = Duration.ofDays(1);
     public static final String MATCHING_PREFIX = "matching_";
 
     public DailyMatchingService(UserPosService userPosService, RedisService redisService,
-        MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository) {
+                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService) {
         super(userPosService, redisService, matchingRepository, similarityFactory);
 //        this.userCRUDService = userService;
 //        this.userRepository = userRepository;
         this.redisService = redisService;
         this.userProfileRepository = userProfileRepository;
-//        this.userPhotoService = userPhotoService;
+        this.userProfileService = userProfileService;
+        this.userPhotoService = userPhotoService;
     }
-//
-//    // TODO: 남은 시간
-//    // TODO: 외모 점수 없을 때
-//    public List<MatchingSimpleResponse> getMatchings(Long userId) {
-//        User matcher = userCRUDService.findById(userId);
-//        List<String> originalMatching = redisService.scanKeysWithPrefix(
-//            DAILY_MATCHING_PREFIX + userId + "_");
-//        if (!originalMatching.isEmpty()) {
-//            return getCachedMatching(userId, originalMatching);
-//        }
-//
-//        return getNewMatching(matcher);
-//    }
+
+    public List<MatchingSimpleResponse> getMatchings(Long userId) {
+        return redisService.scanKeysWithPrefix(
+            MATCHING_PREFIX + TODAY_DATE + "??_" + userId)
+                .stream().map(key -> {
+                    Long matchedId = redisService.getLongValue(key);
+                    UserProfile matched = userProfileService.findByUserId(matchedId);
+
+                    return MatchingSimpleResponse.builder()
+                            .age(matched.getAge())
+                            .userId(matchedId)
+                            .mainPhoto(matched.getMainPhoto())
+                            .nickname(matched.getNickname())
+                            .location(matched.getLocation())
+                            .build();
+                }).toList();
+    }
 //
 //    public List<MatchingSimpleResponse> getPaidMatching(Long userId) {
 //        User matcher = userCRUDService.findById(userId);
-//        List<String> originalMatching = redisService.scanKeysWithPrefix(
+//        List<String> matchingData = redisService.scanKeysWithPrefix(
 //            PAID_DAILY_MATCHING_PREFIX + userId + "_");
 //        List<MatchingSimpleResponse> newMatching = getNewMatching(matcher);
 //
-//        originalMatching.forEach(redisService::delete);
+//        matchingData.forEach(redisService::delete);
 //        return newMatching;
 //    }
 //
@@ -81,14 +94,12 @@ public class DailyMatchingService extends MatchingService {
 //            hobbies, lifeStyles);
 //    }
 //
-//    private List<MatchingSimpleResponse> getCachedMatching(Long userId,
-//        List<String> originalMatching) {
-//        return originalMatching.stream()
-//            .map(key -> {
-//                Long matchedId = getMatchedIdFromKey(key);
-//                User matched = userCRUDService.findById(matchedId);
-//                MatchingInfoDto matchingInfo = getCachedMatchingInfo(userId,
-//                    matchedId);
+//    private List<MatchingSimpleResponse> getSimpleMatchingInfo(Long userId,
+//                                                               List<Long> matchedIds) {
+//        return matchedIds.stream()
+//            .map(matchedId -> {
+////                Long matchedId = getMatchedIdFromKey(key);
+//                UserProfile matched = userProfileService.findByUserId(matchedId);
 //
 //                return MatchingSimpleResponse.builder()
 //                    .userId(matchedId)
@@ -100,7 +111,7 @@ public class DailyMatchingService extends MatchingService {
 //                    .build();
 //            }).toList();
 //    }
-//
+
     public void performMatching(UserProfile matcher) {
         userProfileRepository.getRandomMatched(matcher.getId(),
                 matcher.getGender(), matcher.getLookScore())
@@ -119,7 +130,7 @@ public class DailyMatchingService extends MatchingService {
                 recordMatchingHistory(matcher.getUserId(), matched.getUserId());
             });
     }
-//
+
 //    private MatchingInfoDto getCachedMatchingInfo(Long matcherId, Long matchedId) {
 //        String value = getCachedValue(matcherId, matchedId, DAILY_MATCHING_PREFIX);
 //
@@ -140,7 +151,7 @@ public class DailyMatchingService extends MatchingService {
 //            .lifeStyleSimilarity(lifeStyleSimilarity)
 //            .build();
 //    }
-//
+
     private void cachMatchingScore(UserProfile matcher, UserProfile matched) {
         String matchingDate = getMatchingDate();
         String prefix = MATCHING_PREFIX + matchingDate;

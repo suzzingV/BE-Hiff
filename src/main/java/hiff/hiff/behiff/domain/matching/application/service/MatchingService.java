@@ -88,12 +88,12 @@ public class MatchingService {
 //        return !matchingHistory.isEmpty();
 //    }
 
-    protected Long getMatchedIdFromKey(String key) {
-        StringTokenizer st = new StringTokenizer(key, "_");
-        st.nextToken();
-        st.nextToken();
-        return Long.parseLong(st.nextToken());
-    }
+//    protected Long getMatchedIdFromKey(String key) {
+//        StringTokenizer st = new StringTokenizer(key, "_");
+//        st.nextToken();
+//        st.nextToken();
+//        return Long.parseLong(st.nextToken());
+//    }
 
 
 }
