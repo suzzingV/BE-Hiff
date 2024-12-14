@@ -27,13 +27,9 @@ public class UserIntroductionService {
 
     public void updateIntroduction(Long userId, Long questionId, String content) {
         Question question = catalogIntroductionService.findQuestionById(questionId);
-        UserIntroduction userIntroduction = UserIntroduction.builder()
-                .userId(userId)
-                .questionId(questionId)
-                .question(question.getQuestion())
-                .content(content)
-                .build();
-        userIntroductionRepository.save(userIntroduction);
+        UserIntroduction userIntroduction = findUserIdAndQuestionId(userId, questionId);
+        userIntroduction.updateQuestion(question.getQuestion());
+        userIntroduction.updateContent(content);
     }
 
     public List<UserIntroductionDto> findIntroductionByUserId(Long userId) {
@@ -50,7 +46,9 @@ public class UserIntroductionService {
     public void registerUserIntroduction(Long userId, UserQuestionRequest request) {
         List<Long> questionIds = request.getQuestionIds();
         deleteOldIntroductions(userId, questionIds);
-        questionIds.forEach(questionId -> {
+        questionIds.stream()
+                .filter(questionId -> !isExists(userId, questionId))
+                .forEach(questionId -> {
             Question question = catalogIntroductionService.findQuestionById(questionId);
             UserIntroduction userIntroduction = UserIntroduction.builder()
                 .questionId(questionId)
@@ -59,6 +57,14 @@ public class UserIntroductionService {
                 .build();
             userIntroductionRepository.save(userIntroduction);
         });
+    }
+
+    public void deleteByUserId(Long userId) {
+        userIntroductionRepository.deleteByUserId(userId);
+    }
+
+    private boolean isExists(Long userId, Long questionId) {
+        return userIntroductionRepository.findByUserIdAndQuestionId(userId, questionId).isPresent();
     }
 
     private void deleteOldIntroductions(Long userId, List<Long> questionIds) {
@@ -73,7 +79,8 @@ public class UserIntroductionService {
             });
     }
 
-    public void deleteByUserId(Long userId) {
-        userIntroductionRepository.deleteByUserId(userId);
+    private UserIntroduction findUserIdAndQuestionId(Long userId, Long questionId) {
+        return userIntroductionRepository.findByUserIdAndQuestionId(userId, questionId)
+                .orElseThrow(() -> new ProfileException(ErrorCode.USER_INTRODUCTION_NOT_FOUND));
     }
 }

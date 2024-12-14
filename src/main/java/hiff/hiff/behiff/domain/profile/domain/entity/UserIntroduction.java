@@ -49,7 +49,10 @@ public class UserIntroduction {
         this.content = content;
     }
 
-    public void changeContent(String content) {
+    public void updateContent(String content) {
         this.content = content;
+    }
+    public void updateQuestion(String question) {
+        this.question = question;
     }
 }
