@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.profile.presentation.controller;
 
+import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.profile.application.service.ProfileServiceFacade;
 import hiff.hiff.behiff.domain.profile.presentation.dto.req.*;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.VerificationStatusResponse;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Profile", description = "Profile 관련 API")
 @RestController
 @RequestMapping("/api/v0.2/profile")
@@ -22,6 +25,21 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileControllerV02 {
 
     private final ProfileServiceFacade profileServiceFacade;
+
+
+    @Operation(
+            summary = "user 자기소개 질문 갱신",
+            description = "user 자기소개 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "user 자기소개 조회에 성공하였습니다."
+    )
+    @GetMapping("/introduction")
+    public ResponseEntity<List<UserIntroductionDto>> getUserIntroduction(@AuthenticationPrincipal User user) {
+        List<UserIntroductionDto> response = profileServiceFacade.getUserIntroduction(user.getId());
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(
         summary = "user 자기소개 질문 갱신",

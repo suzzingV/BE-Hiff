@@ -2,6 +2,7 @@ package hiff.hiff.behiff.domain.profile.application.service;
 
 import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.catalog.infrastructure.GenderCountRepository;
+import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
 import hiff.hiff.behiff.domain.profile.domain.enums.VerificationStatus;
@@ -15,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -109,5 +112,9 @@ public class ProfileServiceFacade {
                 .orElseThrow(() -> new UserException(ErrorCode.GENDER_COUNT_NOT_FOUND));
             genderCount.subtractCount();
         }
+    }
+
+    public List<UserIntroductionDto> getUserIntroduction(Long userId) {
+        return userIntroductionService.findIntroductionByUserId(userId);
     }
 }
