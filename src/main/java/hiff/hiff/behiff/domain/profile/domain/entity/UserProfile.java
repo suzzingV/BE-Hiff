@@ -17,11 +17,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Getter
 @Table(name = "user_profile_TB")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class UserProfile {
 
     @Id
@@ -68,15 +70,15 @@ public class UserProfile {
         updateAge();
     }
 
-    public void changeGender(Gender gender) {
+    public void updateGender(Gender gender) {
         this.gender = gender;
     }
 
-    public void changeMbti(Mbti mbti) {
+    public void updateMbti(Mbti mbti) {
         this.mbti = mbti;
     }
 
-    public void updateapperanceScore(LookScore lookScore) {
+    public void updateLookScore(LookScore lookScore) {
         this.lookScore = lookScore;
     }
 
@@ -86,6 +88,10 @@ public class UserProfile {
 
     public void updateAge() {
         this.age = DateCalculator.calculateAge(this.birth);
+    }
+
+    public void updateLocation(String location) {
+        this.location = location;
     }
 
     public String getGenderText() {

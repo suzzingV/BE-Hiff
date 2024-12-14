@@ -1,5 +1,7 @@
 package hiff.hiff.behiff.domain.profile.application.service;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import hiff.hiff.behiff.domain.catalog.domain.entity.GenderCount;
 import hiff.hiff.behiff.domain.catalog.infrastructure.GenderCountRepository;
 import hiff.hiff.behiff.domain.catalog.infrastructure.MbtiScoreRepository;
@@ -7,15 +9,15 @@ import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.domain.enums.*;
 import hiff.hiff.behiff.domain.profile.exception.ProfileException;
 import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.exception.UserException;
-import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,11 @@ public class UserProfileService {
     private final MbtiScoreRepository mbtiScoreRepository;
     private final RedisService redisService;
     private final UserProfileRepository userProfileRepository;
+    private final WebClient webClient = WebClient.builder()
+            .baseUrl("https://maps.googleapis.com")
+            .build();
+    @Value("${google.api.key}")
+    private String apiKey;
 
     public static final String MBTI_PREFIX = "mbti_";
 
@@ -40,7 +47,7 @@ public class UserProfileService {
     }
 
     public void updateGender(UserProfile userProfile, Gender gender) {
-        userProfile.changeGender(gender);
+        userProfile.updateGender(gender);
         updateGenderCount(gender);
     }
 
@@ -51,7 +58,7 @@ public class UserProfileService {
     }
 
     public void updateMbti(UserProfile userProfile, Mbti mbti) {
-        userProfile.changeMbti(mbti);
+        userProfile.updateMbti(mbti);
     }
 
     public void cacheMbtiSimilarity() {
@@ -86,5 +93,54 @@ public class UserProfileService {
             .userId(userId)
             .build();
         userProfileRepository.save(userProfile);
+    }
+
+    public void updateLocationByPos(Long userId, double latitude, double longitude) {
+        webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/maps/api/geocode/json")
+                        .queryParam("latlng", latitude + "," + longitude)
+                        .queryParam("key", apiKey)
+                        .queryParam("language", "ko")
+                        .build())
+                .header("User-Agent", "SpringBoot WebClient")
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(this::extractLocation)
+                .onErrorReturn(ErrorCode.ADDRESS_EXTRACT_ERROR.getMessage())
+                .subscribe(
+                        location -> updateLocation(userId, location),
+                        error -> {
+                            throw new ProfileException(ErrorCode.ADDRESS_EXTRACT_ERROR);
+                        }
+                );
+    }
+
+    private void updateLocation(Long userId, String location) {
+        if(location == null) {
+            return;
+        }
+        UserProfile userProfile = findByUserId(userId);
+        userProfile.updateLocation(location);
+        userProfileRepository.save(userProfile);
+    }
+
+    private String extractLocation(String response) {
+        try {
+            JsonObject jsonResponse = JsonParser.parseString(response).getAsJsonObject();
+            if (jsonResponse.has("results") && jsonResponse.getAsJsonArray("results").size() > 0) {
+                String address = jsonResponse.getAsJsonArray("results")
+                        .get(0)
+                        .getAsJsonObject()
+                        .get("formatted_address")
+                        .getAsString();
+                String[] split = address.split(" ");
+                return split[1] + " " + split[2];
+            }
+        } catch (Exception e) {
+            throw new ProfileException(ErrorCode.ADDRESS_EXTRACT_ERROR);
+        }
+
+        return null;
     }
 }

@@ -74,6 +74,7 @@ public enum ErrorCode {
     VERIFICATION_PHOTO_NOT_FOUND(NOT_FOUND, "user의 인증 사진을 찾을 수 없습니다."),
 
     // 500
+    ADDRESS_EXTRACT_ERROR(INTERNAL_SERVER_ERROR, "주소 추출에 실패했습니다."),
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다."),
     SIGNED_URL_GENERATION_ERROR(INTERNAL_SERVER_ERROR, "스토리지에 사진을 저장하는 도중 에러가 발생하였습니다."),
     FCM_INIT_ERROR(INTERNAL_SERVER_ERROR, "FCM Admin SDK를 초기화하는 도중 오류가 발생하였습니다."),

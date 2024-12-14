@@ -1,7 +1,11 @@
 package hiff.hiff.behiff.domain.profile.application.service;
 
+import com.google.gson.JsonObject;
 import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserPos;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
+import hiff.hiff.behiff.domain.profile.exception.ProfileException;
+import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.profile.infrastructure.UserPosRepository;
 import hiff.hiff.behiff.domain.profile.presentation.dto.res.ProfileUpdateResponse;
@@ -9,6 +13,8 @@ import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 @Transactional
@@ -45,5 +51,4 @@ public class UserPosService {
     public void deleteByUserId(Long userId) {
         userPosRepository.deleteByUserId(userId);
     }
-
 }

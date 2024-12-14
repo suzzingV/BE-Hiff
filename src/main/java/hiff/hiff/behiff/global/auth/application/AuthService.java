@@ -66,6 +66,7 @@ public class AuthService {
                     userProfile.updateAge();
                 }
                 userPosService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+                userProfileService.updateLocationByPos(user.getId(), request.getLatitude(), request.getLongitude());
                 UserInfoResponse userInfo = userService.getUserInfo(user.getId());
                 updateOs(user.getId(), request.getOs());
                 return LoginResponse.of(accessToken, refreshToken, userInfo);
