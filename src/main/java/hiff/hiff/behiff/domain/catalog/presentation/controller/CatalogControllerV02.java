@@ -38,73 +38,73 @@ public class CatalogControllerV02 {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "직업 목록 조회",
-        description = "직업 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "직업 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/field/list")
-    public ResponseEntity<List<TagResponse>> getFields() {
-        List<TagResponse> responses = catalogServiceFacade.getFields();
-        return ResponseEntity.ok(responses);
-    }
-
-    @Operation(
-        summary = "취미 목록 조회",
-        description = "취미 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "취미 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/hobby/list")
-    public ResponseEntity<List<TagResponse>> getHobbies() {
-        List<TagResponse> responses = catalogServiceFacade.getAllHobbies();
-        return ResponseEntity.ok(responses);
-    }
-
-    @Operation(
-        summary = "라이프스타일 목록 조회",
-        description = "라이프스타일 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "라이프스타일 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/life-style/list")
-    public ResponseEntity<List<TagResponse>> getLifeStyles() {
-        List<TagResponse> responses = catalogServiceFacade.getAllLifeStyles();
-        return ResponseEntity.ok(responses);
-    }
-
-    @Operation(
-        summary = "대학교 목록 조회",
-        description = "대학교 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "대학교 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/university/list")
-    public ResponseEntity<List<TagResponse>> getUniversities() {
-        List<TagResponse> responses = catalogServiceFacade.getAllUniversities();
-        return ResponseEntity.ok(responses);
-    }
-
-    @Operation(
-        summary = "대학원 목록 조회",
-        description = "대학원 목록을 조회합니다. 토큰 x"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "대학원 목록 조회에 성공하였습니다."
-    )
-    @GetMapping("/grad/list")
-    public ResponseEntity<List<TagResponse>> getGrads() {
-        List<TagResponse> responses = catalogServiceFacade.getAllGrads();
-        return ResponseEntity.ok(responses);
-    }
+//    @Operation(
+//        summary = "직업 목록 조회",
+//        description = "직업 목록을 조회합니다. 토큰 x"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "직업 목록 조회에 성공하였습니다."
+//    )
+//    @GetMapping("/field/list")
+//    public ResponseEntity<List<TagResponse>> getFields() {
+//        List<TagResponse> responses = catalogServiceFacade.getFields();
+//        return ResponseEntity.ok(responses);
+//    }
+//
+//    @Operation(
+//        summary = "취미 목록 조회",
+//        description = "취미 목록을 조회합니다. 토큰 x"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "취미 목록 조회에 성공하였습니다."
+//    )
+//    @GetMapping("/hobby/list")
+//    public ResponseEntity<List<TagResponse>> getHobbies() {
+//        List<TagResponse> responses = catalogServiceFacade.getAllHobbies();
+//        return ResponseEntity.ok(responses);
+//    }
+//
+//    @Operation(
+//        summary = "라이프스타일 목록 조회",
+//        description = "라이프스타일 목록을 조회합니다. 토큰 x"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "라이프스타일 목록 조회에 성공하였습니다."
+//    )
+//    @GetMapping("/life-style/list")
+//    public ResponseEntity<List<TagResponse>> getLifeStyles() {
+//        List<TagResponse> responses = catalogServiceFacade.getAllLifeStyles();
+//        return ResponseEntity.ok(responses);
+//    }
+//
+//    @Operation(
+//        summary = "대학교 목록 조회",
+//        description = "대학교 목록을 조회합니다. 토큰 x"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "대학교 목록 조회에 성공하였습니다."
+//    )
+//    @GetMapping("/university/list")
+//    public ResponseEntity<List<TagResponse>> getUniversities() {
+//        List<TagResponse> responses = catalogServiceFacade.getAllUniversities();
+//        return ResponseEntity.ok(responses);
+//    }
+//
+//    @Operation(
+//        summary = "대학원 목록 조회",
+//        description = "대학원 목록을 조회합니다. 토큰 x"
+//    )
+//    @ApiResponse(
+//        responseCode = "200",
+//        description = "대학원 목록 조회에 성공하였습니다."
+//    )
+//    @GetMapping("/grad/list")
+//    public ResponseEntity<List<TagResponse>> getGrads() {
+//        List<TagResponse> responses = catalogServiceFacade.getAllGrads();
+//        return ResponseEntity.ok(responses);
+//    }
 }

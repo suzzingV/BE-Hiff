@@ -17,9 +17,9 @@ public class CriteriaControllerV02 {
 
     private final CriteriaService criteriaService;
 
-    @GetMapping
-    public ResponseEntity<List<CriteriaResponse>> getAllCriteria() {
-        List<CriteriaResponse> response = criteriaService.getAllCriteria();
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<CriteriaResponse>> getAllCriteria() {
+//        List<CriteriaResponse> response = criteriaService.getAllCriteria();
+//        return ResponseEntity.ok(response);
+//    }
 }
