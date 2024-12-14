@@ -23,8 +23,8 @@ public class CatalogIntroductionService {
         return questionRepository.findAll();
     }
 
-    public Question findQuestionById(UserIntroduction userIntroduction) {
-        return questionRepository.findById(userIntroduction.getQuestionId())
+    public Question findQuestionById(Long questionId) {
+        return questionRepository.findById(questionId)
             .orElseThrow(() -> new CatalogException(ErrorCode.QUESTION_NOT_FOUND));
     }
 }

@@ -1,9 +1,11 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
-import hiff.hiff.behiff.domain.matching.application.dto.MatchingDataDto;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
+import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
+import hiff.hiff.behiff.domain.profile.application.service.UserIntroductionService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
 import hiff.hiff.behiff.domain.profile.application.service.UserProfileService;
@@ -32,12 +34,13 @@ public class DailyMatchingService extends MatchingService {
     private final UserPhotoService userPhotoService;
     private final UserProfileRepository userProfileRepository;
     private final UserProfileService userProfileService;
+    private final UserIntroductionService userIntroductionService;
 
 //    public static final Duration MATCHING_DURATION = Duration.ofDays(1);
     public static final String MATCHING_PREFIX = "matching_";
 
     public DailyMatchingService(UserPosService userPosService, RedisService redisService,
-                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService) {
+                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService, UserIntroductionService userIntroductionService) {
         super(userPosService, redisService, matchingRepository, similarityFactory);
 //        this.userCRUDService = userService;
 //        this.userRepository = userRepository;
@@ -45,6 +48,7 @@ public class DailyMatchingService extends MatchingService {
         this.userProfileRepository = userProfileRepository;
         this.userProfileService = userProfileService;
         this.userPhotoService = userPhotoService;
+        this.userIntroductionService = userIntroductionService;
     }
 
     public List<MatchingSimpleResponse> getMatchings(Long userId) {
@@ -75,15 +79,11 @@ public class DailyMatchingService extends MatchingService {
 //        return newMatching;
 //    }
 //
-//    public DailyMatchingDetailResponse getMatchingDetails(Long matcherId, Long matchedId) {
-//        if (!isMatchedBefore(matcherId, matchedId)) {
-//            throw new MatchingException(ErrorCode.MATCHING_HISTORY_NOT_FOUND);
-//        }
-//        User matcher = userCRUDService.findById(matcherId);
-//        User matched = userCRUDService.findById(matchedId);
-//
-//        String mainPhoto = matched.getMainPhoto();
-//        List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
+    public MatchingDetailResponse getMatchingDetails(Long matchedId) {
+        UserProfile matchedProfile = userProfileService.findByUserId(matchedId);
+
+        List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
+        List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(matchedId);
 //        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
 //            matchedId);
 //        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId,
@@ -91,11 +91,9 @@ public class DailyMatchingService extends MatchingService {
 //        Double distance = getDistance(matcherId, matchedId);
 //        MatchingInfoDto matchingInfo = getCachedMatchingInfo(
 //            matcherId, matchedId);
-//
-//        return DailyMatchingDetailResponse.of(matcher, matched, distance, mainPhoto, photos,
-//            matchingInfo,
-//            hobbies, lifeStyles);
-//    }
+
+        return MatchingDetailResponse.of(matchedProfile, photos, introductions);
+    }
 //
 //    private List<MatchingSimpleResponse> getSimpleMatchingInfo(Long userId,
 //                                                               List<Long> matchedIds) {

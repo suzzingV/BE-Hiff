@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +23,10 @@ public class MatchingServiceFacade {
     public List<MatchingSimpleResponse> getRandomMatching(Long userId) {
         return dailyMatchingService.getMatchings(userId);
     }
-//
-//    public List<MatchingSimpleResponse> getPaidDailyMatching(Long userId) {
-//        return dailyMatchingService.getPaidMatching(userId);
-//    }
-//
-//    public DailyMatchingDetailResponse getDailyMatchingDetails(Long matcherId, Long matchedId) {
-//        return dailyMatchingService.getMatchingDetails(matcherId, matchedId);
-//    }
+
+    public MatchingDetailResponse getMatchingDetails(Long matchedId) {
+        return dailyMatchingService.getMatchingDetails(matchedId);
+    }
 //
 //    public List<MatchingSimpleResponse> getHiffMatching(Long userId) {
 //        return hiffMatchingService.getMatchings(userId);

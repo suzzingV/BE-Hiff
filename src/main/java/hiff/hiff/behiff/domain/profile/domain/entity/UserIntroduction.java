@@ -34,14 +34,18 @@ public class UserIntroduction {
     @Column(nullable = false)
     private Long questionId;
 
+    @Column(nullable = false)
+    private String question;
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private String content;
 
     @Builder
-    private UserIntroduction(Long userId, Long questionId, String content) {
+    private UserIntroduction(Long userId, Long questionId, String question, String content) {
         this.userId = userId;
         this.questionId = questionId;
+        this.question = question;
         this.content = content;
     }
 
