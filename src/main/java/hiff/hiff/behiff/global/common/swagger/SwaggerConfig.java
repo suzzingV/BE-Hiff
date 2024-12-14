@@ -18,7 +18,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi v0Api() {
         // "/v1/**" 경로에 매칭되는 API를 그룹화하여 문서화한다.
-        String[] paths = {"/api/v0/**"};
+        String[] paths = {"/api/**"};
 
         return GroupedOpenApi.builder()
             .group("Hiff API v0")  // 그룹 이름을 설정한다.
