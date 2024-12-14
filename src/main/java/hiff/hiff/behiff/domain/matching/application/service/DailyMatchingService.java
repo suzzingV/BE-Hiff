@@ -51,7 +51,7 @@ public class DailyMatchingService extends MatchingService {
         return redisService.scanKeysWithPrefix(
             MATCHING_PREFIX + TODAY_DATE + "??_" + userId)
                 .stream()
-                .filter(key -> isValidMatchingData(key))
+                .filter(this::isValidMatchingData)
                 .map(key -> {
                     Long matchedId = redisService.getLongValue(key);
                     UserProfile matched = userProfileService.findByUserId(matchedId);
@@ -164,7 +164,7 @@ public class DailyMatchingService extends MatchingService {
     }
 
     private boolean isValidMatchingData(String key) {
-        StringTokenizer st = new StringTokenizer(key);
+        StringTokenizer st = new StringTokenizer(key, "_");
         st.nextToken();
         String date = st.nextToken();
         int hour = Integer.parseInt(date.substring(date.length() - 2));
