@@ -48,5 +48,5 @@ jobs:
           script: |
             sudo docker pull ${{secrets.DOCKER_USERNAME}}/hiff-backend:${GITHUB_SHA::7}
             sudo docker rm -f hiff-api-server
-            sudo docker run -d --network dh5277_app-network -e TZ=Asia/Seoul --name hiff-api-server  -v ~/log:/app/log -v ~/api_config:/app/config/ -p 8080:8080 -p 443:443 dh5252/hiff-backend:${GITHUB_SHA::7}
+            sudo docker run -d --network suzzingv_app-network -e TZ=Asia/Seoul --name hiff-api-server  -v ~/log:/app/log -v ~/api_config:/app/config/ -p 8080:8080 -p 443:443 dh5252/hiff-backend:${GITHUB_SHA::7}
             sudo docker image prune -af
