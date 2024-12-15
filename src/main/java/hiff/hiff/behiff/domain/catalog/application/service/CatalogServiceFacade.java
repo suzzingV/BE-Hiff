@@ -86,4 +86,14 @@ public class CatalogServiceFacade {
                     .build())
             .toList();
     }
+
+    public List<QuestionResponse> getNotSelectedQuestionList(Long userId) {
+        return catalogIntroductionService.getNotSelectedQuestions(userId)
+                .stream().map(question ->
+                        QuestionResponse.builder()
+                                .id(question.getId())
+                                .question(question.getQuestion())
+                                .build())
+                .toList();
+    }
 }

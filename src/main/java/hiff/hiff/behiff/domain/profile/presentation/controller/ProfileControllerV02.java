@@ -28,7 +28,7 @@ public class ProfileControllerV02 {
 
 
     @Operation(
-            summary = "user 자기소개 질문 조",
+            summary = "user 자기소개 질문 조회",
             description = "user 자기소개 조회합니다. 토큰 o"
     )
     @ApiResponse(

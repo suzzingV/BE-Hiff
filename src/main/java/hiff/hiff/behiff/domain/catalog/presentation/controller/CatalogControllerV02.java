@@ -38,6 +38,21 @@ public class CatalogControllerV02 {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "user가 선택하지 않은 자기소개 질문 목록 조회",
+            description = "user가 선택하지 않은 자기소개 질문 목록을 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "user가 선택하지 않은 자기소개 질문 목록 조회에 성공하였습니다."
+    )
+    @GetMapping("/question/list/not-selected")
+    public ResponseEntity<List<QuestionResponse>> getNotSelectedQuestionList(
+            @AuthenticationPrincipal User user) {
+        List<QuestionResponse> response = catalogServiceFacade.getNotSelectedQuestionList(user.getId());
+        return ResponseEntity.ok(response);
+    }
+
 //    @Operation(
 //        summary = "직업 목록 조회",
 //        description = "직업 목록을 조회합니다. 토큰 x"

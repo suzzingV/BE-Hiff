@@ -7,6 +7,8 @@ import lombok.Getter;
 @Builder
 public class UserIntroductionDto {
 
+    private Long questionId;
+
     private String question;
 
     private String content;
