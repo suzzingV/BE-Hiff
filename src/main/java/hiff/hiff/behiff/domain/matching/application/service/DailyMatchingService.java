@@ -118,8 +118,7 @@ public class DailyMatchingService extends MatchingService {
 //    }
 
     public void performMatching(UserProfile matcher) {
-        userProfileRepository.getRandomMatched(matcher.getId(),
-                matcher.getGender(), matcher.getLookScore())
+        userProfileRepository.getRandomMatched(matcher.getId())
             .forEach(matched -> {
 //                Weighting matcherWV = userWeightValueService.findByUserId(matcher.getId());
 //                List<UserHobby> matcherHobbies = userHobbyService.findByUserId(matcher.getId());

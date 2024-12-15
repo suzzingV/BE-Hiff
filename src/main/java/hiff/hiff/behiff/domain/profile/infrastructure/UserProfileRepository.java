@@ -23,7 +23,7 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
         AND u.id != :matcherId
         ORDER BY RAND() LIMIT 1
         """)
-    List<UserProfile> getRandomMatched(Long matcherId, Gender gender, LookScore lookScore);
+    List<UserProfile> getRandomMatched(Long matcherId);
 
     @Query("""
         SELECT u FROM UserProfile u
