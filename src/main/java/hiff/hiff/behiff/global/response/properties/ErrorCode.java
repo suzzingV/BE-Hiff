@@ -39,6 +39,7 @@ public enum ErrorCode {
     VERIFICATION_PHOTO_ALREADY_EXISTS(BAD_REQUEST, "이미 사진 인증 처리 중인 User입니다."),
     MEMBERSHIP_ALREADY(BAD_REQUEST, "이미 멤버십에 가입한 user입니다."),
     LIKE_ALREADY_EXISTS(BAD_REQUEST, "이미 호감을 보낸 상대입니다."),
+    INTRODUCTION_ALREADY_EXISTS(BAD_REQUEST, "이미 해당 질문에 답을 등록한 user입니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),

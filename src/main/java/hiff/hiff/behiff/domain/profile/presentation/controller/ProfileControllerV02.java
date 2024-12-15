@@ -28,7 +28,7 @@ public class ProfileControllerV02 {
 
 
     @Operation(
-            summary = "user 자기소개 질문 갱신",
+            summary = "user 자기소개 질문 조",
             description = "user 자기소개 조회합니다. 토큰 o"
     )
     @ApiResponse(
@@ -38,21 +38,6 @@ public class ProfileControllerV02 {
     @GetMapping("/introduction")
     public ResponseEntity<List<UserIntroductionDto>> getUserIntroduction(@AuthenticationPrincipal User user) {
         List<UserIntroductionDto> response = profileServiceFacade.getUserIntroduction(user.getId());
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(
-        summary = "user 자기소개 질문 갱신",
-        description = "user 자기소개 질문을 갱신합니다. 토큰 o"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "user 자기소개 질문 갱신에 성공하였습니다."
-    )
-    @PatchMapping("/question")
-    public ResponseEntity<ProfileUpdateResponse> updateUserQuestion(@AuthenticationPrincipal User user,
-        @RequestBody @Valid UserQuestionRequest request) {
-        ProfileUpdateResponse response = profileServiceFacade.updateUserQuestion(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -68,6 +53,21 @@ public class ProfileControllerV02 {
     public ResponseEntity<ProfileUpdateResponse> updateIntroduction(@AuthenticationPrincipal User user,
         @RequestBody @Valid IntroductionRequest request) {
         ProfileUpdateResponse response = profileServiceFacade.updateIntroduction(user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "user 자기소개 등록",
+            description = "user 자기소개를 등록합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "user 자기소개 등록에 성공하였습니다."
+    )
+    @PostMapping("/introduction")
+    public ResponseEntity<ProfileUpdateResponse> registerIntroduction(@AuthenticationPrincipal User user,
+                                                                    @RequestBody @Valid IntroductionRequest request) {
+        ProfileUpdateResponse response = profileServiceFacade.registerIntroduction(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 

@@ -24,10 +24,9 @@ public class UserIntroductionService {
     private final UserIntroductionRepository userIntroductionRepository;
     private final CatalogIntroductionService catalogIntroductionService;
 
-    public void updateIntroduction(Long userId, Long questionId, String content) {
-        Question question = catalogIntroductionService.findQuestionById(questionId);
+    public void updateIntroduction(Long userId, Long questionId, String question, String content) {
         UserIntroduction userIntroduction = findByUserIdAndQuestionId(userId, questionId);
-        userIntroduction.updateQuestion(question.getQuestion());
+        userIntroduction.updateQuestion(question);
         userIntroduction.updateContent(content);
     }
 
@@ -42,20 +41,17 @@ public class UserIntroductionService {
             }).toList();
     }
 
-    public void registerUserIntroduction(Long userId, UserQuestionRequest request) {
-        List<Long> questionIds = request.getQuestionIds();
-        deleteOldIntroductions(userId, questionIds);
-        questionIds.stream()
-                .filter(questionId -> !isExists(userId, questionId))
-                .forEach(questionId -> {
-            Question question = catalogIntroductionService.findQuestionById(questionId);
+    public void registerUserIntroduction(Long userId, Long questionId, String question, String content) {
+        if(isExists(userId, questionId)) {
+            throw new ProfileException(ErrorCode.INTRODUCTION_ALREADY_EXISTS);
+        }
             UserIntroduction userIntroduction = UserIntroduction.builder()
                 .questionId(questionId)
-                    .question(question.getQuestion())
+                    .question(question)
+                    .content(content)
                 .userId(userId)
                 .build();
             userIntroductionRepository.save(userIntroduction);
-        });
     }
 
     public void deleteByUserId(Long userId) {
@@ -64,18 +60,6 @@ public class UserIntroductionService {
 
     private boolean isExists(Long userId, Long questionId) {
         return userIntroductionRepository.findByUserIdAndQuestionId(userId, questionId).isPresent();
-    }
-
-    private void deleteOldIntroductions(Long userId, List<Long> questionIds) {
-        userIntroductionRepository.findByUserId(userId)
-            .forEach(userIntroduction -> {
-                Long questionId = userIntroduction.getQuestionId();
-                if (!questionIds.contains(questionId)) {
-                    userIntroductionRepository.delete(userIntroduction);
-                } else {
-                    questionIds.remove(questionId);
-                }
-            });
     }
 
     private UserIntroduction findByUserIdAndQuestionId(Long userId, Long questionId) {

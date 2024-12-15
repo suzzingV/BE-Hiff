@@ -6,13 +6,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class IntroductionRequest {
+public class IntroductionUpdateRequest {
 
     @NotNull
     private Long questionId;
-
-    @NotNull
-    private String question;
 
     @Size(min = 50, max = 100)
     @NotEmpty

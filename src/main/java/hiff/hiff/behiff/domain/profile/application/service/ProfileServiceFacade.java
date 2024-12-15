@@ -66,13 +66,8 @@ public class ProfileServiceFacade {
     }
 
     public ProfileUpdateResponse updateIntroduction(Long userId, IntroductionRequest request) {
-        userIntroductionService.updateIntroduction(userId, request.getQuestionId(),
+        userIntroductionService.updateIntroduction(userId, request.getQuestionId(), request.getQuestion(),
             request.getContent());
-        return ProfileUpdateResponse.from(userId);
-    }
-
-    public ProfileUpdateResponse updateUserQuestion(Long userId, UserQuestionRequest request) {
-        userIntroductionService.registerUserIntroduction(userId, request);
         return ProfileUpdateResponse.from(userId);
     }
 
@@ -116,5 +111,12 @@ public class ProfileServiceFacade {
 
     public List<UserIntroductionDto> getUserIntroduction(Long userId) {
         return userIntroductionService.findIntroductionByUserId(userId);
+    }
+
+    public ProfileUpdateResponse registerIntroduction(Long userId, IntroductionRequest request) {
+        userIntroductionService.registerUserIntroduction(userId, request.getQuestionId(), request.getQuestion(), request.getContent());
+        return ProfileUpdateResponse.builder()
+                .userId(userId)
+                .build();
     }
 }
