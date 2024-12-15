@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class MatchingSimpleResponse {
 
-    private Long userId;
+    private Long matchedId;
 
     private String nickname;
 
