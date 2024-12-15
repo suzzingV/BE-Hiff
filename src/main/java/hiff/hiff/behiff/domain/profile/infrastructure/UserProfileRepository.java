@@ -21,8 +21,6 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
         WHERE u.id NOT IN (SELECT m.matchedId FROM Matching m
                                 WHERE m.matchedId = u.id AND m.matcherId = :matcherId)
         AND u.id != :matcherId
-        AND u.gender != :gender
-        AND u.lookScore = :lookScore
         ORDER BY RAND() LIMIT 1
         """)
     List<UserProfile> getRandomMatched(Long matcherId, Gender gender, LookScore lookScore);
