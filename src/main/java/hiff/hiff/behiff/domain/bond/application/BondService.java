@@ -1,5 +1,10 @@
-package hiff.hiff.behiff.domain.chat.application;
+package hiff.hiff.behiff.domain.bond.application;
 
+import hiff.hiff.behiff.domain.bond.domain.Like;
+import hiff.hiff.behiff.domain.bond.exception.BondException;
+import hiff.hiff.behiff.domain.bond.infrastructure.LikeRepository;
+import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeResponse;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,14 +12,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ChatService {
+public class BondService {
+
 
 //    private final AuthService authService;
 //    private final ChatHistoryRepository chatHistoryRepository;
 //    private final UserCRUDService userCRUDService;
 //    private final SmsUtil smsUtil;
 //    private final FcmUtils fcmUtils;
+    private final LikeRepository likeRepository;
 
+    public LikeResponse sendLike(Long userId, Long responderId) {
+        if(!likeRepository.findBySenderIdAndResponderId(userId, responderId).isEmpty()) {
+            throw new BondException(ErrorCode.LIKE_ALREADY_EXISTS);
+        }
+
+        Like like = Like.builder()
+                .senderId(userId)
+                .responderId(responderId)
+                .build();
+        likeRepository.save(like);
+
+        return LikeResponse.of(userId, responderId);
+    }
 //    public ChatProposalResponse proposeChat(Long userId, Long matchedId) {
 //        User user = userCRUDService.findById(userId);
 //        Token token = authService.findTokenByUserId(matchedId);

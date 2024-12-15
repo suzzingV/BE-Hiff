@@ -1,11 +1,7 @@
 package hiff.hiff.behiff.global.auth.domain.entity;
 
 import hiff.hiff.behiff.global.auth.domain.enums.OS;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +21,7 @@ public class Device {
 
     private String fcmToken;
 
+    @Enumerated(EnumType.STRING)
     private OS os;
 
     @Builder

@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.chat.presentation.dto.req;
+package hiff.hiff.behiff.domain.bond.presentation.dto.req;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

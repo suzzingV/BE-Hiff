@@ -10,8 +10,10 @@ import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
 import hiff.hiff.behiff.domain.profile.application.service.UserProfileService;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
+import hiff.hiff.behiff.domain.profile.exception.ProfileException;
 import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
+import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +54,7 @@ public class DailyMatchingService extends MatchingService {
     }
 
     public List<MatchingSimpleResponse> getMatchings(Long userId) {
-        return redisService.scanKeysWithPrefix(
+        return redisService.scanKeysByPattern(
             MATCHING_PREFIX + TODAY_DATE + "??_" + userId)
                 .stream()
                 .filter(this::isValidMatchingData)
@@ -61,7 +63,7 @@ public class DailyMatchingService extends MatchingService {
                     UserProfile matched = userProfileService.findByUserId(matchedId);
                     return MatchingSimpleResponse.builder()
                             .age(matched.getAge())
-                            .userId(matchedId)
+                            .matchedId(matchedId)
                             .mainPhoto(matched.getMainPhoto())
                             .nickname(matched.getNickname())
                             .location(matched.getLocation())
@@ -79,9 +81,11 @@ public class DailyMatchingService extends MatchingService {
 //        return newMatching;
 //    }
 //
-    public MatchingDetailResponse getMatchingDetails(Long matchedId) {
+    public MatchingDetailResponse getMatchingDetails(Long userId, Long matchedId) {
+        if(!isMatchedBefore(userId, matchedId)) {
+            throw new ProfileException(ErrorCode.MATCHING_HISTORY_NOT_FOUND);
+        }
         UserProfile matchedProfile = userProfileService.findByUserId(matchedId);
-
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(matchedId);
 //        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
@@ -92,7 +96,7 @@ public class DailyMatchingService extends MatchingService {
 //        MatchingInfoDto matchingInfo = getCachedMatchingInfo(
 //            matcherId, matchedId);
 
-        return MatchingDetailResponse.of(matchedProfile, photos, introductions);
+        return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions);
     }
 //
 //    private List<MatchingSimpleResponse> getSimpleMatchingInfo(Long userId,

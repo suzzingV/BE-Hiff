@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.chat.presentation.dto.res;
+package hiff.hiff.behiff.domain.bond.presentation.dto.res;
 
 import lombok.Builder;
 import lombok.Getter;

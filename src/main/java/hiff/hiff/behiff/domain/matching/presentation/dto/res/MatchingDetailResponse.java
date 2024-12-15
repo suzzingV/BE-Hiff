@@ -11,6 +11,8 @@ import lombok.Getter;
 @Builder
 public class MatchingDetailResponse {
 
+    private Long matcherId;
+
     private Long matchedId;
 
     private String nickname;
@@ -47,8 +49,9 @@ public class MatchingDetailResponse {
 
     private String location;
 
-    public static MatchingDetailResponse of(UserProfile matchedProfile, List<String> photos, List<UserIntroductionDto> introductions) {
+    public static MatchingDetailResponse of(Long matcherId, UserProfile matchedProfile, List<String> photos, List<UserIntroductionDto> introductions) {
         return MatchingDetailResponse.builder()
+                .matchedId(matcherId)
             .matchedId(matchedProfile.getId())
 //            .nickname(matchedProfile.getNickname())
             .age(matchedProfile.getAge())

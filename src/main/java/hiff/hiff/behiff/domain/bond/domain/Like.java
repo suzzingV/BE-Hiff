@@ -1,4 +1,4 @@
-package hiff.hiff.behiff.domain.chat.domain;
+package hiff.hiff.behiff.domain.bond.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,29 +14,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "chat_history_TB")
-public class ChatHistory {
+@Table(name = "like_TB")
+public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private Long proposerId;
+    private Long senderId;
 
     @Column(nullable = false)
-    private Long proposedId;
-
-    private Boolean isAccepted;
+    private Long responderId;
 
     @Builder
-    private ChatHistory(Long proposerId, Long proposedId) {
-        this.proposerId = proposerId;
-        this.proposedId = proposedId;
-        this.isAccepted = false;
-    }
-
-    public void accept() {
-        this.isAccepted = true;
+    private Like(Long senderId, Long responderId) {
+        this.senderId = senderId;
+        this.responderId = responderId;
     }
 }

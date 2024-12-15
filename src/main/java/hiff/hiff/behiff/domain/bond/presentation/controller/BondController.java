@@ -1,50 +1,38 @@
-package hiff.hiff.behiff.domain.chat.presentation.controller;
+package hiff.hiff.behiff.domain.bond.presentation.controller;
 
-import hiff.hiff.behiff.domain.chat.application.ChatService;
-import hiff.hiff.behiff.domain.chat.presentation.dto.req.ChatAcceptanceRequest;
-import hiff.hiff.behiff.domain.chat.presentation.dto.req.ChatProposalRequest;
-import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposalResponse;
-import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposedResponse;
-import hiff.hiff.behiff.domain.chat.presentation.dto.res.ChatProposerResponse;
+import hiff.hiff.behiff.domain.bond.application.BondService;
+import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Chat", description = "Chat 관련 API")
+@Tag(name = "Bond", description = "Bond 관련 API")
 @RestController
-@RequestMapping("/api/v0/chat")
+@RequestMapping("/api/v0.2/bond")
 @RequiredArgsConstructor
-public class ChatController {
+public class BondController {
 
-//    private final ChatService chatService;
-//
-//    @Operation(
-//        summary = "대화 신청",
-//        description = "대화를 신청합니다. 토큰 o"
-//    )
-//    @ApiResponse(
-//        responseCode = "200",
-//        description = "대화 신청에 성공하였습니다."
-//    )
-//    @PostMapping("/proposal")
-//    public ResponseEntity<ChatProposalResponse> propose(@AuthenticationPrincipal User user,
-//        @RequestBody @Valid ChatProposalRequest request) {
-//        ChatProposalResponse response = chatService.proposeChat(user.getId(),
-//            request.getMatchedId());
-//
-//        return ResponseEntity.ok(response);
-//    }
+    private final BondService bondService;
+
+    @Operation(
+        summary = "호감 보내기",
+        description = "호감을 보냅니다. 토큰 o"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "호감 보내기에 성공하였습니다."
+    )
+    @PostMapping("/like/{responderId}")
+    public ResponseEntity<LikeResponse> sendLike(@AuthenticationPrincipal User user, @PathVariable Long responderId) {
+        LikeResponse response = bondService.sendLike(user.getId(), responderId);
+
+        return ResponseEntity.ok(response);
+    }
 //
 //    @Operation(
 //        summary = "받은 대화 신청 내역 조회.",

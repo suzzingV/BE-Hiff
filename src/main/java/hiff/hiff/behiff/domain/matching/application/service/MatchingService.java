@@ -81,12 +81,10 @@ public class MatchingService {
             matchedPos.getLon());
     }
 
-//    protected boolean isMatchedBefore(Long matcherId, Long matchedId) {
-//        List<Long> matchingHistory = matchingRepository.findByUsers(matcherId, matchedId);
-//        Set<String> keys = redisService.keys(HIFF_MATCHING_PREFIX + matcherId + "_" + matchedId);
-//        return !keys.isEmpty();
-//        return !matchingHistory.isEmpty();
-//    }
+    protected boolean isMatchedBefore(Long matcherId, Long matchedId) {
+        List<Long> matchingHistory = matchingRepository.findByUsers(matcherId, matchedId);
+        return !matchingHistory.isEmpty();
+    }
 
 //    protected Long getMatchedIdFromKey(String key) {
 //        StringTokenizer st = new StringTokenizer(key, "_");

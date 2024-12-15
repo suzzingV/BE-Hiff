@@ -24,8 +24,8 @@ public class MatchingServiceFacade {
         return dailyMatchingService.getMatchings(userId);
     }
 
-    public MatchingDetailResponse getMatchingDetails(Long matchedId) {
-        return dailyMatchingService.getMatchingDetails(matchedId);
+    public MatchingDetailResponse getMatchingDetails(Long userId, Long matchedId) {
+        return dailyMatchingService.getMatchingDetails(userId, matchedId);
     }
 //
 //    public List<MatchingSimpleResponse> getHiffMatching(Long userId) {

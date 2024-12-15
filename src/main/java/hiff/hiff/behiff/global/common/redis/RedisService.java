@@ -67,13 +67,13 @@ public class RedisService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> scanKeysWithPrefix(String prefix) {
+    public List<String> scanKeysByPattern(String pattern) {
         List<String> keys = new ArrayList<>();
 
         Cursor<byte[]> cursor = Objects.requireNonNull(redisTemplate.getConnectionFactory())
             .getConnection()
             .keyCommands().scan(
-                ScanOptions.scanOptions().match(prefix + "*").count(1000).build()
+                ScanOptions.scanOptions().match(pattern).count(1000).build()
             );
 
         while (cursor.hasNext()) {

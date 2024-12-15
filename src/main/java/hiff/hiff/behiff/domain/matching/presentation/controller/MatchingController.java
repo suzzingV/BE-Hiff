@@ -52,7 +52,7 @@ public class MatchingController {
     @GetMapping("/{matchedId}")
     public ResponseEntity<MatchingDetailResponse> getMatchingDetails(
         @AuthenticationPrincipal User user, @PathVariable Long matchedId) {
-        MatchingDetailResponse response = matchingServiceFacade.getMatchingDetails(
+        MatchingDetailResponse response = matchingServiceFacade.getMatchingDetails(user.getId(),
             matchedId);
         return ResponseEntity.ok(response);
     }
