@@ -14,7 +14,7 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
                 SELECT m.id FROM Matching m
                 WHERE (m.matchedId = :matchedId AND m.matcherId = :matcherId)
         """)
-    List<Long> findByUsers(Long matcherId, Long matchedId);
+    Optional<Matching> findByUsers(Long matcherId, Long matchedId);
 
     void deleteByMatchedIdOrMatcherId(Long matchedId, Long matcherId);
 }

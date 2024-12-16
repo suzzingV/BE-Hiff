@@ -15,6 +15,7 @@ import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
@@ -82,8 +83,9 @@ public class MatchingService {
     }
 
     protected boolean isMatchedBefore(Long matcherId, Long matchedId) {
-        List<Long> matchingHistory = matchingRepository.findByUsers(matcherId, matchedId);
-        return !matchingHistory.isEmpty();
+        Optional<Matching> matchingHistoryByMatcher = matchingRepository.findByUsers(matcherId, matchedId);
+        Optional<Matching> matchingHistoryByMatched = matchingRepository.findByUsers(matchedId, matcherId);
+        return matchingHistoryByMatcher.isPresent() || matchingHistoryByMatched.isPresent();
     }
 
 //    protected Long getMatchedIdFromKey(String key) {
