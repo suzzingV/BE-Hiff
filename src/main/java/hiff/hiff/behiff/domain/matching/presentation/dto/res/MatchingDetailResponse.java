@@ -1,5 +1,6 @@
 package hiff.hiff.behiff.domain.matching.presentation.dto.res;
 
+import hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus;
 import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.domain.enums.Mbti;
@@ -49,7 +50,9 @@ public class MatchingDetailResponse {
 
     private String location;
 
-    public static MatchingDetailResponse of(Long matcherId, UserProfile matchedProfile, List<String> photos, List<UserIntroductionDto> introductions) {
+    private MatchingStatus status;
+
+    public static MatchingDetailResponse of(Long matcherId, UserProfile matchedProfile, List<String> photos, List<UserIntroductionDto> introductions, MatchingStatus status) {
         return MatchingDetailResponse.builder()
                 .matchedId(matcherId)
             .matchedId(matchedProfile.getId())
@@ -69,6 +72,8 @@ public class MatchingDetailResponse {
 //            .lifeStyles(lifeStyles)
 //            .lifeStyleSimilarity(matchingScores.getLifeStyleSimilarity())
             .mainPhoto(matchedProfile.getMainPhoto())
+                .status(status)
+                .introductions(introductions)
             .build();
     }
 }

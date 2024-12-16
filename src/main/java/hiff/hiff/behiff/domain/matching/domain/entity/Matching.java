@@ -1,12 +1,7 @@
 package hiff.hiff.behiff.domain.matching.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,9 +26,13 @@ public class Matching {
     @Column(nullable = false)
     private Long matchedId;
 
+    @Enumerated(EnumType.STRING)
+    private MatchingStatus status;
+
     @Builder
     private Matching(Long matcherId, Long matchedId) {
         this.matcherId = matcherId;
         this.matchedId = matchedId;
+        this.status = MatchingStatus.INIT;
     }
 }

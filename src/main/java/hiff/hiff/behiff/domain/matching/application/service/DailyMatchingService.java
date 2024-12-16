@@ -1,5 +1,11 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
+import hiff.hiff.behiff.domain.bond.application.BondService;
+import hiff.hiff.behiff.domain.bond.domain.Chat;
+import hiff.hiff.behiff.domain.bond.domain.Like;
+import hiff.hiff.behiff.domain.bond.infrastructure.ChatRepository;
+import hiff.hiff.behiff.domain.bond.infrastructure.LikeRepository;
+import hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
@@ -20,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 import static hiff.hiff.behiff.global.util.DateCalculator.TODAY_DATE;
@@ -37,12 +44,14 @@ public class DailyMatchingService extends MatchingService {
     private final UserProfileRepository userProfileRepository;
     private final UserProfileService userProfileService;
     private final UserIntroductionService userIntroductionService;
+    private final LikeRepository likeRepository;
+    private final ChatRepository chatRepository;
 
 //    public static final Duration MATCHING_DURATION = Duration.ofDays(1);
     public static final String MATCHING_PREFIX = "matching_";
 
     public DailyMatchingService(UserPosService userPosService, RedisService redisService,
-                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService, UserIntroductionService userIntroductionService) {
+                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService, UserIntroductionService userIntroductionService, LikeRepository likeRepository, ChatRepository chatRepository) {
         super(userPosService, redisService, matchingRepository, similarityFactory);
 //        this.userCRUDService = userService;
 //        this.userRepository = userRepository;
@@ -51,6 +60,8 @@ public class DailyMatchingService extends MatchingService {
         this.userProfileService = userProfileService;
         this.userPhotoService = userPhotoService;
         this.userIntroductionService = userIntroductionService;
+        this.likeRepository = likeRepository;
+        this.chatRepository = chatRepository;
     }
 
     public List<MatchingSimpleResponse> getMatchings(Long userId) {
@@ -88,6 +99,7 @@ public class DailyMatchingService extends MatchingService {
         UserProfile matchedProfile = userProfileService.findByUserId(matchedId);
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(matchedId);
+        MatchingStatus matchingStatus = getMatchingStatus(userId, matchedId);
 //        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
 //            matchedId);
 //        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId,
@@ -96,7 +108,7 @@ public class DailyMatchingService extends MatchingService {
 //        MatchingInfoDto matchingInfo = getCachedMatchingInfo(
 //            matcherId, matchedId);
 
-        return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions);
+        return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus);
     }
 //
 //    private List<MatchingSimpleResponse> getSimpleMatchingInfo(Long userId,
@@ -172,5 +184,36 @@ public class DailyMatchingService extends MatchingService {
         int currentHour = LocalDateTime.now().getHour();
 
         return hour <= currentHour;
+    }
+
+    private MatchingStatus getMatchingStatus(Long userId, Long matchedId) {
+        Optional<Chat> chatSentByUser = chatRepository.findBySenderIdAndResponderId(userId, matchedId);
+        if(chatSentByUser.isPresent()) {
+            if(chatSentByUser.get().getStatus() == MatchingStatus.MUTUAL_CHAT) {
+                return MatchingStatus.MUTUAL_CHAT;
+            } else if(chatSentByUser.get().getStatus() == MatchingStatus.CHAT_PENDING) {
+                return MatchingStatus.CHAT_PENDING;
+            }
+        }
+
+        Optional<Chat> chatSentByMatched = chatRepository.findBySenderIdAndResponderId(matchedId, userId);
+        if(chatSentByMatched.isPresent()) {
+            if(chatSentByMatched.get().getStatus() == MatchingStatus.MUTUAL_CHAT) {
+                return MatchingStatus.MUTUAL_CHAT;
+            } else if(chatSentByMatched.get().getStatus() == MatchingStatus.CHAT_PENDING) {
+                return MatchingStatus.CHAT_RECEIVED;
+            }
+        }
+
+        Optional<Like> likeSentByUser = likeRepository.findBySenderIdAndResponderId(userId, matchedId);
+        Optional<Like> likeSentByMatched = likeRepository.findBySenderIdAndResponderId(matchedId, userId);
+        if(likeSentByUser.isPresent() && likeSentByMatched.isPresent()) {
+            return MatchingStatus.MUTUAL_LIKE;
+        } else if(likeSentByUser.isPresent()) {
+            return MatchingStatus.LIKE_PENDING;
+        } else if(likeSentByMatched.isPresent()) {
+            return MatchingStatus.LIKE_RECEIVED;
+        }
+        return MatchingStatus.INIT;
     }
 }
