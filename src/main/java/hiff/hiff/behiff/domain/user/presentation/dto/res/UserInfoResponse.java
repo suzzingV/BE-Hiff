@@ -24,7 +24,7 @@ public class UserInfoResponse {
                                       List<String> photos,
                                       List<UserIntroductionDto> introductions) {
         return UserInfoResponse.builder()
-            .userId(userProfile.getId())
+            .userId(userProfile.getUserId())
             .userProfile(userProfile)
             .photos(photos)
             .introductions(introductions)

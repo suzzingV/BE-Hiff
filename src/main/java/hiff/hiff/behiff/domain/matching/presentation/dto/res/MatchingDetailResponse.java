@@ -52,6 +52,8 @@ public class MatchingDetailResponse {
 
     private MatchingStatus status;
 
+    private Integer coupon;
+
     public static MatchingDetailResponse of(Long matcherId, UserProfile matchedProfile, List<String> photos, List<UserIntroductionDto> introductions, MatchingStatus status) {
         return MatchingDetailResponse.builder()
                 .matchedId(matcherId)
@@ -75,5 +77,31 @@ public class MatchingDetailResponse {
                 .status(status)
                 .introductions(introductions)
             .build();
+    }
+
+    public static MatchingDetailResponse of(Long matcherId, UserProfile matchedProfile, List<String> photos, List<UserIntroductionDto> introductions, MatchingStatus status, Integer coupon) {
+        return MatchingDetailResponse.builder()
+                .matchedId(matcherId)
+                .matchedId(matchedProfile.getId())
+//            .nickname(matchedProfile.getNickname())
+                .age(matchedProfile.getAge())
+//            .distance(distance)
+                .photos(photos)
+//            .totalScore(matchingScores.getTotalScoreByMatcher())
+//            .myMbti(matcher.getMbti())
+                .mbti(matchedProfile.getMbti())
+                .location(matchedProfile.getLocation())
+//            .mbtiSimilarity(matchingScores.getMbtiSimilarity())
+//            .matchedIncome(matchedProfile.getIncome())
+//            .incomeSimilarity(matchingScores.getIncomeSimilarity())
+//            .hobbies(hobbies)
+//            .hobbySimilarity(matchingScores.getHobbySimilarity())
+//            .lifeStyles(lifeStyles)
+//            .lifeStyleSimilarity(matchingScores.getLifeStyleSimilarity())
+                .mainPhoto(matchedProfile.getMainPhoto())
+                .status(status)
+                .introductions(introductions)
+                .coupon(coupon)
+                .build();
     }
 }

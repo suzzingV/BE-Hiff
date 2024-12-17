@@ -10,6 +10,9 @@ import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
+import hiff.hiff.behiff.domain.plan.application.service.PlanService;
+import hiff.hiff.behiff.domain.plan.infrastructure.UserPlanRepository;
+import hiff.hiff.behiff.domain.plan.presentation.dto.res.CouponResponse;
 import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
 import hiff.hiff.behiff.domain.profile.application.service.UserIntroductionService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
@@ -44,6 +47,7 @@ public class DailyMatchingService extends MatchingService {
     private final UserProfileRepository userProfileRepository;
     private final UserProfileService userProfileService;
     private final UserIntroductionService userIntroductionService;
+    private final PlanService planService;
     private final LikeRepository likeRepository;
     private final ChatRepository chatRepository;
 
@@ -51,7 +55,7 @@ public class DailyMatchingService extends MatchingService {
     public static final String MATCHING_PREFIX = "matching_";
 
     public DailyMatchingService(UserPosService userPosService, RedisService redisService,
-                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService, UserIntroductionService userIntroductionService, LikeRepository likeRepository, ChatRepository chatRepository) {
+                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService, UserIntroductionService userIntroductionService, LikeRepository likeRepository, ChatRepository chatRepository, PlanService planService) {
         super(userPosService, redisService, matchingRepository, similarityFactory);
 //        this.userCRUDService = userService;
 //        this.userRepository = userRepository;
@@ -62,6 +66,7 @@ public class DailyMatchingService extends MatchingService {
         this.userIntroductionService = userIntroductionService;
         this.likeRepository = likeRepository;
         this.chatRepository = chatRepository;
+        this.planService = planService;
     }
 
     public List<MatchingSimpleResponse> getMatchings(Long userId) {
@@ -100,6 +105,10 @@ public class DailyMatchingService extends MatchingService {
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(matchedId);
         MatchingStatus matchingStatus = getMatchingStatus(userId, matchedId);
+        if(matchingStatus == MatchingStatus.MUTUAL_LIKE) {
+            CouponResponse coupon = planService.getUserPlan(userId);
+            return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus, coupon.getCoupon());
+        }
 //        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
 //            matchedId);
 //        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId,

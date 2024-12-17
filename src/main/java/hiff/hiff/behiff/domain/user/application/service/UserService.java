@@ -39,6 +39,7 @@ public class UserService {
         planService.createUserPlan(user.getId());
         userProfileService.createUserProfile(user.getId());
         userProfileService.updateLocationByPos(user.getId(), lat, lon);
+        planService.createUserPlan(user.getId());
         return user;
     }
 
