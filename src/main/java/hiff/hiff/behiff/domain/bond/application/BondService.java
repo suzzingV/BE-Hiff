@@ -94,6 +94,17 @@ public class BondService {
                 }).toList();
     }
 
+    public List<LikeToUserResponse> getLikers(Long userId) {
+        return likeRepository.findByResponderId(userId)
+                .stream().map(like -> {
+                    Long senderId = like.getSenderId();
+                    Matching matching = matchingService.findByUsers(userId, senderId);
+                    UserProfile matchedProfile = userProfileService.findByUserId(senderId);
+
+                    return LikeToUserResponse.of(senderId, matchedProfile.getNickname(), matchedProfile.getAge(), matchedProfile.getMainPhoto(), getDateByPattern(matching.getCreatedAt(), BOND_MATCHING_DATE_PATTERN));
+                }).toList();
+    }
+
     private void createChat(Long userId, Long responderId) {
         Chat chat = Chat.builder()
                 .senderId(userId)

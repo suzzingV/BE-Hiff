@@ -55,6 +55,21 @@ public class BondController {
     }
 
     @Operation(
+            summary = "호감을 받은 상대 조회",
+            description = "호감을 받은 상대를 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "호감을 받은 상대 조회에 성공하였습니다."
+    )
+    @GetMapping("/like/list/received")
+    public ResponseEntity<List<LikeToUserResponse>> getLikers(@AuthenticationPrincipal User user) {
+        List<LikeToUserResponse> responses = bondService.getLikers(user.getId());
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @Operation(
             summary = "매칭 신청",
             description = "매칭을 신청합니다. 토큰 o"
     )
