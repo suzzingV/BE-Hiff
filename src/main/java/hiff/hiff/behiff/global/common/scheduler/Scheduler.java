@@ -2,7 +2,9 @@ package hiff.hiff.behiff.global.common.scheduler;
 
 import java.util.Date;
 
+import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import hiff.hiff.behiff.global.util.DateCalculator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -21,14 +23,18 @@ public class Scheduler {
     private final JobLauncher jobLauncher;
     private final Job dailyMatchingInitJob;
     private final Job randomMatcingJob;
+
+    private final Job matchingAlarmJob;
 //    private final GenderCountRepository genderCountRepository;
 
     public Scheduler(@Qualifier("dailyMatchingInitJob") Job dailyMatchingInitJob,
-        @Qualifier("randomMatchingJob") Job randomMatchingJob, JobLauncher jobLauncher) {
+        @Qualifier("randomMatchingJob") Job randomMatchingJob,
+                     @Qualifier("matchingAlarmJob") Job matchingAlarmJob, JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
         this.dailyMatchingInitJob = dailyMatchingInitJob;
 //        this.genderCountRepository = genderCountRepository;
         this.randomMatcingJob = randomMatchingJob;
+        this.matchingAlarmJob = matchingAlarmJob;
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
@@ -48,6 +54,7 @@ public class Scheduler {
             .addDate("currentTime", new Date())
             .toJobParameters();
         runRandomMatchingJob(jobParameters);
+        jobLauncher.run(matchingAlarmJob, jobParameters);
     }
 
     public void runRandomMatchingJob(JobParameters jobParameters)

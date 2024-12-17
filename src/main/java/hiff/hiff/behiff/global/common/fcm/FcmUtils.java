@@ -20,7 +20,7 @@ public class FcmUtils {
 
     private static final String PUSH_TITLE = "Hiff";
     private static final String CHAT_PROPOSAL_BODY = "님이 대화를 신청했습니다.";
-    public static final String MATCHING_ALARM_BODY = "매칭 상대를 찾았습니다.";
+    public static final String MATCHING_ALARM_BODY = "새로운 매칭 상대를 찾았습니다.";
 
     private final FirebaseMessaging firebaseMessaging;
 
@@ -43,7 +43,7 @@ public class FcmUtils {
         }
     }
 
-    public void sendMatchingAlarm(String token, Long matchedId) {
+    public static void sendMatchingAlarm(String token, Long matchedId) {
         Notification notification = Notification.builder()
                 .setTitle(PUSH_TITLE)
                 .setBody(MATCHING_ALARM_BODY)

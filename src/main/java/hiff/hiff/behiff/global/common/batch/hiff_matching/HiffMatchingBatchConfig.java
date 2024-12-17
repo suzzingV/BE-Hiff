@@ -7,12 +7,16 @@ import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.profile.domain.enums.Gender;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
+import hiff.hiff.behiff.global.auth.domain.entity.Device;
+import hiff.hiff.behiff.global.auth.infrastructure.DeviceRepository;
 import hiff.hiff.behiff.global.common.batch.CustomSkipListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.Future;
+
+import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -39,6 +43,7 @@ public class HiffMatchingBatchConfig {
     private final CustomSkipListener customSkipListener;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    private final DeviceRepository deviceRepository;
     private final UserRepository userRepository;
     private final HiffMatchingJobExecutionListener hiffMatchingJobExecutionListener;
     private final MatchedStepExecutionListener matchedStepExecutionListener;
@@ -62,6 +67,14 @@ public class HiffMatchingBatchConfig {
         return new JobBuilder("randomMatchingJob", jobRepository)
                 .listener(hiffMatchingJobExecutionListener)
                 .start(randomMatchingStep())
+                .build();
+    }
+
+    @Bean
+    public Job matchingAlarmJob() {
+        return new JobBuilder("matchingAlarmJob", jobRepository)
+                .listener(hiffMatchingJobExecutionListener)
+                .start(matchingAlarmStep())
                 .build();
     }
 
@@ -136,6 +149,21 @@ public class HiffMatchingBatchConfig {
                 .build();
     }
 
+    @Bean
+    public Step matchingAlarmStep() {
+        return new StepBuilder("matchingAlarmStep", jobRepository)
+                .<Device, Future<Device>>chunk(5000, transactionManager)
+                .reader(deviceReader())
+                .processor(deviceAsyncItemProcessor())
+                .writer(deviceAsyncItemWriter())
+                .faultTolerant()
+                .skip(Exception.class)
+                .listener(customSkipListener)
+                .retry(Exception.class)
+                .retryLimit(3)
+                .build();
+    }
+
 //    @Bean
 //    public Step matchingByFemaleStep() {
 //        return new StepBuilder("matchingByFemaleStep", jobRepository)
@@ -172,6 +200,16 @@ public class HiffMatchingBatchConfig {
         return reader;
     }
 
+    @Bean
+    public RepositoryItemReader<Device> deviceReader() {
+        RepositoryItemReader<Device> reader = new RepositoryItemReader<>();
+        reader.setRepository(deviceRepository);
+        reader.setMethodName("findAll");
+        reader.setPageSize(5000);
+        reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
+        return reader;
+    }
+
 //    @Bean
 //    public RepositoryItemReader<User> femaleReader() {
 //        RepositoryItemReader<User> reader = new RepositoryItemReader<>();
@@ -188,6 +226,14 @@ public class HiffMatchingBatchConfig {
         AsyncItemProcessor<UserProfile, UserProfile> asyncItemProcessor = new AsyncItemProcessor<>();
         asyncItemProcessor.setTaskExecutor(taskExecutor()); // 스레드풀 지정
         asyncItemProcessor.setDelegate(matcherItemProcessor());
+        return asyncItemProcessor;
+    }
+
+    @Bean
+    public AsyncItemProcessor<Device, Device> deviceAsyncItemProcessor() {
+        AsyncItemProcessor<Device, Device> asyncItemProcessor = new AsyncItemProcessor<>();
+        asyncItemProcessor.setTaskExecutor(taskExecutor()); // 스레드풀 지정
+        asyncItemProcessor.setDelegate(deviceItemProcessor());
         return asyncItemProcessor;
     }
 
@@ -213,6 +259,17 @@ public class HiffMatchingBatchConfig {
     }
 
     @Bean
+    public ItemProcessor<Device, Device> deviceItemProcessor() {
+        return new ItemProcessor<Device, Device>() {
+            @Override
+            public Device process(Device device) {
+                FcmUtils.sendMatchingAlarm(device.getFcmToken(), device.getUserId());
+                return null;
+            }
+        };
+    }
+
+    @Bean
     public ItemProcessor<User, User> matchedItemProcessor() {
         return matched -> {
             matchedList.add(matched);
@@ -228,6 +285,13 @@ public class HiffMatchingBatchConfig {
     }
 
     @Bean
+    public AsyncItemWriter<Device> deviceAsyncItemWriter() {
+        AsyncItemWriter<Device> writer = new AsyncItemWriter<>();
+        writer.setDelegate(deviceWriter());
+        return writer;
+    }
+
+    @Bean
     public AsyncItemWriter<User> matchedAsyncItemWriter() {
         AsyncItemWriter<User> writer = new AsyncItemWriter<>();
         writer.setDelegate(matchedWriter());
@@ -239,6 +303,15 @@ public class HiffMatchingBatchConfig {
         return new ItemWriter<UserProfile>() {
             @Override
             public void write(Chunk<? extends UserProfile> chunk) throws Exception {
+            }
+        };
+    }
+
+    @Bean
+    public ItemWriter<Device> deviceWriter() {
+        return new ItemWriter<Device>() {
+            @Override
+            public void write(Chunk<? extends Device> chunk) throws Exception {
             }
         };
     }
