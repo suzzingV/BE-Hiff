@@ -28,7 +28,7 @@ public enum ErrorCode {
     EVALUATION_INVALID_GENDER(BAD_REQUEST, "첫인상 평가 대상의 성별이 적절하지 않습니다."),
     EVALUATION_COUNT_EXCEED(BAD_REQUEST, "첫인상 평가 횟수를 초과했습니다."),
     EVALUATION_ALREADY(BAD_REQUEST, "이미 첫인상 평가를 한 대상입니다."),
-    LACK_OF_HEART(BAD_REQUEST, "하트가 부족합니다."),
+    LACK_OF_COUPON(BAD_REQUEST, "쿠폰이 부족합니다."),
     INVALID_SIMILARITY_TYPE(BAD_REQUEST, "적절한 유사도 타입이 아닙니다."),
     INCOME_WEIGHT_VALUE_PRIVATE(BAD_REQUEST, "소득이 비공개일 경우 가중치는 0이어야 합니다."),
     VERIFICATION_CODE_INCORRECT(BAD_REQUEST, "인증 코드가 올바르지 않습니다."),
@@ -40,6 +40,8 @@ public enum ErrorCode {
     MEMBERSHIP_ALREADY(BAD_REQUEST, "이미 멤버십에 가입한 user입니다."),
     LIKE_ALREADY_EXISTS(BAD_REQUEST, "이미 호감을 보낸 상대입니다."),
     INTRODUCTION_ALREADY_EXISTS(BAD_REQUEST, "이미 해당 질문에 답을 등록한 user입니다."),
+    CHAT_ALREADY_EXISTS(BAD_REQUEST, "이미 매칭 신청을 하거나 받은 상대입니다."),
+    NOT_MUTUAL_LIKE(BAD_REQUEST, "맞호감 상태의 상대가 아닙니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),

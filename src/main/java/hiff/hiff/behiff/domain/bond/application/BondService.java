@@ -1,13 +1,27 @@
 package hiff.hiff.behiff.domain.bond.application;
 
+import hiff.hiff.behiff.domain.bond.domain.Chat;
 import hiff.hiff.behiff.domain.bond.domain.Like;
 import hiff.hiff.behiff.domain.bond.exception.BondException;
+import hiff.hiff.behiff.domain.bond.infrastructure.ChatRepository;
 import hiff.hiff.behiff.domain.bond.infrastructure.LikeRepository;
+import hiff.hiff.behiff.domain.bond.presentation.dto.res.ChatSendingResponse;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeResponse;
+import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
+import hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus;
+import hiff.hiff.behiff.domain.plan.application.service.PlanService;
+import hiff.hiff.behiff.domain.plan.domain.entity.UserPlan;
+import hiff.hiff.behiff.domain.plan.exception.PlanException;
+import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 
 @Service
 @Transactional
@@ -16,11 +30,14 @@ public class BondService {
 
 
 //    private final AuthService authService;
-//    private final ChatHistoryRepository chatHistoryRepository;
+    private final ChatRepository chatRepository;
 //    private final UserCRUDService userCRUDService;
 //    private final SmsUtil smsUtil;
 //    private final FcmUtils fcmUtils;
+    private final RedisService redisService;
     private final LikeRepository likeRepository;
+    private final PlanService planService;
+    private final MatchingService matchingService;
 
     public LikeResponse sendLike(Long userId, Long responderId) {
         if(!likeRepository.findBySenderIdAndResponderId(userId, responderId).isEmpty()) {
@@ -34,6 +51,79 @@ public class BondService {
         likeRepository.save(like);
 
         return LikeResponse.of(userId, responderId);
+    }
+
+    public ChatSendingResponse sendChat(Long userId, Long responderId) {
+        checkMatchingHistory(userId, responderId);
+        checkLikeStatus(userId, responderId);
+        checkChatHistory(userId, responderId);
+
+        Chat chat = Chat.builder()
+                .senderId(userId)
+                .responderId(responderId)
+                .status(MatchingStatus.CHAT_PENDING)
+                .build();
+        chatRepository.save(chat);
+
+        useCoupon(userId);
+
+        return ChatSendingResponse.from(responderId);
+    }
+
+    private void checkLikeStatus(Long userId, Long responderId) {
+        if(getLikeStatus(userId, responderId) != MatchingStatus.MUTUAL_LIKE) {
+            throw new BondException(ErrorCode.NOT_MUTUAL_LIKE);
+        }
+    }
+
+    public MatchingStatus getLikeStatus(Long userId, Long matchedId) {
+        Optional<Like> likeSentByUser = likeRepository.findBySenderIdAndResponderId(userId, matchedId);
+        Optional<Like> likeSentByMatched = likeRepository.findBySenderIdAndResponderId(matchedId, userId);
+        if(likeSentByUser.isPresent() && likeSentByMatched.isPresent()) {
+            return MatchingStatus.MUTUAL_LIKE;
+        } else if(likeSentByUser.isPresent()) {
+            return MatchingStatus.LIKE_PENDING;
+        } else if(likeSentByMatched.isPresent()) {
+            return MatchingStatus.LIKE_RECEIVED;
+        }
+        return MatchingStatus.INIT;
+    }
+
+    public MatchingStatus getChatStatus(Long senderId, Long responderId) {
+        Optional<Chat> chat = chatRepository.findBySenderIdAndResponderId(senderId, responderId);
+        if(chat.isPresent()) {
+            if(chat.get().getStatus() == MatchingStatus.MUTUAL_CHAT) {
+                return MatchingStatus.MUTUAL_CHAT;
+            } else if(chat.get().getStatus() == MatchingStatus.CHAT_PENDING) {
+                return MatchingStatus.CHAT_PENDING;
+            }
+        }
+        return null;
+    }
+
+    private void useCoupon(Long userId) {
+        if(planService.isMembership(userId)) {
+            return;
+        }
+
+        UserPlan userPlan = planService.findByUserId(userId);
+        if(userPlan.getCoupon() <= 0) {
+            throw new BondException(ErrorCode.LACK_OF_COUPON);
+        }
+        userPlan.subtractCoupon();
+    }
+
+    private void checkChatHistory(Long userId, Long responderId) {
+        Optional<Chat> chatHistory = chatRepository.findByUsers(userId, responderId);
+        if(chatHistory.isPresent()) {
+            throw new BondException(ErrorCode.CHAT_ALREADY_EXISTS);
+        }
+    }
+
+    private void checkMatchingHistory(Long userId, Long responderId) {
+        if(!matchingService.isMatchedBefore(userId, responderId)) {
+            throw new BondException(ErrorCode.MATCHING_HISTORY_NOT_FOUND);
+        }
     }
 //    public ChatProposalResponse proposeChat(Long userId, Long matchedId) {
 //        User user = userCRUDService.findById(userId);

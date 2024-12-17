@@ -82,7 +82,7 @@ public class MatchingService {
             matchedPos.getLon());
     }
 
-    protected boolean isMatchedBefore(Long matcherId, Long matchedId) {
+    public boolean isMatchedBefore(Long matcherId, Long matchedId) {
         Optional<Matching> matchingHistoryByMatcher = matchingRepository.findByUsers(matcherId, matchedId);
         Optional<Matching> matchingHistoryByMatched = matchingRepository.findByUsers(matchedId, matcherId);
         return matchingHistoryByMatcher.isPresent() || matchingHistoryByMatched.isPresent();

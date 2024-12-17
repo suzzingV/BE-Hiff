@@ -24,6 +24,8 @@ import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,14 +50,15 @@ public class DailyMatchingService extends MatchingService {
     private final UserProfileService userProfileService;
     private final UserIntroductionService userIntroductionService;
     private final PlanService planService;
-    private final LikeRepository likeRepository;
     private final ChatRepository chatRepository;
+
+    private final BondService bondService;
 
 //    public static final Duration MATCHING_DURATION = Duration.ofDays(1);
     public static final String MATCHING_PREFIX = "matching_";
 
     public DailyMatchingService(UserPosService userPosService, RedisService redisService,
-                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService, UserIntroductionService userIntroductionService, LikeRepository likeRepository, ChatRepository chatRepository, PlanService planService) {
+                                MatchingRepository matchingRepository, SimilarityFactory similarityFactory, UserProfileRepository userProfileRepository, UserProfileService userProfileService, UserPhotoService userPhotoService, UserIntroductionService userIntroductionService, LikeRepository likeRepository, ChatRepository chatRepository, PlanService planService, BondService bondService) {
         super(userPosService, redisService, matchingRepository, similarityFactory);
 //        this.userCRUDService = userService;
 //        this.userRepository = userRepository;
@@ -64,7 +67,7 @@ public class DailyMatchingService extends MatchingService {
         this.userProfileService = userProfileService;
         this.userPhotoService = userPhotoService;
         this.userIntroductionService = userIntroductionService;
-        this.likeRepository = likeRepository;
+        this.bondService = bondService;
         this.chatRepository = chatRepository;
         this.planService = planService;
     }
@@ -196,33 +199,12 @@ public class DailyMatchingService extends MatchingService {
     }
 
     private MatchingStatus getMatchingStatus(Long userId, Long matchedId) {
-        Optional<Chat> chatSentByUser = chatRepository.findBySenderIdAndResponderId(userId, matchedId);
-        if(chatSentByUser.isPresent()) {
-            if(chatSentByUser.get().getStatus() == MatchingStatus.MUTUAL_CHAT) {
-                return MatchingStatus.MUTUAL_CHAT;
-            } else if(chatSentByUser.get().getStatus() == MatchingStatus.CHAT_PENDING) {
-                return MatchingStatus.CHAT_PENDING;
-            }
-        }
+        MatchingStatus chatStatusByUser = bondService.getChatStatus(userId, matchedId);
+        if (chatStatusByUser != null) return chatStatusByUser;
 
-        Optional<Chat> chatSentByMatched = chatRepository.findBySenderIdAndResponderId(matchedId, userId);
-        if(chatSentByMatched.isPresent()) {
-            if(chatSentByMatched.get().getStatus() == MatchingStatus.MUTUAL_CHAT) {
-                return MatchingStatus.MUTUAL_CHAT;
-            } else if(chatSentByMatched.get().getStatus() == MatchingStatus.CHAT_PENDING) {
-                return MatchingStatus.CHAT_RECEIVED;
-            }
-        }
+        MatchingStatus chatStatusByMatched = bondService.getChatStatus(userId, matchedId);
+        if (chatStatusByMatched != null) return chatStatusByMatched;
 
-        Optional<Like> likeSentByUser = likeRepository.findBySenderIdAndResponderId(userId, matchedId);
-        Optional<Like> likeSentByMatched = likeRepository.findBySenderIdAndResponderId(matchedId, userId);
-        if(likeSentByUser.isPresent() && likeSentByMatched.isPresent()) {
-            return MatchingStatus.MUTUAL_LIKE;
-        } else if(likeSentByUser.isPresent()) {
-            return MatchingStatus.LIKE_PENDING;
-        } else if(likeSentByMatched.isPresent()) {
-            return MatchingStatus.LIKE_RECEIVED;
-        }
-        return MatchingStatus.INIT;
+        return bondService.getLikeStatus(userId, matchedId);
     }
 }

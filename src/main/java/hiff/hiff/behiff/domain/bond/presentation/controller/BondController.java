@@ -1,6 +1,7 @@
 package hiff.hiff.behiff.domain.bond.presentation.controller;
 
 import hiff.hiff.behiff.domain.bond.application.BondService;
+import hiff.hiff.behiff.domain.bond.presentation.dto.res.ChatSendingResponse;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,21 @@ public class BondController {
     @PostMapping("/like/{responderId}")
     public ResponseEntity<LikeResponse> sendLike(@AuthenticationPrincipal User user, @PathVariable Long responderId) {
         LikeResponse response = bondService.sendLike(user.getId(), responderId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "매칭 신청",
+            description = "매칭을 신청합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "매칭 신청에 성공하였습니다."
+    )
+    @PostMapping("/chat/{responderId}")
+    public ResponseEntity<ChatSendingResponse> sendChat(@AuthenticationPrincipal User user, @PathVariable Long responderId) {
+        ChatSendingResponse response = bondService.sendChat(user.getId(), responderId);
 
         return ResponseEntity.ok(response);
     }

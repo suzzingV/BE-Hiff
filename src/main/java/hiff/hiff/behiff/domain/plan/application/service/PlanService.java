@@ -33,7 +33,7 @@ public class PlanService {
         return CouponResponse.from(userPlan);
     }
 
-    private UserPlan findByUserId(Long userId) {
+    public UserPlan findByUserId(Long userId) {
         return userPlanRepository.findByUserId(userId)
             .orElseThrow(() -> new PlanException(ErrorCode.USER_PLAN_NOT_FOUND));
     }
@@ -51,10 +51,14 @@ public class PlanService {
     }
 
     public PlanUpdateResponse purchaseMembership(Long userId) {
-        if(!redisService.getStrValue(MEMBERSHIP_PREFIX + userId).equals(NOT_EXIST)) {
+        if(!isMembership(userId)) {
             throw new PlanException(ErrorCode.MEMBERSHIP_ALREADY);
         }
         redisService.setValue(MEMBERSHIP_PREFIX + userId, null, MEMBERSHIP_DURATION);
         return PlanUpdateResponse.of(userId);
+    }
+
+    public boolean isMembership(Long userId) {
+        return !redisService.getStrValue(MEMBERSHIP_PREFIX + userId).equals(NOT_EXIST);
     }
 }
