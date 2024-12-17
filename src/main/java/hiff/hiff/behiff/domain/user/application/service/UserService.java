@@ -36,7 +36,6 @@ public class UserService {
         Role role, String phoneNum, Double lat, Double lon) {
         User user = createUser(role, phoneNum);
         userPosService.createPos(user.getId(), lat, lon);
-        planService.createUserPlan(user.getId());
         userProfileService.createUserProfile(user.getId());
         userProfileService.updateLocationByPos(user.getId(), lat, lon);
         planService.createUserPlan(user.getId());
