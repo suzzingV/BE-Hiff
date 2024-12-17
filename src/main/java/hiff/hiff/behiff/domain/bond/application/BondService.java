@@ -83,7 +83,7 @@ public class BondService {
         return ChatAcceptanceResponse.from(senderId);
     }
 
-    public List<LikeToUserResponse> getUsersOfSendingLike(Long userId) {
+    public List<LikeToUserResponse> getLikedUsers(Long userId) {
         return likeRepository.findBySenderId(userId)
                 .stream().map(like -> {
                     Long responderId = like.getResponderId();

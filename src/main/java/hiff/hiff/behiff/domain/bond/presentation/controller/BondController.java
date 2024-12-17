@@ -48,8 +48,8 @@ public class BondController {
             description = "호감을 보낸 상대 조회에 성공하였습니다."
     )
     @GetMapping("/like/list/send")
-    public ResponseEntity<List<LikeToUserResponse>> getUsersOfSendingLike(@AuthenticationPrincipal User user) {
-        List<LikeToUserResponse> responses = bondService.getUsersOfSendingLike(user.getId());
+    public ResponseEntity<List<LikeToUserResponse>> getLikedUsers(@AuthenticationPrincipal User user) {
+        List<LikeToUserResponse> responses = bondService.getLikedUsers(user.getId());
 
         return ResponseEntity.ok(responses);
     }
