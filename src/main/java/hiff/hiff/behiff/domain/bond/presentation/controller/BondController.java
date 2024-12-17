@@ -1,6 +1,7 @@
 package hiff.hiff.behiff.domain.bond.presentation.controller;
 
 import hiff.hiff.behiff.domain.bond.application.BondService;
+import hiff.hiff.behiff.domain.bond.presentation.dto.res.ChatAcceptanceResponse;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.ChatSendingResponse;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
@@ -43,9 +44,25 @@ public class BondController {
             responseCode = "200",
             description = "매칭 신청에 성공하였습니다."
     )
-    @PostMapping("/chat/{responderId}")
+    @PostMapping("/chat/proposal/{responderId}")
     public ResponseEntity<ChatSendingResponse> sendChat(@AuthenticationPrincipal User user, @PathVariable Long responderId) {
         ChatSendingResponse response = bondService.sendChat(user.getId(), responderId);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    @Operation(
+            summary = "매칭 수락",
+            description = "매칭을 수락합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "매칭 수락에 성공하였습니다."
+    )
+    @PostMapping("/chat/accept/{senderId}")
+    public ResponseEntity<ChatAcceptanceResponse> acceptChat(@AuthenticationPrincipal User user, @PathVariable Long senderId) {
+        ChatAcceptanceResponse response = bondService.acceptChat(user.getId(), senderId);
 
         return ResponseEntity.ok(response);
     }

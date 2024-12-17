@@ -33,6 +33,22 @@ public class Matching {
     private Matching(Long matcherId, Long matchedId) {
         this.matcherId = matcherId;
         this.matchedId = matchedId;
-        this.status = MatchingStatus.INIT;
+        this.status = MatchingStatus.DEFAULT;
+    }
+
+    public void sendLike() {
+        if(this.status == MatchingStatus.ONE_WAY_LIKE) {
+            this.status = MatchingStatus.MUTUAL_LIKE;
+        } else {
+            this.status = MatchingStatus.ONE_WAY_LIKE;
+        }
+    }
+
+    public void sendChat() {
+        this.status = MatchingStatus.CHAT_PENDING;
+    }
+
+    public void acceptChat() {
+        this.status = MatchingStatus.MUTUAL_CHAT;
     }
 }

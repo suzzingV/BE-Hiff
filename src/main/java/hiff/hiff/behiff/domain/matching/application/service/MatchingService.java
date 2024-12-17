@@ -1,23 +1,40 @@
 package hiff.hiff.behiff.domain.matching.application.service;
 
+import static hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus.*;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
+import static hiff.hiff.behiff.global.util.DateCalculator.TODAY_DATE;
+import static hiff.hiff.behiff.global.util.DateCalculator.getMatchingDate;
 
-import hiff.hiff.behiff.domain.matching.application.dto.MatchingInfoDto;
+import hiff.hiff.behiff.domain.bond.application.BondService;
+import hiff.hiff.behiff.domain.bond.infrastructure.ChatRepository;
+import hiff.hiff.behiff.domain.bond.infrastructure.LikeRepository;
 import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
+import hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus;
 import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
+import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
 import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
+import hiff.hiff.behiff.domain.plan.application.service.PlanService;
+import hiff.hiff.behiff.domain.plan.presentation.dto.res.CouponResponse;
+import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
+import hiff.hiff.behiff.domain.profile.application.service.UserIntroductionService;
+import hiff.hiff.behiff.domain.profile.application.service.UserPhotoService;
 import hiff.hiff.behiff.domain.profile.application.service.UserPosService;
-import hiff.hiff.behiff.domain.user.domain.entity.User;
+import hiff.hiff.behiff.domain.profile.application.service.UserProfileService;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserPos;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
+import hiff.hiff.behiff.domain.profile.exception.ProfileException;
+import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.StringTokenizer;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,9 +49,117 @@ public class MatchingService {
     private final UserPosService userPosService;
     private final RedisService redisService;
     private final MatchingRepository matchingRepository;
-    private final SimilarityFactory similarityFactory;
+    private final UserPhotoService userPhotoService;
+    private final UserProfileRepository userProfileRepository;
+    private final UserProfileService userProfileService;
+    private final UserIntroductionService userIntroductionService;
+    private final PlanService planService;
+    private final ChatRepository chatRepository;
+    private final LikeRepository likeRepository;
 
     public static final Duration MATCHING_DURATION = Duration.ofDays(1);
+    public static final String MATCHING_PREFIX = "matching_";
+
+    public List<MatchingSimpleResponse> getMatchings(Long userId) {
+        return redisService.scanKeysByPattern(
+                        MATCHING_PREFIX + TODAY_DATE + "??_" + userId)
+                .stream()
+                .filter(this::isValidMatchingData)
+                .map(key -> {
+                    Long matchedId = redisService.getLongValue(key);
+                    UserProfile matched = userProfileService.findByUserId(matchedId);
+                    return MatchingSimpleResponse.builder()
+                            .age(matched.getAge())
+                            .matchedId(matchedId)
+                            .mainPhoto(matched.getMainPhoto())
+                            .nickname(matched.getNickname())
+                            .location(matched.getLocation())
+                            .build();
+                }).toList();
+    }
+
+    public MatchingDetailResponse getMatchingDetails(Long userId, Long matchedId) {
+        if(!isMatchedBefore(userId, matchedId)) {
+            throw new ProfileException(ErrorCode.MATCHING_NOT_FOUND);
+        }
+        UserProfile matchedProfile = userProfileService.findByUserId(matchedId);
+        List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
+        List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(matchedId);
+        MatchingStatus matchingStatus = getMatchingStatus(userId, matchedId);
+        if(matchingStatus == MatchingStatus.MUTUAL_LIKE) {
+            CouponResponse coupon = planService.getUserPlan(userId);
+            return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus, coupon.getCoupon());
+        }
+//        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
+//            matchedId);
+//        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId,
+//            matchedId);
+//        Double distance = getDistance(matcherId, matchedId);
+//        MatchingInfoDto matchingInfo = getCachedMatchingInfo(
+//            matcherId, matchedId);
+
+        return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus);
+    }
+
+    public void performMatching(UserProfile matcher) {
+        userProfileRepository.getRandomMatched(matcher.getId())
+                .forEach(matched -> {
+//                Weighting matcherWV = userWeightValueService.findByUserId(matcher.getId());
+//                List<UserHobby> matcherHobbies = userHobbyService.findByUserId(matcher.getId());
+//                List<UserHobby> matchedHobbies = userHobbyService.findByUserId(matched.getId());
+//                List<UserLifeStyle> matcherLifeStyles = userLifeStyleService.findByUserId(
+//                    matcher.getId());
+//                List<UserLifeStyle> matchedLifeStyles = userLifeStyleService.findByUserId(
+//                    matched.getId());
+//                MatchingInfoDto matchingInfoDto = getNewMatchingInfo(matcher, matched, matcherWV,
+//                    matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyles);
+
+                    cachMatchingScore(matcher, matched);
+                    createMatching(matcher.getUserId(), matched.getUserId());
+                });
+    }
+
+    private void cachMatchingScore(UserProfile matcher, UserProfile matched) {
+        String matchingDate = getMatchingDate();
+        String prefix = MATCHING_PREFIX + matchingDate;
+        String key = prefix + "_" + matcher.getUserId();
+        Long value = matched.getUserId();
+        redisService.setValue(key, value);
+    }
+
+    private boolean isValidMatchingData(String key) {
+        StringTokenizer st = new StringTokenizer(key, "_");
+        st.nextToken();
+        String date = st.nextToken();
+        int hour = Integer.parseInt(date.substring(date.length() - 2));
+        int currentHour = LocalDateTime.now().getHour();
+
+        return hour <= currentHour;
+    }
+
+    private MatchingStatus getMatchingStatus(Long userId, Long matchedId) {
+        MatchingStatus status = findByUsers(userId, matchedId).getStatus();
+
+        if(status == MatchingStatus.DEFAULT || status == MatchingStatus.MUTUAL_CHAT || status == MatchingStatus.MUTUAL_LIKE) {
+            return status;
+        }
+
+        if(status == MatchingStatus.CHAT_PENDING) {
+            return getChatStatus(userId, matchedId);
+        }
+
+        if(status == MatchingStatus.ONE_WAY_LIKE) {
+            if(isLikeSenderOfResponder(userId, matchedId)) {
+                return MatchingStatus.LIKE_PENDING;
+            } else {
+                return MatchingStatus.LIKE_RECEIVED;
+            }
+        }
+
+        return status;
+    }
+
+
 
 
     protected String getCachedValue(Long matcherId, Long matchedId, String prefix) {
@@ -66,7 +191,7 @@ public class MatchingService {
 //            .build();
 //    }
 
-    protected void recordMatchingHistory(Long userId, Long matchedId) {
+    protected void createMatching(Long userId, Long matchedId) {
         Matching matching = Matching.builder()
             .matchedId(matchedId)
             .matcherId(userId)
@@ -83,9 +208,29 @@ public class MatchingService {
     }
 
     public boolean isMatchedBefore(Long matcherId, Long matchedId) {
-        Optional<Matching> matchingHistoryByMatcher = matchingRepository.findByUsers(matcherId, matchedId);
-        Optional<Matching> matchingHistoryByMatched = matchingRepository.findByUsers(matchedId, matcherId);
-        return matchingHistoryByMatcher.isPresent() || matchingHistoryByMatched.isPresent();
+        Optional<Matching> matching = matchingRepository.findByUsers(matcherId, matchedId);
+        return matching.isPresent();
+    }
+
+    public Matching findByUsers(Long userId, Long responderId) {
+        return matchingRepository.findByUsers(userId, responderId)
+                .orElseThrow(() -> new MatchingException(ErrorCode.MATCHING_NOT_FOUND));
+    }
+
+    private MatchingStatus getChatStatus(Long userId, Long matchedId) {
+        return chatRepository.findByUsers(userId, matchedId)
+                .map(chat -> {
+                    if(chat.getSenderId().equals(userId)) {
+                        return CHAT_PENDING;
+                    }
+                    return CHAT_RECEIVED;
+                })
+                .orElse(DEFAULT);
+    }
+
+    private boolean isLikeSenderOfResponder(Long userId, Long matchedId) {
+        return likeRepository.findBySenderIdAndResponderId(userId, matchedId)
+                .isPresent();
     }
 
 //    protected Long getMatchedIdFromKey(String key) {

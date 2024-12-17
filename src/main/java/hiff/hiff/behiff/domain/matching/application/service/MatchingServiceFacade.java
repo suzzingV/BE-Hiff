@@ -15,17 +15,17 @@ import java.util.List;
 @Slf4j
 public class MatchingServiceFacade {
 
-    private final DailyMatchingService dailyMatchingService;
+    private final MatchingService matchingService;
 //
 //    private final UserCRUDService userCRUDService;
 //    private final SmsUtil smsUtil;
 
     public List<MatchingSimpleResponse> getRandomMatching(Long userId) {
-        return dailyMatchingService.getMatchings(userId);
+        return matchingService.getMatchings(userId);
     }
 
     public MatchingDetailResponse getMatchingDetails(Long userId, Long matchedId) {
-        return dailyMatchingService.getMatchingDetails(userId, matchedId);
+        return matchingService.getMatchingDetails(userId, matchedId);
     }
 //
 //    public List<MatchingSimpleResponse> getHiffMatching(Long userId) {

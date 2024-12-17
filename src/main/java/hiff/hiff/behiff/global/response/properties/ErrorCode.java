@@ -42,6 +42,7 @@ public enum ErrorCode {
     INTRODUCTION_ALREADY_EXISTS(BAD_REQUEST, "이미 해당 질문에 답을 등록한 user입니다."),
     CHAT_ALREADY_EXISTS(BAD_REQUEST, "이미 매칭 신청을 하거나 받은 상대입니다."),
     NOT_MUTUAL_LIKE(BAD_REQUEST, "맞호감 상태의 상대가 아닙니다."),
+    CHAT_NOT_PENDING(BAD_REQUEST, "상대로부터 매칭 신청을 받지 않았습니다."),
 
     // 401
     SECURITY_UNAUTHORIZED(UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
@@ -60,12 +61,11 @@ public enum ErrorCode {
     EVALUATED_USER_NOT_FOUND(NOT_FOUND, "첫인상 평가 대상이 존재하지 않습니다."),
     EVALUATION_NOT_FOUND(NOT_FOUND, "첫인상 평가 대상을 찾을 수 없습니다."),
     USER_POS_NOT_FOUND(NOT_FOUND, "사용자의 위치를 찾을 수 없습니다."),
-    MATCHING_HISTORY_NOT_FOUND(NOT_FOUND, "매칭 내역이 존재하지 않습니다."),
-    MATCHING_NOT_FOUND(NOT_FOUND, "매칭 상대가 존재하지 않습니다."),
+    MATCHING_NOT_FOUND(NOT_FOUND, "매칭 내역이 존재하지 않습니다."),
     MATCHING_SCORE_NOT_FOUND(NOT_FOUND, "매칭 점수 내역이 존재하지 않습니다."),
     GENDER_COUNT_NOT_FOUND(NOT_FOUND, "성별 집계를 찾을 수 없습니다."),
     MAIN_PHOTO_NOT_FOUND(NOT_FOUND, "유저의 메인 사진을 찾을 수 없습니다."),
-    CHAT_HISTORY_NOT_FOUND(NOT_FOUND, "대화 신청 내역을 찾을 수 없습니다."),
+    CHAT_NOT_FOUND(NOT_FOUND, "대화 신청 내역을 찾을 수 없습니다."),
     DEVICE_NOT_FOUND(NOT_FOUND, "auth를 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "자기소개 질문을 찾을 수 없습니다."),
     USER_INTRODUCTION_NOT_FOUND(NOT_FOUND, "user의 자기소개를 찾을 수 없습니다."),

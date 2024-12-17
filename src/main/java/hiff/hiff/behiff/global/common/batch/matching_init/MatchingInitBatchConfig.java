@@ -1,7 +1,5 @@
 package hiff.hiff.behiff.global.common.batch.matching_init;
 
-import static hiff.hiff.behiff.domain.matching.application.service.DailyMatchingService.MATCHING_PREFIX;
-
 import hiff.hiff.behiff.global.common.batch.CustomSkipListener;
 import hiff.hiff.behiff.global.util.DateCalculator;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +15,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import static hiff.hiff.behiff.domain.matching.application.service.MatchingService.MATCHING_PREFIX;
 
 @Configuration
 @RequiredArgsConstructor

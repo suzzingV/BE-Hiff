@@ -1,7 +1,7 @@
 package hiff.hiff.behiff.global.common.batch.hiff_matching;
 
 import hiff.hiff.behiff.domain.matching.application.dto.UserWithMatchCount;
-import hiff.hiff.behiff.domain.matching.application.service.DailyMatchingService;
+import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
@@ -44,7 +44,7 @@ public class HiffMatchingBatchConfig {
     private final MatchedStepExecutionListener matchedStepExecutionListener;
 //    private final HiffMatchingService hiffMatchingService;
     private final UserProfileRepository userProfileRepository;
-    private final DailyMatchingService dailyMatchingService;
+    private final MatchingService matchingService;
     public static PriorityQueue<UserWithMatchCount> matchedQueue = new PriorityQueue<>();
     public static List<User> matchedList = new ArrayList<>();
 
@@ -206,7 +206,7 @@ public class HiffMatchingBatchConfig {
             public UserProfile process(UserProfile matcher) {
 //                PriorityQueue<UserWithMatchCount> matchedArr = new PriorityQueue<>(matchedQueue);
 //                hiffMatchingService.dailyMatching(matcher, matchedArr);
-                dailyMatchingService.performMatching(matcher);
+                matchingService.performMatching(matcher);
                 return null;
             }
         };

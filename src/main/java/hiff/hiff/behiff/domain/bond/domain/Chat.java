@@ -23,13 +23,9 @@ public class Chat {
     @Column(nullable = false)
     private Long responderId;
 
-    @Column(nullable = false)
-    private MatchingStatus status;
-
     @Builder
-    private Chat(Long senderId, Long responderId, MatchingStatus status) {
+    private Chat(Long senderId, Long responderId) {
         this.senderId = senderId;
         this.responderId = responderId;
-        this.status = status;
     }
 }
