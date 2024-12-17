@@ -4,6 +4,7 @@ import hiff.hiff.behiff.domain.bond.application.BondService;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.ChatAcceptanceResponse;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.ChatSendingResponse;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeResponse;
+import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeToUserResponse;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Bond", description = "Bond 관련 API")
 @RestController
@@ -37,6 +40,21 @@ public class BondController {
     }
 
     @Operation(
+            summary = "호감을 보낸 상대 조회",
+            description = "호감을 보낸 상대를 조회합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "호감을 보낸 상대 조회에 성공하였습니다."
+    )
+    @GetMapping("/like/list/send")
+    public ResponseEntity<List<LikeToUserResponse>> getUsersOfSendingLike(@AuthenticationPrincipal User user) {
+        List<LikeToUserResponse> responses = bondService.getUsersOfSendingLike(user.getId());
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @Operation(
             summary = "매칭 신청",
             description = "매칭을 신청합니다. 토큰 o"
     )
@@ -44,7 +62,7 @@ public class BondController {
             responseCode = "200",
             description = "매칭 신청에 성공하였습니다."
     )
-    @PostMapping("/chat/proposal/{responderId}")
+    @PostMapping("/chat/send/{responderId}")
     public ResponseEntity<ChatSendingResponse> sendChat(@AuthenticationPrincipal User user, @PathVariable Long responderId) {
         ChatSendingResponse response = bondService.sendChat(user.getId(), responderId);
 

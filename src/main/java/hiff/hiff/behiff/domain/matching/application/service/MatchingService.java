@@ -3,8 +3,7 @@ package hiff.hiff.behiff.domain.matching.application.service;
 import static hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus.*;
 import static hiff.hiff.behiff.domain.matching.util.Calculator.computeDistance;
 import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
-import static hiff.hiff.behiff.global.util.DateCalculator.TODAY_DATE;
-import static hiff.hiff.behiff.global.util.DateCalculator.getMatchingDate;
+import static hiff.hiff.behiff.global.util.DateCalculator.*;
 
 import hiff.hiff.behiff.domain.bond.infrastructure.ChatRepository;
 import hiff.hiff.behiff.domain.bond.infrastructure.LikeRepository;
@@ -30,6 +29,7 @@ import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -104,12 +104,13 @@ public class MatchingService {
 //                    matcherHobbies, matchedHobbies, matcherLifeStyles, matchedLifeStyles);
 
                     cachMatchingScore(matcher, matched);
-                    createMatching(matcher.getUserId(), matched.getUserId());
+                    LocalDate matchingDate = getMatchingDate();
+                    createMatching(matcher.getUserId(), matched.getUserId(), matchingDate);
                 });
     }
 
     private void cachMatchingScore(UserProfile matcher, UserProfile matched) {
-        String matchingDate = getMatchingDate();
+        String matchingDate = getMatchingDateTimeByString();
         String prefix = MATCHING_PREFIX + matchingDate;
         String key = prefix + "_" + matcher.getUserId();
         Long value = matched.getUserId();
@@ -180,10 +181,11 @@ public class MatchingService {
 //            .build();
 //    }
 
-    protected void createMatching(Long userId, Long matchedId) {
+    protected void createMatching(Long userId, Long matchedId, LocalDate matchingDate) {
         Matching matching = Matching.builder()
             .matchedId(matchedId)
             .matcherId(userId)
+                .creatdAt(matchingDate)
             .build();
         matchingRepository.save(matching);
     }

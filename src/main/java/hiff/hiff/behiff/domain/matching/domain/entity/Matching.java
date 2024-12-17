@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "matching_TB",
@@ -29,11 +31,14 @@ public class Matching {
     @Enumerated(EnumType.STRING)
     private MatchingStatus status;
 
+    private LocalDate createdAt;
+
     @Builder
-    private Matching(Long matcherId, Long matchedId) {
+    private Matching(Long matcherId, Long matchedId, LocalDate creatdAt) {
         this.matcherId = matcherId;
         this.matchedId = matchedId;
         this.status = MatchingStatus.DEFAULT;
+        this.createdAt = creatdAt;
     }
 
     public void sendLike() {

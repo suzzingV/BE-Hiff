@@ -6,7 +6,6 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateCalculator {
@@ -18,7 +17,7 @@ public class DateCalculator {
         return Period.between(birthdate, today).getYears();
     }
 
-    public static String getMatchingDate() {
+    public static String getMatchingDateTimeByString() {
         LocalDateTime today = LocalDateTime.now();
 
         if(today.getHour() >= 0 && today.getHour() < 3) {
@@ -39,6 +38,16 @@ public class DateCalculator {
         return getTomorrowDate() + "00";
     }
 
+    public static LocalDate getMatchingDate() {
+        LocalDateTime today = LocalDateTime.now();
+
+        if(today.getHour() >= 21) {
+            LocalDateTime tomorrow = today.plusDays(1);
+            return tomorrow.toLocalDate();
+        }
+        return today.toLocalDate();
+    }
+
     public static String getYesterdayDate() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd");
@@ -55,5 +64,10 @@ public class DateCalculator {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd");
         return tomorrow.format(formatter);
+    }
+
+    public static String getDateByPattern(LocalDate localDate, String pattern) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        return localDate.format(formatter);
     }
 }

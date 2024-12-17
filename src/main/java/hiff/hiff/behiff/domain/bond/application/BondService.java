@@ -8,6 +8,7 @@ import hiff.hiff.behiff.domain.bond.infrastructure.LikeRepository;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.ChatAcceptanceResponse;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.ChatSendingResponse;
 import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeResponse;
+import hiff.hiff.behiff.domain.bond.presentation.dto.res.LikeToUserResponse;
 import hiff.hiff.behiff.domain.matching.application.service.MatchingService;
 import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
 import hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus;
@@ -25,7 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+
+import static hiff.hiff.behiff.global.util.DateCalculator.getDateByPattern;
 
 @Service
 @Transactional
@@ -45,6 +49,8 @@ public class BondService {
     private final FcmUtils fcmUtils;
     private final UserService userService;
     private final UserProfileService userProfileService;
+
+    private final static String BOND_MATCHING_DATE_PATTERN = "MM.dd";
 
     public LikeResponse sendLike(Long userId, Long responderId) {
         isLikeBefore(userId, responderId);
@@ -75,6 +81,17 @@ public class BondService {
 
 //        sendChatAcceptAlarm(userId);
         return ChatAcceptanceResponse.from(senderId);
+    }
+
+    public List<LikeToUserResponse> getUsersOfSendingLike(Long userId) {
+        return likeRepository.findBySenderId(userId)
+                .stream().map(like -> {
+                    Long responderId = like.getResponderId();
+                    Matching matching = matchingService.findByUsers(userId, responderId);
+                    UserProfile matchedProfile = userProfileService.findByUserId(responderId);
+
+                    return LikeToUserResponse.of(responderId, matchedProfile.getNickname(), matchedProfile.getAge(), matchedProfile.getMainPhoto(), getDateByPattern(matching.getCreatedAt(), BOND_MATCHING_DATE_PATTERN));
+                }).toList();
     }
 
     private void createChat(Long userId, Long responderId) {
