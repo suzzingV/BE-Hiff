@@ -6,7 +6,6 @@ import static hiff.hiff.behiff.global.common.redis.RedisService.NOT_EXIST;
 import static hiff.hiff.behiff.global.util.DateCalculator.TODAY_DATE;
 import static hiff.hiff.behiff.global.util.DateCalculator.getMatchingDate;
 
-import hiff.hiff.behiff.domain.bond.application.BondService;
 import hiff.hiff.behiff.domain.bond.infrastructure.ChatRepository;
 import hiff.hiff.behiff.domain.bond.infrastructure.LikeRepository;
 import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
@@ -15,7 +14,6 @@ import hiff.hiff.behiff.domain.matching.exception.MatchingException;
 import hiff.hiff.behiff.domain.matching.infrastructure.MatchingRepository;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingDetailResponse;
 import hiff.hiff.behiff.domain.matching.presentation.dto.res.MatchingSimpleResponse;
-import hiff.hiff.behiff.domain.matching.util.SimilarityFactory;
 import hiff.hiff.behiff.domain.plan.application.service.PlanService;
 import hiff.hiff.behiff.domain.plan.presentation.dto.res.CouponResponse;
 import hiff.hiff.behiff.domain.profile.application.dto.UserIntroductionDto;
@@ -27,6 +25,8 @@ import hiff.hiff.behiff.domain.profile.domain.entity.UserPos;
 import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
 import hiff.hiff.behiff.domain.profile.exception.ProfileException;
 import hiff.hiff.behiff.domain.profile.infrastructure.UserProfileRepository;
+import hiff.hiff.behiff.domain.user.application.service.UserService;
+import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.time.Duration;
@@ -56,6 +56,7 @@ public class MatchingService {
     private final PlanService planService;
     private final ChatRepository chatRepository;
     private final LikeRepository likeRepository;
+    private final UserService userService;
 
     public static final Duration MATCHING_DURATION = Duration.ofDays(1);
     public static final String MATCHING_PREFIX = "matching_";
@@ -86,19 +87,7 @@ public class MatchingService {
         List<String> photos = userPhotoService.getPhotosOfUser(matchedId);
         List<UserIntroductionDto> introductions = userIntroductionService.findIntroductionByUserId(matchedId);
         MatchingStatus matchingStatus = getMatchingStatus(userId, matchedId);
-        if(matchingStatus == MatchingStatus.MUTUAL_LIKE) {
-            CouponResponse coupon = planService.getUserPlan(userId);
-            return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus, coupon.getCoupon());
-        }
-//        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
-//            matchedId);
-//        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId,
-//            matchedId);
-//        Double distance = getDistance(matcherId, matchedId);
-//        MatchingInfoDto matchingInfo = getCachedMatchingInfo(
-//            matcherId, matchedId);
-
-        return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus);
+        return getResponseByMatchingStatus(userId, matchedId, matchingStatus, matchedProfile, photos, introductions);
     }
 
     public void performMatching(UserProfile matcher) {
@@ -231,6 +220,27 @@ public class MatchingService {
     private boolean isLikeSenderOfResponder(Long userId, Long matchedId) {
         return likeRepository.findBySenderIdAndResponderId(userId, matchedId)
                 .isPresent();
+    }
+
+    private MatchingDetailResponse getResponseByMatchingStatus(Long userId, Long matchedId, MatchingStatus matchingStatus, UserProfile matchedProfile, List<String> photos, List<UserIntroductionDto> introductions) {
+        if(matchingStatus == MatchingStatus.MUTUAL_LIKE) {
+            CouponResponse coupon = planService.getUserPlan(userId);
+            return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus, coupon.getCoupon());
+        }
+
+        if(matchingStatus == MUTUAL_CHAT) {
+            User user = userService.findById(matchedId);
+            return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus, user.getPhoneNum());
+        }
+//        List<NameWithCommonDto> hobbies = userHobbyService.getHobbiesWithCommon(matcherId,
+//            matchedId);
+//        List<NameWithCommonDto> lifeStyles = userLifeStyleService.getLifeStylesWithCommon(matcherId,
+//            matchedId);
+//        Double distance = getDistance(matcherId, matchedId);
+//        MatchingInfoDto matchingInfo = getCachedMatchingInfo(
+//            matcherId, matchedId);
+
+        return MatchingDetailResponse.of(userId, matchedProfile, photos, introductions, matchingStatus);
     }
 
 //    protected Long getMatchedIdFromKey(String key) {

@@ -52,7 +52,7 @@ public class BondService {
 
         createLike(userId, responderId);
 
-        sendLikeSendAlarm(userId);
+//        sendLikeSendAlarm(userId);
 
         return LikeResponse.of(userId, responderId);
     }
@@ -64,7 +64,7 @@ public class BondService {
         createChat(userId, responderId);
         useCoupon(userId);
 
-        sendChatSendAlarm(userId);
+//        sendChatSendAlarm(userId);
 
         return ChatSendingResponse.from(responderId);
     }
@@ -73,7 +73,7 @@ public class BondService {
         findChatBySenderIdAndResponderId(senderId, userId);
         saveChatAcceptStatus(userId, senderId);
 
-        sendChatAcceptAlarm(userId);
+//        sendChatAcceptAlarm(userId);
         return ChatAcceptanceResponse.from(senderId);
     }
 
