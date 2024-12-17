@@ -60,24 +60,8 @@ public class AuthService {
         jwtService.updateRefreshToken(refreshToken, request.getPhoneNum());
 
         return userRepository.findByPhoneNum(request.getPhoneNum())
-            .map(user -> {
-                UserProfile userProfile = userProfileService.findByUserId(user.getId());
-                if(userProfile.getBirth() != null) {
-                    userProfile.updateAge();
-                }
-                userPosService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
-                userProfileService.updateLocationByPos(user.getId(), request.getLatitude(), request.getLongitude());
-                UserInfoResponse userInfo = userService.getUserInfo(user.getId());
-                updateOs(user.getId(), request.getOs());
-                return LoginResponse.of(accessToken, refreshToken, userInfo);
-            })
-            .orElseGet(() -> {
-                User newUser = userService.registerUser(Role.USER, request.getPhoneNum(),
-                    request.getLatitude(), request.getLongitude());
-                registerDeviceInfo(newUser.getId(), request.getOs());
-                UserInfoResponse userInfo = userService.getUserInfo(newUser.getId());
-                return LoginResponse.of(accessToken, refreshToken, userInfo);
-            });
+            .map(user -> loginOfExistingUser(request, user, accessToken, refreshToken))
+            .orElseGet(() -> loginOfNewUser(request, accessToken, refreshToken));
     }
 
     public TokenResponse reissueTokens(Optional<String> refresh) {
@@ -91,25 +75,6 @@ public class AuthService {
             .accessToken(reissuedAccessToken)
             .refreshToken(reissuedRefreshToken)
             .build();
-    }
-
-    public ProfileUpdateResponse updateFcmToken(Long userId, FcmTokenRequest request) {
-        Device device = deviceRepository.findByUserId(userId)
-                .orElseThrow(() -> new AuthException(ErrorCode.DEVICE_NOT_FOUND));
-        device.updateFcmToken(request.getFcmToken());
-
-        return ProfileUpdateResponse.from(userId);
-    }
-
-    private void updateOs(Long userId, OS os) {
-        Device device = deviceRepository.findByUserId(userId)
-                .orElseThrow(() -> new AuthException(ErrorCode.DEVICE_NOT_FOUND));
-        device.updateOs(os);
-    }
-
-    private String checkRefreshToken(String refreshToken) {
-        jwtService.isTokenValid(refreshToken);
-        return jwtService.checkRefreshToken(refreshToken);
     }
 
     public CodeResponse sendVerificationCode(PhoneNumRequest request) {
@@ -132,11 +97,6 @@ public class AuthService {
         }
     }
 
-    public Device findTokenByUserId(Long userId) {
-        return deviceRepository.findByUserId(userId)
-            .orElseThrow(() -> new AuthException(ErrorCode.DEVICE_NOT_FOUND));
-    }
-
     public void withdraw(Long userId, Optional<String> accessToken, Optional<String> refreshToken) {
         userService.deleteById(userId);
         profileServiceFacade.deleteByUserId(userId);
@@ -156,11 +116,28 @@ public class AuthService {
         jwtService.invalidAccessToken(accessToken);
     }
 
-    private void registerDeviceInfo(Long userId, OS os) {
-        Device device = Device.builder()
-                .userId(userId)
-                .os(os)
-                .build();
-        deviceRepository.save(device);
+    private LoginResponse loginOfNewUser(LoginRequest request, String accessToken, String refreshToken) {
+        User newUser = userService.registerUser(Role.USER, request.getPhoneNum(),
+                request.getLatitude(), request.getLongitude());
+        userService.registerDeviceInfo(newUser.getId(), request.getOs());
+        UserInfoResponse userInfo = userService.getUserInfo(newUser.getId());
+        return LoginResponse.of(accessToken, refreshToken, userInfo);
+    }
+
+    private LoginResponse loginOfExistingUser(LoginRequest request, User user, String accessToken, String refreshToken) {
+        UserProfile userProfile = userProfileService.findByUserId(user.getId());
+        if(userProfile.getBirth() != null) {
+            userProfile.updateAge();
+        }
+        userPosService.updatePos(user.getId(), request.getLatitude(), request.getLongitude());
+        userProfileService.updateLocationByPos(user.getId(), request.getLatitude(), request.getLongitude());
+        UserInfoResponse userInfo = userService.getUserInfo(user.getId());
+        userService.updateOs(user.getId(), request.getOs());
+        return LoginResponse.of(accessToken, refreshToken, userInfo);
+    }
+
+    private String checkRefreshToken(String refreshToken) {
+        jwtService.isTokenValid(refreshToken);
+        return jwtService.checkRefreshToken(refreshToken);
     }
 }

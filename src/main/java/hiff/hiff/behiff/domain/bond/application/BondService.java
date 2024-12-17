@@ -13,6 +13,11 @@ import hiff.hiff.behiff.domain.matching.domain.entity.Matching;
 import hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus;
 import hiff.hiff.behiff.domain.plan.application.service.PlanService;
 import hiff.hiff.behiff.domain.plan.domain.entity.UserPlan;
+import hiff.hiff.behiff.domain.profile.application.service.UserProfileService;
+import hiff.hiff.behiff.domain.profile.domain.entity.UserProfile;
+import hiff.hiff.behiff.domain.user.application.service.UserService;
+import hiff.hiff.behiff.global.auth.domain.entity.Device;
+import hiff.hiff.behiff.global.common.fcm.FcmUtils;
 import hiff.hiff.behiff.global.common.redis.RedisService;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
-import static hiff.hiff.behiff.domain.matching.domain.enums.MatchingStatus.*;
 
 @Service
 @Transactional
@@ -35,17 +38,21 @@ public class BondService {
     private final ChatRepository chatRepository;
 //    private final UserCRUDService userCRUDService;
 //    private final SmsUtil smsUtil;
-//    private final FcmUtils fcmUtils;
     private final RedisService redisService;
     private final LikeRepository likeRepository;
     private final PlanService planService;
     private final MatchingService matchingService;
+    private final FcmUtils fcmUtils;
+    private final UserService userService;
+    private final UserProfileService userProfileService;
 
     public LikeResponse sendLike(Long userId, Long responderId) {
         isLikeBefore(userId, responderId);
         saveLikePendingStatus(userId, responderId);
 
         createLike(userId, responderId);
+
+        sendLikeSendAlarm(userId);
 
         return LikeResponse.of(userId, responderId);
     }
@@ -57,6 +64,8 @@ public class BondService {
         createChat(userId, responderId);
         useCoupon(userId);
 
+        sendChatSendAlarm(userId);
+
         return ChatSendingResponse.from(responderId);
     }
 
@@ -64,6 +73,7 @@ public class BondService {
         findChatBySenderIdAndResponderId(senderId, userId);
         saveChatAcceptStatus(userId, senderId);
 
+        sendChatAcceptAlarm(userId);
         return ChatAcceptanceResponse.from(senderId);
     }
 
@@ -133,6 +143,24 @@ public class BondService {
     private Chat findChatBySenderIdAndResponderId(Long senderId, Long responderId) {
         return chatRepository.findBySenderIdAndResponderId(senderId, responderId)
                 .orElseThrow(() -> new BondException(ErrorCode.CHAT_NOT_FOUND));
+    }
+
+    private void sendChatSendAlarm(Long userId) {
+        Device device = userService.findDeviceByUserId(userId);
+        UserProfile userProfile = userProfileService.findByUserId(userId);
+        fcmUtils.sendChatAlarm(userId, device.getFcmToken(), userProfile.getNickname());
+    }
+
+    private void sendLikeSendAlarm(Long userId) {
+        Device device = userService.findDeviceByUserId(userId);
+        UserProfile userProfile = userProfileService.findByUserId(userId);
+        fcmUtils.sendLikeAlarm(userId, device.getFcmToken(), userProfile.getNickname());
+    }
+
+    private void sendChatAcceptAlarm(Long userId) {
+        Device device = userService.findDeviceByUserId(userId);
+        UserProfile userProfile = userProfileService.findByUserId(userId);
+        fcmUtils.sendChatAcceptAlarm(userId, device.getFcmToken(), userProfile.getNickname());
     }
 //    public ChatProposalResponse proposeChat(Long userId, Long matchedId) {
 //        User user = userCRUDService.findById(userId);

@@ -3,15 +3,9 @@ package hiff.hiff.behiff.global.common.fcm;
 import com.google.firebase.messaging.*;
 import hiff.hiff.behiff.global.auth.exception.AuthException;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -19,20 +13,60 @@ import java.util.List;
 public class FcmUtils {
 
     private static final String PUSH_TITLE = "Hiff";
-    private static final String CHAT_PROPOSAL_BODY = "님이 대화를 신청했습니다.";
+    private static final String CHAT_SENDING_BODY = "님이 대화를 신청했습니다.";
+    private static final String CHAT_ACCEPTANCE_BODY = "님이 대화를 수했습니다.";
+    private static final String LIKE_SENDING_BODY = "님이 호감을 보냈습니다.";
     public static final String MATCHING_ALARM_BODY = "새로운 매칭 상대를 찾았습니다.";
 
     private final FirebaseMessaging firebaseMessaging;
 
-    public void sendChatProposal(Long proposerId, String token, String nickname) {
+    public void sendChatAlarm(Long proposerId, String token, String nickname) {
         Notification notification = Notification.builder()
                 .setTitle(PUSH_TITLE)
-                .setBody(nickname + CHAT_PROPOSAL_BODY)
+                .setBody(nickname + CHAT_SENDING_BODY)
                 .build();
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(notification)
-                .putData("proposerId", proposerId.toString())
+                .putData("senderId", proposerId.toString())
+                .build();
+
+        try {
+            firebaseMessaging.send(message);
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+            throw new AuthException(ErrorCode.FCM_SEND_ERROR);
+        }
+    }
+
+    public void sendLikeAlarm(Long senderId, String token, String nickname) {
+        Notification notification = Notification.builder()
+                .setTitle(PUSH_TITLE)
+                .setBody(nickname + LIKE_SENDING_BODY)
+                .build();
+        Message message = Message.builder()
+                .setToken(token)
+                .setNotification(notification)
+                .putData("senderId", senderId.toString())
+                .build();
+
+        try {
+            firebaseMessaging.send(message);
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+            throw new AuthException(ErrorCode.FCM_SEND_ERROR);
+        }
+    }
+
+    public void sendChatAcceptAlarm(Long senderId, String token, String nickname) {
+        Notification notification = Notification.builder()
+                .setTitle(PUSH_TITLE)
+                .setBody(nickname + CHAT_ACCEPTANCE_BODY)
+                .build();
+        Message message = Message.builder()
+                .setToken(token)
+                .setNotification(notification)
+                .putData("senderId", senderId.toString())
                 .build();
 
         try {

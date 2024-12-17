@@ -5,6 +5,7 @@ import hiff.hiff.behiff.domain.user.application.service.UserService;
 import hiff.hiff.behiff.domain.user.domain.entity.User;
 import hiff.hiff.behiff.domain.user.presentation.dto.req.PhoneNumRequest;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
+import hiff.hiff.behiff.global.auth.presentation.dto.req.FcmTokenRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,6 +53,22 @@ public class UserController {
     public ResponseEntity<ProfileUpdateResponse> updatePhone(@AuthenticationPrincipal User user, @Valid @RequestBody
         PhoneNumRequest request) {
         ProfileUpdateResponse response = userService.updatePhoneNum(user.getId(), request.getPhoneNum());
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "fcm token 등록",
+            description = "fcm token을 등록합니다. 토큰 o"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "fcm token 등록에 성공하였습니다."
+    )
+    @PatchMapping("/fcm-token")
+    public ResponseEntity<ProfileUpdateResponse> getFcmToken(@AuthenticationPrincipal User user, @Valid @RequestBody
+    FcmTokenRequest request) {
+        ProfileUpdateResponse response = userService.updateFcmToken(user.getId(), request);
+
         return ResponseEntity.ok(response);
     }
 }

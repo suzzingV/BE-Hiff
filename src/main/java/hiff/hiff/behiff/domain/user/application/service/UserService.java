@@ -13,6 +13,11 @@ import hiff.hiff.behiff.domain.user.domain.enums.Role;
 import hiff.hiff.behiff.domain.user.exception.UserException;
 import hiff.hiff.behiff.domain.user.infrastructure.UserRepository;
 import hiff.hiff.behiff.domain.user.presentation.dto.res.UserInfoResponse;
+import hiff.hiff.behiff.global.auth.domain.entity.Device;
+import hiff.hiff.behiff.global.auth.domain.enums.OS;
+import hiff.hiff.behiff.global.auth.exception.AuthException;
+import hiff.hiff.behiff.global.auth.infrastructure.DeviceRepository;
+import hiff.hiff.behiff.global.auth.presentation.dto.req.FcmTokenRequest;
 import hiff.hiff.behiff.global.response.properties.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +36,7 @@ public class UserService {
     private final PlanService planService;
     private final UserProfileService userProfileService;
     private final UserRepository userRepository;
+    private final DeviceRepository deviceRepository;
 
     public User registerUser(
         Role role, String phoneNum, Double lat, Double lon) {
@@ -72,6 +78,31 @@ public class UserService {
         User user = findById(userId);
         user.changePhoneNum(phoneNum);
         return ProfileUpdateResponse.from(userId);
+    }
+
+    public ProfileUpdateResponse updateFcmToken(Long userId, FcmTokenRequest request) {
+        Device device = findDeviceByUserId(userId);
+        device.updateFcmToken(request.getFcmToken());
+
+        return ProfileUpdateResponse.from(userId);
+    }
+
+    public Device findDeviceByUserId(Long userId) {
+        return deviceRepository.findByUserId(userId)
+                .orElseThrow(() -> new AuthException(ErrorCode.DEVICE_NOT_FOUND));
+    }
+
+    public void updateOs(Long userId, OS os) {
+        Device device = findDeviceByUserId(userId);
+        device.updateOs(os);
+    }
+
+    public void registerDeviceInfo(Long userId, OS os) {
+        Device device = Device.builder()
+                .userId(userId)
+                .os(os)
+                .build();
+        deviceRepository.save(device);
     }
 
     private User createUser(Role role, String phoneNum) {
