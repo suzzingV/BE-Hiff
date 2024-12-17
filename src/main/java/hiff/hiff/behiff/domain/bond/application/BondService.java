@@ -61,7 +61,7 @@ public class BondService {
     }
 
     public ChatAcceptanceResponse acceptChat(Long userId, Long senderId) {
-        Chat chat = findChatBySenderIdAndResponderId(senderId, userId);
+        findChatBySenderIdAndResponderId(senderId, userId);
         saveChatAcceptStatus(userId, senderId);
 
         return ChatAcceptanceResponse.from(senderId);
@@ -71,7 +71,6 @@ public class BondService {
         Chat chat = Chat.builder()
                 .senderId(userId)
                 .responderId(responderId)
-                .status(CHAT_PENDING)
                 .build();
         chatRepository.save(chat);
     }
