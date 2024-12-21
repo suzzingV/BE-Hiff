@@ -185,8 +185,9 @@ public class MatchingService {
         Matching matching = Matching.builder()
             .matchedId(matchedId)
             .matcherId(userId)
-                .creatdAt(matchingDate)
+                .createdAt(matchingDate)
             .build();
+        log.info("상태: " + matching.getStatus().toString());
         matchingRepository.save(matching);
     }
 

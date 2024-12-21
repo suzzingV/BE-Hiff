@@ -34,11 +34,11 @@ public class Matching {
     private LocalDate createdAt;
 
     @Builder
-    private Matching(Long matcherId, Long matchedId, LocalDate creatdAt) {
+    private Matching(Long matcherId, Long matchedId, LocalDate createdAt) {
         this.matcherId = matcherId;
         this.matchedId = matchedId;
         this.status = MatchingStatus.DEFAULT;
-        this.createdAt = creatdAt;
+        this.createdAt = createdAt;
     }
 
     public void sendLike() {
